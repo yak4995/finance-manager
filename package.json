@@ -9,18 +9,18 @@
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "format": "prettier --write \"src/**/*.ts\""
-  },
-  "dependencies": {
-    "dinero.js": "^1.6.0"
+    "format": "prettier --write \"src/**/*{.ts, .spec.ts}\""
   },
   "devDependencies": {
-    "@types/dinero.js": "^1.4.1",
     "@types/jest": "^24.0.18",
+    "@types/moment": "^2.13.0",
     "jest": "^24.9.0",
     "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
     "tslint": "^5.19.0",
     "typescript": "^3.6.2"
+  },
+  "dependencies": {
+    "moment": "^2.24.0"
   }
 }
