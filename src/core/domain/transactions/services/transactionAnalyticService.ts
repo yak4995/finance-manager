@@ -219,7 +219,7 @@ export default class TransactionAnalyticService {
       by,
     )) {
       result[
-        currentEndDate.toLocaleDateString()
+        currentStartDate.toLocaleDateString()
       ] = transactionsForProcessing.filter(
         t => t.datetime >= currentStartDate && t.datetime <= currentEndDate,
       ).length;
@@ -255,7 +255,7 @@ export default class TransactionAnalyticService {
       dateEnd,
       by,
     )) {
-      result[currentEndDate.toLocaleDateString()] = this.getSumByTransactions(
+      result[currentStartDate.toLocaleDateString()] = this.getSumByTransactions(
         transactionsForProcessing.filter(
           t => t.datetime >= currentStartDate && t.datetime <= currentEndDate,
         ),
@@ -270,7 +270,7 @@ export default class TransactionAnalyticService {
     dateEnd: Date,
     by: Period,
   ) {
-    while (dateStart <= dateEnd) {
+    while (dateStart < dateEnd) {
       const currentEndDate = new Date(dateStart);
       switch (by) {
         case Period.MONTH:
