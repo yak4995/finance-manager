@@ -15,68 +15,6 @@ export default class TransactionAnalyticService {
     private readonly transactionCategoryService: TransactionCategoryService,
   ) {}
 
-  private async getTransactionsByFilter(filter: {
-    dateStart: Date;
-    dateEnd: Date;
-    category?: ITransactionCategory;
-    categories?: ITransactionCategory[];
-  }): Promise<ITransaction[]> {
-    const result = this.transactions.filter(
-      t => t.datetime >= filter.dateStart && t.datetime <= filter.dateEnd,
-    );
-    if (filter.category) {
-      const categoryChildrenIds = (await this.transactionCategoryService.getTransactionCategoryChildren(
-        filter.category,
-      )).map(childCategory => childCategory.id);
-      return result.filter(t =>
-        categoryChildrenIds.includes(t.transactionCategory.id),
-      );
-    }
-    if (filter.categories) {
-      return result.filter(t =>
-        filter.categories.map(tc => tc.id).includes(t.transactionCategory.id),
-      );
-    }
-    return result;
-  }
-
-  private getSumByTransactions(
-    transactions: ITransaction[],
-    baseCurrency: ICurrency,
-  ): number {
-    return transactions
-      .map(
-        transaction =>
-          this.converter.getRateFor(
-            transaction.currency.code,
-            baseCurrency.code,
-            new Date(),
-          ) * transaction.amount,
-      )
-      .reduce((sum, amount) => sum + amount, 0);
-  }
-
-  private checkDateRangeForDynamicAnalytics(
-    dateStart: Date,
-    dateEnd: Date,
-    period: Period,
-  ): void {
-    const preparedDateStart = moment(dateStart);
-    const preparedDateEnd = moment(dateEnd);
-    const periodsToDiffUnitsMap: moment.unitOfTime.Diff[] = [
-      'months',
-      'quarters',
-      'years',
-    ];
-    if (
-      preparedDateEnd.diff(preparedDateStart, periodsToDiffUnitsMap[period]) < 1
-    ) {
-      throw new InvalidDateRangeException(
-        "'by' period is less than date range",
-      );
-    }
-  }
-
   get transactions(): ITransaction[] {
     return this._transactions;
   }
@@ -133,28 +71,12 @@ export default class TransactionAnalyticService {
     dateStart: Date,
     dateEnd: Date,
   ): Promise<IRatioViewModel> {
-    const directChildren = await this.transactionCategoryService.getTransactionCategoryDirectChildren(
+    return this.processTransactionRatioByCategory(
       baseCategory,
+      dateStart,
+      dateEnd,
+      arg => arg.length,
     );
-    let generalTransactionsCount = 0;
-    const result: IRatioViewModel = {};
-    for (const childCategory of directChildren) {
-      const transactionsForProcessing = await this.getTransactionsByFilter({
-        dateStart,
-        dateEnd,
-        categories: await this.transactionCategoryService.getTransactionCategoryChildren(
-          childCategory,
-        ),
-      });
-      generalTransactionsCount += transactionsForProcessing.length;
-      result[childCategory.id] = transactionsForProcessing.length;
-    }
-    for (const categoryId in result) {
-      result[categoryId] = Math.round(
-        (result[categoryId] * 100) / generalTransactionsCount,
-      );
-    }
-    return result;
   }
 
   public async getTransactionSumRatioByCategories(
@@ -163,31 +85,12 @@ export default class TransactionAnalyticService {
     dateEnd: Date,
     baseCurrency: ICurrency,
   ): Promise<IRatioViewModel> {
-    const directChildren = await this.transactionCategoryService.getTransactionCategoryDirectChildren(
+    return this.processTransactionRatioByCategory(
       baseCategory,
+      dateStart,
+      dateEnd,
+      arg => this.getSumByTransactions(arg, baseCurrency),
     );
-    let generalTransactionsSum = 0;
-    const result: IRatioViewModel = {};
-    for (const childCategory of directChildren) {
-      const transactionsSum = this.getSumByTransactions(
-        await this.getTransactionsByFilter({
-          dateStart,
-          dateEnd,
-          categories: await this.transactionCategoryService.getTransactionCategoryChildren(
-            childCategory,
-          ),
-        }),
-        baseCurrency,
-      );
-      generalTransactionsSum += transactionsSum;
-      result[childCategory.id] = transactionsSum;
-    }
-    for (const categoryId in result) {
-      result[categoryId] = Math.round(
-        (result[categoryId] * 100) / generalTransactionsSum,
-      );
-    }
-    return result;
   }
 
   // line chart diagramm data for transactions dynamic by time
@@ -197,34 +100,13 @@ export default class TransactionAnalyticService {
     dateEnd: Date,
     by: Period,
   ): Promise<IRatioViewModel> {
-    try {
-      this.checkDateRangeForDynamicAnalytics(dateStart, dateEnd, by);
-    } catch (e) {
-      throw e;
-    }
-    const transactionsForProcessing = await this.getTransactionsByFilter({
-      dateStart,
-      dateEnd,
-      categories: await this.transactionCategoryService.getTransactionCategoryChildren(
-        category,
-      ),
-    });
-    const result: IRatioViewModel = {};
-    for (const [
-      currentStartDate,
-      currentEndDate,
-    ] of TransactionAnalyticService.dateRangeGenerator(
+    return this.processTransactionsChangeByPeriod(
+      category,
       dateStart,
       dateEnd,
       by,
-    )) {
-      result[
-        currentStartDate.toLocaleDateString()
-      ] = transactionsForProcessing.filter(
-        t => t.datetime >= currentStartDate && t.datetime <= currentEndDate,
-      ).length;
-    }
-    return result;
+      arg => arg.length,
+    );
   }
 
   public async getTransactionSumChangeByPeriod(
@@ -233,6 +115,112 @@ export default class TransactionAnalyticService {
     dateEnd: Date,
     by: Period,
     baseCurrency: ICurrency,
+  ): Promise<IRatioViewModel> {
+    return this.processTransactionsChangeByPeriod(
+      category,
+      dateStart,
+      dateEnd,
+      by,
+      arg => this.getSumByTransactions(arg, baseCurrency),
+    );
+  }
+
+  private async getTransactionsByFilter(filter: {
+    dateStart: Date;
+    dateEnd: Date;
+    category?: ITransactionCategory;
+    categories?: ITransactionCategory[];
+  }): Promise<ITransaction[]> {
+    const result = this.transactions.filter(
+      t => t.datetime >= filter.dateStart && t.datetime <= filter.dateEnd,
+    );
+    if (filter.category) {
+      const categoryChildrenIds = (await this.transactionCategoryService.getTransactionCategoryChildren(
+        filter.category,
+      )).map(childCategory => childCategory.id);
+      return result.filter(t =>
+        categoryChildrenIds.includes(t.transactionCategory.id),
+      );
+    }
+    if (filter.categories) {
+      return result.filter(t =>
+        filter.categories.map(tc => tc.id).includes(t.transactionCategory.id),
+      );
+    }
+    return result;
+  }
+
+  private getSumByTransactions(
+    transactions: ITransaction[],
+    baseCurrency: ICurrency,
+  ): number {
+    return transactions
+      .map(
+        transaction =>
+          this.converter.getRateFor(
+            transaction.currency.code,
+            baseCurrency.code,
+            new Date(),
+          ) * transaction.amount,
+      )
+      .reduce((sum, amount) => sum + amount, 0);
+  }
+
+  private async processTransactionRatioByCategory(
+    baseCategory: ITransactionCategory,
+    dateStart: Date,
+    dateEnd: Date,
+    processFunction: (transactions: ITransaction[]) => number,
+  ): Promise<IRatioViewModel> {
+    const directChildren = await this.transactionCategoryService.getTransactionCategoryDirectChildren(
+      baseCategory,
+    );
+    let general = 0;
+    const result: IRatioViewModel = {};
+    for (const childCategory of directChildren) {
+      const transactionsForProcessing = await this.getTransactionsByFilter({
+        dateStart,
+        dateEnd,
+        categories: await this.transactionCategoryService.getTransactionCategoryChildren(
+          childCategory,
+        ),
+      });
+      general += processFunction(transactionsForProcessing);
+      result[childCategory.id] = processFunction(transactionsForProcessing);
+    }
+    for (const categoryId in result) {
+      result[categoryId] = Math.round((result[categoryId] * 100) / general);
+    }
+    return result;
+  }
+
+  private checkDateRangeForDynamicAnalytics(
+    dateStart: Date,
+    dateEnd: Date,
+    period: Period,
+  ): void {
+    const preparedDateStart = moment(dateStart);
+    const preparedDateEnd = moment(dateEnd);
+    const periodsToDiffUnitsMap: moment.unitOfTime.Diff[] = [
+      'months',
+      'quarters',
+      'years',
+    ];
+    if (
+      preparedDateEnd.diff(preparedDateStart, periodsToDiffUnitsMap[period]) < 1
+    ) {
+      throw new InvalidDateRangeException(
+        "'by' period is less than date range",
+      );
+    }
+  }
+
+  private async processTransactionsChangeByPeriod(
+    category: ITransactionCategory,
+    dateStart: Date,
+    dateEnd: Date,
+    by: Period,
+    processFunction: (transactions: ITransaction[]) => number,
   ): Promise<IRatioViewModel> {
     try {
       this.checkDateRangeForDynamicAnalytics(dateStart, dateEnd, by);
@@ -255,17 +243,16 @@ export default class TransactionAnalyticService {
       dateEnd,
       by,
     )) {
-      result[currentStartDate.toLocaleDateString()] = this.getSumByTransactions(
+      result[currentStartDate.toLocaleDateString()] = processFunction(
         transactionsForProcessing.filter(
           t => t.datetime >= currentStartDate && t.datetime <= currentEndDate,
         ),
-        baseCurrency,
       );
     }
     return result;
   }
 
-  public static *dateRangeGenerator(
+  private static *dateRangeGenerator(
     dateStart: Date,
     dateEnd: Date,
     by: Period,
