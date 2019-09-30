@@ -1,17 +1,17 @@
 import * as moment from 'moment';
-import ITransaction from '../transaction.interface';
-import ITransactionCategory from '../transactionCategory.interface';
-import ICurrency from '../currency.interface';
-import ICurrencyConverter from '../currencyConverter.interface';
+import ITransaction from '../entities/transaction.interface';
+import ITransactionCategory from '../entities/transactionCategory.interface';
+import ICurrency from '../entities/currency.interface';
+import ICurrencyConverterService from './currencyConverterService.interface';
 import { Period } from '../../period/enums/period.enum';
-import { IRatioViewModel } from '../view-models/ratioViewModel.interface';
+import { TransactionsComparisonDto } from '../dto/transactionsComparison.dto';
 import TransactionCategoryService from './transactionCategoryService';
 import { InvalidDateRangeException } from '../exceptions/invalidDateRange.exception';
 
 export default class TransactionAnalyticService {
   constructor(
     private _transactions: ITransaction[],
-    private readonly converter: ICurrencyConverter,
+    private readonly converter: ICurrencyConverterService,
     private readonly transactionCategoryService: TransactionCategoryService,
   ) {}
 
@@ -70,7 +70,7 @@ export default class TransactionAnalyticService {
     baseCategory: ITransactionCategory,
     dateStart: Date,
     dateEnd: Date,
-  ): Promise<IRatioViewModel> {
+  ): Promise<TransactionsComparisonDto> {
     return this.processTransactionRatioByCategory(
       baseCategory,
       dateStart,
@@ -84,7 +84,7 @@ export default class TransactionAnalyticService {
     dateStart: Date,
     dateEnd: Date,
     baseCurrency: ICurrency,
-  ): Promise<IRatioViewModel> {
+  ): Promise<TransactionsComparisonDto> {
     return this.processTransactionRatioByCategory(
       baseCategory,
       dateStart,
@@ -99,7 +99,7 @@ export default class TransactionAnalyticService {
     dateStart: Date,
     dateEnd: Date,
     by: Period,
-  ): Promise<IRatioViewModel> {
+  ): Promise<TransactionsComparisonDto> {
     return this.processTransactionsChangeByPeriod(
       category,
       dateStart,
@@ -115,7 +115,7 @@ export default class TransactionAnalyticService {
     dateEnd: Date,
     by: Period,
     baseCurrency: ICurrency,
-  ): Promise<IRatioViewModel> {
+  ): Promise<TransactionsComparisonDto> {
     return this.processTransactionsChangeByPeriod(
       category,
       dateStart,
@@ -171,12 +171,12 @@ export default class TransactionAnalyticService {
     dateStart: Date,
     dateEnd: Date,
     processFunction: (transactions: ITransaction[]) => number,
-  ): Promise<IRatioViewModel> {
+  ): Promise<TransactionsComparisonDto> {
     const directChildren = await this.transactionCategoryService.getTransactionCategoryDirectChildren(
       baseCategory,
     );
     let general = 0;
-    const result: IRatioViewModel = {};
+    const result: TransactionsComparisonDto = {};
     for (const childCategory of directChildren) {
       const transactionsForProcessing = await this.getTransactionsByFilter({
         dateStart,
@@ -221,7 +221,7 @@ export default class TransactionAnalyticService {
     dateEnd: Date,
     by: Period,
     processFunction: (transactions: ITransaction[]) => number,
-  ): Promise<IRatioViewModel> {
+  ): Promise<TransactionsComparisonDto> {
     try {
       this.checkDateRangeForDynamicAnalytics(dateStart, dateEnd, by);
     } catch (e) {
@@ -234,7 +234,7 @@ export default class TransactionAnalyticService {
         category,
       ),
     });
-    const result: IRatioViewModel = {};
+    const result: TransactionsComparisonDto = {};
     for (const [
       currentStartDate,
       currentEndDate,

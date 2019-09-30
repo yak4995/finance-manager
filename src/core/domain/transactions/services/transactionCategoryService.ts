@@ -1,4 +1,4 @@
-import ITransactionCategory from '../transactionCategory.interface';
+import ITransactionCategory from '../entities/transactionCategory.interface';
 import IRepository from '../../repository.interface';
 
 export default class TransactionCategoryService {

@@ -1,7 +1,7 @@
-import IUser from '../users/user.interface';
+import IUser from '../../users/entities/user.interface';
 import ITransactionCategory from './transactionCategory.interface';
 import ICurrency from './currency.interface';
-import IPersistantEntity from '../persistantEntity';
+import IPersistantEntity from '../../persistantEntity';
 
 export default interface ITransaction extends IPersistantEntity {
   datetime: Date;

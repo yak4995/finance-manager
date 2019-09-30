@@ -1,12 +1,12 @@
-import { Criteria } from './repository.interface';
-import ICurrency from './transactions/currency.interface';
-import ITransaction from './transactions/transaction.interface';
-import ITransactionCategory from './transactions/transactionCategory.interface';
-import IUser from './users/user.interface';
-import ICurrencyCreator from './transactions/currencyCreator.interface';
-import ITransactionCategoryCreator from './transactions/transactionCategoryCreator';
-import ITransactionCreator from './transactions/transactionCreator';
-import IUserCreator from './users/userCreator';
+import { Criteria } from '../domain/repository.interface';
+import ICurrency from '../domain/transactions/entities/currency.interface';
+import ITransaction from '../domain/transactions/entities/transaction.interface';
+import ITransactionCategory from '../domain/transactions/entities/transactionCategory.interface';
+import ICurrencyCreator from '../domain/transactions/creators/currencyCreator.interface';
+import ITransactionCategoryCreator from '../domain/transactions/creators/transactionCategoryCreator';
+import ITransactionCreator from '../domain/transactions/creators/transactionCreator';
+import IUserCredential from './users/entities/userCredential.interface';
+import IUserCredentialCreator from './users/creators/userCredentialCreator';
 
 // For instantiating objects of related classes without their source dependency
 // we use abstract class instead of interface
@@ -17,7 +17,7 @@ export default abstract class EntityFactory {
     private currencyCreator: ICurrencyCreator,
     private transactionCategoryCreator: ITransactionCategoryCreator,
     private transactionCreator: ITransactionCreator,
-    private userCreator: IUserCreator,
+    private userCredentialCreator: IUserCredentialCreator,
   ) {}
 
   private static instance: EntityFactory = null;
@@ -43,7 +43,9 @@ export default abstract class EntityFactory {
     return this.transactionCreator.getInstance(fields);
   }
 
-  public createUser(fields: Criteria<IUser>): IUser {
-    return this.userCreator.getInstance(fields);
+  public createUserCredential(
+    fields: Criteria<IUserCredential>,
+  ): IUserCredential {
+    return this.userCredentialCreator.getInstance(fields);
   }
 }

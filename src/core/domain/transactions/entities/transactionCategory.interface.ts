@@ -1,5 +1,5 @@
-import IUser from '../users/user.interface';
-import IPersistantEntity from '../persistantEntity';
+import IUser from '../../users/entities/user.interface';
+import IPersistantEntity from '../../persistantEntity';
 
 export default interface ITransactionCategory extends IPersistantEntity {
   name: string;

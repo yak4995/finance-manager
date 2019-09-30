@@ -1,5 +1,5 @@
 import IRepository, { OrderCriteria, Criteria } from '../repository.interface';
-import ITransactionCategory from '../transactions/transactionCategory.interface';
+import ITransactionCategory from '../transactions/entities/transactionCategory.interface';
 
 export const firstCategory = {
   id: '1',
