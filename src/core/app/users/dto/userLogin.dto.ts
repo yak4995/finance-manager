@@ -1,4 +1,4 @@
 export default class UserLoginDto {
   email: string;
-  password: string;
+  authorityData?: any;
 }

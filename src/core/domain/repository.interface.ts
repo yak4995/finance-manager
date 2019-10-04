@@ -22,10 +22,10 @@ export default interface IRepository<T extends IPersistantEntity> {
     perPage: number,
     orderBy: OrderCriteria<T>,
   ): Promise<T[]>;
-  findById(id: number): Promise<T>;
+  findById(id: string): Promise<T>;
   findOneByAndCriteria(searchCriteria: Criteria<T>): Promise<T>;
   findByAndCriteria(searchCriteria: Criteria<T>): Promise<T[]>;
   findByOrCriteria(searchCriteria: Criteria<T>): Promise<T[]>;
-  update(updateData: Criteria<T>, id: number): Promise<any>;
+  update(updateData: Criteria<T>, id: string): Promise<any>;
   delete(deleteCriteria: Criteria<T>): Promise<any>;
 }

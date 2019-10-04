@@ -6,5 +6,4 @@ export default interface IUserCredential extends IUser {
   profileImageUrl: string | null;
   roles: Roles[];
   isActive: boolean;
-  password: string;
 }

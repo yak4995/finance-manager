@@ -7,6 +7,8 @@ import ITransactionCategoryCreator from '../domain/transactions/creators/transac
 import ITransactionCreator from '../domain/transactions/creators/transactionCreator';
 import IUserCredential from './users/entities/userCredential.interface';
 import IUserCredentialCreator from './users/creators/userCredentialCreator';
+import IDistributingMetricItemCreator from './transactions/creators/distributingMetricItemCreator';
+import IDistributingMetricItem from './transactions/entities/distributingMetricItem.interface';
 
 // For instantiating objects of related classes without their source dependency
 // we use abstract class instead of interface
@@ -18,6 +20,7 @@ export default abstract class EntityFactory {
     private transactionCategoryCreator: ITransactionCategoryCreator,
     private transactionCreator: ITransactionCreator,
     private userCredentialCreator: IUserCredentialCreator,
+    private distributingMetricItemCreator: IDistributingMetricItemCreator,
   ) {}
 
   private static instance: EntityFactory = null;
@@ -47,5 +50,11 @@ export default abstract class EntityFactory {
     fields: Criteria<IUserCredential>,
   ): IUserCredential {
     return this.userCredentialCreator.getInstance(fields);
+  }
+
+  public createDistributingMetricItem(
+    fields: Criteria<IDistributingMetricItem>,
+  ): IDistributingMetricItem {
+    return this.distributingMetricItemCreator.getInstance(fields);
   }
 }
