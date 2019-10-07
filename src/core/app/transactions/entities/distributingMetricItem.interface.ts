@@ -5,6 +5,7 @@ import { AvailableAnalyticMetric } from '../../../domain/transactions/enums/avai
 import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
 import ICurrency from '../../../domain/transactions/entities/currency.interface';
 
+// Probably children: TypeOrmDistributingMetricItemEntity, MongooseDistributingMetricItemSchema, XMLDistributingMetricItemEntity
 export default interface IDistributingMetricItem extends IPersistantEntity {
   user: IUserCredential; // whose
   period: Period; // frequency of distributing

@@ -85,7 +85,7 @@ export default class FakeCategoryRepo
   ) {
     return [];
   }
-  async findById(id: number) {
+  async findById(id: string) {
     return null;
   }
   async findOneByAndCriteria(searchCriteria: Criteria<ITransactionCategory>) {
@@ -109,7 +109,7 @@ export default class FakeCategoryRepo
   async findByOrCriteria(searchCriteria: Criteria<ITransactionCategory>) {
     return [];
   }
-  async update(updateData: Criteria<ITransactionCategory>, id: number) {
+  async update(updateData: Criteria<ITransactionCategory>, id: string) {
     return null;
   }
   async delete(deleteCriteria: Criteria<ITransactionCategory>) {

@@ -11,7 +11,7 @@ import FakeCategoryRepo, {
 import TransactionCategoryService from '../transactions/services/transactionCategoryService';
 import { Period } from '../period/enums/period.enum';
 import { InvalidDateRangeException } from '../transactions/exceptions/invalidDateRange.exception';
-import ITransaction from '../transactions/transaction.interface';
+import ITransaction from '../transactions/entities/transaction.interface';
 
 describe('TransactionAnalyticService tests', () => {
   const now = new Date();

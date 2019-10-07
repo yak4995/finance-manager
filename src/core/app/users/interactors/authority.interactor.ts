@@ -7,9 +7,10 @@ import UserRegisterDto from '../dto/userRegister.dto';
 import UserLoginDto from '../dto/userLogin.dto';
 import IRepository from '../../../domain/repository.interface';
 import IUserCredential from '../entities/userCredential.interface';
-import ITransportService from '../../transportService.interface';
 import EntityFactory from '../../entityFactory';
 import IAuthorityService from '../interfaces/authorityService.interface';
+import IEventDispatchService from '../../events/eventDispatchService.interface';
+import UserHasBeenCreatedEvent from '../events/userHasBeenCreated.event';
 
 export class AuthorityInteractor
   implements SessionsManagementInputPort, UserCredentialsManagementInputPort {
@@ -17,7 +18,9 @@ export class AuthorityInteractor
     private readonly authorityService: IAuthorityService,
     private readonly entityFactory: EntityFactory,
     private readonly userCredentialRepo: IRepository<IUserCredential>,
-    private readonly transportService: ITransportService,
+    private readonly eventDispatcher: IEventDispatchService<
+      UserHasBeenCreatedEvent
+    >,
     private readonly outputPort: AuthorityOutputPort,
   ) {}
 
@@ -27,13 +30,6 @@ export class AuthorityInteractor
         email: payload.email,
       });
     } catch (e) {
-      // use auth service from infrastructure
-      // (because, for example, SSO\OAuth2\(Passwordless\biometric) auth doesn`t required password, only redirection;
-      // 2FA required one more step for auth; also we have Auth0 service or Basic auth:
-      // The .htaccess file references a .htpasswd file in which each line contains of a username and a password
-      // separated by a colon (":"). You can not see the actual passwords as they are encrypted (md5 in this case).
-      // Then client needs to transfer a login and pass in the URL: https://username:password@www.example.com (DEPRECATED)
-      // )
       const createdUser = this.entityFactory.createUserCredential({
         email: payload.email,
       });
@@ -42,42 +38,41 @@ export class AuthorityInteractor
           this.authorityService.signUp(payload),
           this.userCredentialRepo.insert(createdUser),
         ]);
-        let mailingResult = false;
+        let mailingResult: boolean = false;
         if (registrationResult) {
-          mailingResult = await this.transportService.unicast(
-            'You has been registered successfully',
-            createdUser.email,
+          mailingResult = await this.eventDispatcher.emit(
+            new UserHasBeenCreatedEvent(savedUser),
           );
         }
-        this.outputPort.processRegistration(savedUser, mailingResult);
+        await this.outputPort.processRegistration(savedUser, mailingResult);
       } catch (e2) {
-        this.outputPort.processRegistration(null, false);
+        await this.outputPort.processRegistration(null, false);
       }
       return;
     }
-    this.outputPort.processRegistration(null, false);
+    await this.outputPort.processRegistration(null, false);
   }
 
   public async signIn(payload: UserLoginDto): Promise<void> {
     try {
-      const [loginResult] = await Promise.all([
+      const [loginResult, foundUser] = await Promise.all([
         this.authorityService.signIn(payload),
         this.userCredentialRepo.findOneByAndCriteria({
           email: payload.email,
         }),
       ]);
-      this.outputPort.processLogin(loginResult);
+      await this.outputPort.processLogin(loginResult);
     } catch (e) {
-      this.outputPort.processLogin(null);
+      await this.outputPort.processLogin(null);
     }
   }
 
   public async signOut(user: IUser): Promise<void> {
     try {
       const result = await this.authorityService.signOut(user);
-      this.outputPort.processLogout(user, result);
+      await this.outputPort.processLogout(user, result);
     } catch (e) {
-      this.outputPort.processLogout(null, false);
+      await this.outputPort.processLogout(null, false);
     }
   }
 
@@ -94,9 +89,9 @@ export class AuthorityInteractor
         },
         user.id,
       );
-      this.outputPort.processAccountInfoChanging(user);
+      await this.outputPort.processAccountInfoChanging(user);
     } catch (e) {
-      this.outputPort.processAccountInfoChanging(null);
+      await this.outputPort.processAccountInfoChanging(null);
     }
   }
 
@@ -109,18 +104,18 @@ export class AuthorityInteractor
         { profileImageUrl: newProfileImagePath },
         user.id,
       );
-      this.outputPort.processAccountProfileImageChanging(user);
+      await this.outputPort.processAccountProfileImageChanging(user);
     } catch (e) {
-      this.outputPort.processAccountProfileImageChanging(null);
+      await this.outputPort.processAccountProfileImageChanging(null);
     }
   }
 
   public async deleteAccount(user: IUser): Promise<void> {
     try {
       const result = await this.authorityService.deleteAccount(user);
-      this.outputPort.processAccountDeleting(user, result);
+      await this.outputPort.processAccountDeleting(user, result);
     } catch (e) {
-      this.outputPort.processAccountProfileImageChanging(null);
+      await this.outputPort.processAccountProfileImageChanging(null);
     }
   }
 }

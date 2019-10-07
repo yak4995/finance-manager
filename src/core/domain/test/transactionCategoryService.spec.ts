@@ -1,7 +1,7 @@
 import 'ts-jest';
 import TransactionCategoryService from '../transactions/services/transactionCategoryService';
 import IRepository from '../repository.interface';
-import ITransactionCategory from '../transactions/transactionCategory.interface';
+import ITransactionCategory from '../transactions/entities/transactionCategory.interface';
 import FakeCategoryRepo, {
   firstCategory,
   thirdCategory,

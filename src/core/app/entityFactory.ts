@@ -13,7 +13,7 @@ import IDistributingMetricItem from './transactions/entities/distributingMetricI
 // For instantiating objects of related classes without their source dependency
 // we use abstract class instead of interface
 // because in this case we interested in private field and some implementation details
-// Probably children: TypeOrmEntityFactory, MongoEntityFactory, XmlEntityFactory
+// Probably children: TypeOrmEntityFactory, MongoObjectsEntityFactory, XmlEntityFactory
 export default abstract class EntityFactory {
   protected constructor(
     private currencyCreator: ICurrencyCreator,
