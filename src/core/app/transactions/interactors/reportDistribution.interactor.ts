@@ -7,9 +7,9 @@ import TransactionAnalyticService from '../../../domain/transactions/services/tr
 import { AvailableAnalyticMetric } from '../../../domain/transactions/enums/availableAnalyticMetric.enum';
 import IEventDispatchService from '../../events/eventDispatchService.interface';
 import ReportHasBeenGeneratedEvent from '../events/reportHasBeenGenerated.event';
-import { Period } from 'src/core/domain/period/enums/period.enum';
+import { Period } from '../../../domain/period/enums/period.enum';
 
-export class ReportDistributionInteractor
+export default class ReportDistributionInteractor
   implements ReportDistributionInputPort {
   constructor(
     private readonly distributionMetricItemRepo: IRepository<

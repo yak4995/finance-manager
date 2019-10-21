@@ -12,7 +12,7 @@ import IAuthorityService from '../interfaces/authorityService.interface';
 import IEventDispatchService from '../../events/eventDispatchService.interface';
 import UserHasBeenCreatedEvent from '../events/userHasBeenCreated.event';
 
-export class AuthorityInteractor
+export default class AuthorityInteractor
   implements SessionsManagementInputPort, UserCredentialsManagementInputPort {
   constructor(
     private readonly authorityService: IAuthorityService,

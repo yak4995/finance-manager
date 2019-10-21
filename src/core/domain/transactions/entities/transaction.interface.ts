@@ -6,6 +6,7 @@ import IPersistantEntity from '../../persistantEntity';
 // Probably children: TypeOrmTransactionEntity, MongooseTransactionSchema, XMLTransactionEntity
 export default interface ITransaction extends IPersistantEntity {
   datetime: Date;
+  description?: string;
   amount: number; // integer: count of cents or another minimal currency unit
   owner: IUser;
   transactionCategory: ITransactionCategory;

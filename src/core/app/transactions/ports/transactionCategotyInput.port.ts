@@ -4,7 +4,10 @@ import IUser from '../../../domain/users/entities/user.interface';
 
 export default interface TransactionCategoryInputPort {
   getTopCategories(user: IUser): Promise<void>;
-  getCategoryDirectChildren(category: ITransactionCategory): Promise<void>;
+  getCategoryDirectChildren(
+    user: IUser,
+    parentCategory: ITransactionCategory,
+  ): Promise<void>;
   getOwnCategories(user: IUser): Promise<void>;
   search(user: IUser, content: string): Promise<void>;
   addCategory(user: IUser, payload: TransactionCategoryDto): Promise<void>;

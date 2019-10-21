@@ -6,14 +6,12 @@ import IUser from '../../../domain/users/entities/user.interface';
 import TransactionCategoryDto from '../dto/transactionCategory.dto';
 import TransactionCategoryOutputPort from '../ports/transactionCategoryOutput.port';
 import ISearchService from '../../search/searchService.interface';
-import TransactionCategoryService from '../../../domain/transactions/services/transactionCategoryService';
 
-export class TransactionCategoryInteractor
+export default class TransactionCategoryInteractor
   implements TransactionCategoryInputPort {
   constructor(
     private readonly entityFactory: EntityFactory,
     private readonly transactionCategoryRepo: IRepository<ITransactionCategory>,
-    private readonly transactionCategoryService: TransactionCategoryService,
     private readonly searchService: ISearchService<ITransactionCategory>,
     private readonly transactionCategoryOutputPort: TransactionCategoryOutputPort,
   ) {}
@@ -38,12 +36,25 @@ export class TransactionCategoryInteractor
   }
 
   async getCategoryDirectChildren(
-    category: ITransactionCategory,
+    user: IUser,
+    parentCategory: ITransactionCategory,
   ): Promise<void> {
-    const result = await this.transactionCategoryService.getTransactionCategoryDirectChildren(
-      category,
-    );
-    await this.transactionCategoryOutputPort.getCategoryDirectChildren(result);
+    const [systemCategories, ownCategories] = await Promise.all([
+      this.transactionCategoryRepo.findByAndCriteria({
+        parentCategory,
+        isSystem: true,
+        owner: null,
+      }),
+      this.transactionCategoryRepo.findByAndCriteria({
+        parentCategory,
+        isSystem: false,
+        owner: user,
+      }),
+    ]);
+    await this.transactionCategoryOutputPort.getCategoryDirectChildren([
+      ...systemCategories,
+      ...ownCategories,
+    ]);
   }
 
   async getOwnCategories(user: IUser): Promise<void> {

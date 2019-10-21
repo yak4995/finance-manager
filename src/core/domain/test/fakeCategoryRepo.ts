@@ -82,6 +82,7 @@ export default class FakeCategoryRepo
     page: number,
     perPage: number,
     orderBy: OrderCriteria<ITransactionCategory>,
+    searchCriteria: Criteria<ITransactionCategory>,
   ) {
     return [];
   }

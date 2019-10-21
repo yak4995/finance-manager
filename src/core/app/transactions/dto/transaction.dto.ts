@@ -3,4 +3,5 @@ export class TransactionDto {
   amount: number;
   transactionCategoryId: string;
   currencyId: string;
+  description: string;
 }

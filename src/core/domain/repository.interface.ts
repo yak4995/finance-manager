@@ -21,6 +21,7 @@ export default interface IRepository<T extends IPersistantEntity> {
     page: number,
     perPage: number,
     orderBy: OrderCriteria<T>,
+    searchCriteria: Criteria<T>,
   ): Promise<T[]>;
   findById(id: string): Promise<T>;
   findOneByAndCriteria(searchCriteria: Criteria<T>): Promise<T>;
