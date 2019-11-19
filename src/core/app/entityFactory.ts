@@ -23,7 +23,7 @@ export default abstract class EntityFactory {
     private distributingMetricItemCreator: IDistributingMetricItemCreator,
   ) {}
 
-  private static instance: EntityFactory = null;
+  protected static instance: EntityFactory = null;
 
   public static getInstance(): EntityFactory {
     if (this.instance !== null) {

@@ -33,21 +33,23 @@ export default class AuthorityInteractor
       const createdUser = this.entityFactory.createUserCredential({
         email: payload.email,
       });
+      let registrationResult: IUserCredential = null,
+        savedUser: IUserCredential = null,
+        mailingResult: boolean = false;
       try {
-        const [registrationResult, savedUser] = await Promise.all([
+        [registrationResult, savedUser] = await Promise.all([
           this.authorityService.signUp(payload),
           this.userCredentialRepo.insert(createdUser),
         ]);
-        let mailingResult: boolean = false;
         if (registrationResult) {
           mailingResult = await this.eventDispatcher.emit(
             new UserHasBeenCreatedEvent(savedUser),
           );
         }
-        await this.outputPort.processRegistration(savedUser, mailingResult);
       } catch (e2) {
-        await this.outputPort.processRegistration(null, false);
+        throw e2;
       }
+      await this.outputPort.processRegistration(savedUser, mailingResult);
       return;
     }
     await this.outputPort.processRegistration(null, false);
@@ -115,7 +117,7 @@ export default class AuthorityInteractor
       const result = await this.authorityService.deleteAccount(user);
       await this.outputPort.processAccountDeleting(user, result);
     } catch (e) {
-      await this.outputPort.processAccountProfileImageChanging(null);
+      await this.outputPort.processAccountDeleting(user, false);
     }
   }
 }
