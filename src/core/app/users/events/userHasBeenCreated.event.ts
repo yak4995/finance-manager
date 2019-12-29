@@ -10,9 +10,11 @@ export default class UserHasBeenCreatedEvent implements IEvent {
   get state(): EventStatus {
     return this.eventState;
   }
+
   set state(state: EventStatus) {
     this.eventState = state;
   }
+
   get registeredUser(): IUserCredential {
     return this.user;
   }

@@ -7,8 +7,8 @@ import { EventStatus } from './eventStatus.enum';
 export default abstract class IEventDispatchService<T extends IEvent> {
   constructor(protected readonly eventListeners: IEventListener<T>[]) {}
   async emit(event: T): Promise<boolean> {
-    const results = [];
-    this.eventListeners.forEach(listener => {
+    const results: Promise<any>[] = [];
+    this.eventListeners.forEach((listener: IEventListener<T>): void => {
       results.push(listener.process(event));
     });
     event.state = EventStatus.WAITING;

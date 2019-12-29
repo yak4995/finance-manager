@@ -1,0 +1,13 @@
+{
+    "preset": "ts-jest",
+    "clearMocks": true,
+    "verbose": false,
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "coverageDirectory": "<rootDir>/coverage/",
+    "coveragePathIgnorePatterns": [
+        "node_modules",
+        "<rootDir>/src/core/app/test",
+        "<rootDir>/src/core/domain/test"
+    ]
+}

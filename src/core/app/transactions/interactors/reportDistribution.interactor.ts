@@ -8,6 +8,7 @@ import { AvailableAnalyticMetric } from '../../../domain/transactions/enums/avai
 import IEventDispatchService from '../../events/eventDispatchService.interface';
 import ReportHasBeenGeneratedEvent from '../events/reportHasBeenGenerated.event';
 import { Period } from '../../../domain/period/enums/period.enum';
+import { TransactionsComparisonDto } from '../../../domain/transactions/dto/transactionsComparison.dto';
 
 export default class ReportDistributionInteractor
   implements ReportDistributionInputPort {
@@ -23,37 +24,44 @@ export default class ReportDistributionInteractor
     private readonly outputPort: ReportDistributionOutputPort,
   ) {}
 
-  public async subscribe(items: IDistributingMetricItem[]): Promise<void> {
+  public async subscribe(items: IDistributingMetricItem[]): Promise<any> {
     try {
       await Promise.all(
-        items.map(item => this.distributionMetricItemRepo.insert(item)),
-      );
-      await this.outputPort.processMetricSubscribing(items);
-    } catch (e) {
-      await this.outputPort.processMetricSubscribing(null);
-    }
-  }
-
-  public async unsubscribe(items: IDistributingMetricItem[]): Promise<void> {
-    try {
-      await Promise.all(
-        items.map(item =>
-          this.distributionMetricItemRepo.delete({ id: item.id }),
+        items.map(
+          (item: IDistributingMetricItem): Promise<IDistributingMetricItem> =>
+            this.distributionMetricItemRepo.insert(item),
         ),
       );
-      await this.outputPort.processMetricUnsubscribing(items);
+      return this.outputPort.processMetricSubscribing(items);
     } catch (e) {
-      await this.outputPort.processMetricUnsubscribing(null);
+      return this.outputPort.processMetricSubscribing(null);
     }
   }
 
-  public async send(item: IDistributingMetricItem): Promise<void> {
-    const transactions = await this.transactionsRepo.findByAndCriteria({
-      owner: item.user,
-    });
+  public async unsubscribe(items: IDistributingMetricItem[]): Promise<any> {
+    try {
+      await Promise.all(
+        items.map(
+          (item: IDistributingMetricItem): Promise<IDistributingMetricItem> =>
+            this.distributionMetricItemRepo.delete({ id: item.id }),
+        ),
+      );
+      return this.outputPort.processMetricUnsubscribing(items);
+    } catch (e) {
+      console.log(e);
+      return this.outputPort.processMetricUnsubscribing(null);
+    }
+  }
+
+  public async send(item: IDistributingMetricItem): Promise<any> {
+    const transactions: ITransaction[] = await this.transactionsRepo.findByAndCriteria(
+      {
+        owner: item.user,
+      },
+    );
     this.transactionAnalyticService.transactions = transactions;
-    let message = null;
-    const startDate = new Date();
+    let message: number | TransactionsComparisonDto = null;
+    const startDate: Date = new Date();
     switch (item.period) {
       case Period.MONTH:
         if (startDate.getMonth() > 1) {
@@ -81,17 +89,17 @@ export default class ReportDistributionInteractor
         startDate.setFullYear(startDate.getFullYear() - 1);
         break;
     }
-    const endDate = new Date();
+    const endDate: Date = new Date();
     switch (item.metric) {
       case AvailableAnalyticMetric.TRANSACTIONS_COUNT_BY_CATEGORY_AND_DATE_RANGE:
-        message = this.transactionAnalyticService.getTransactionsCountBy(
+        message = await this.transactionAnalyticService.getTransactionsCountBy(
           item.category,
           startDate,
           endDate,
         );
         break;
       case AvailableAnalyticMetric.TRANSACTIONS_SUMT_BY_CATEGORY_AND_DATE_RANGE:
-        message = this.transactionAnalyticService.getTransactionsSumBy(
+        message = await this.transactionAnalyticService.getTransactionsSumBy(
           item.category,
           startDate,
           endDate,
@@ -99,27 +107,27 @@ export default class ReportDistributionInteractor
         );
         break;
       case AvailableAnalyticMetric.TRANSACTIONS_COUNT_BY_DATE_RANGE:
-        message = this.transactionAnalyticService.getTransactionsCountForDateRange(
+        message = await this.transactionAnalyticService.getTransactionsCountForDateRange(
           startDate,
           endDate,
         );
         break;
       case AvailableAnalyticMetric.TRANSACTIONS_SUMT_BY_DATE_RANGE:
-        message = this.transactionAnalyticService.getTransactionsSumForDateRange(
+        message = await this.transactionAnalyticService.getTransactionsSumForDateRange(
           startDate,
           endDate,
           item.baseCurrency,
         );
         break;
       case AvailableAnalyticMetric.TRANSACTIONS_COUNT_RATIO_BY_CATEGORY_AND_DATE_RANGE:
-        message = this.transactionAnalyticService.getTransactionCountRatioByCategories(
+        message = await this.transactionAnalyticService.getTransactionCountRatioByCategories(
           item.category,
           startDate,
           endDate,
         );
         break;
       case AvailableAnalyticMetric.TRANSACTIONS_SUM_RATIO_BY_CATEGORY_AND_DATE_RANGE:
-        message = this.transactionAnalyticService.getTransactionSumRatioByCategories(
+        message = await this.transactionAnalyticService.getTransactionSumRatioByCategories(
           item.category,
           startDate,
           endDate,
@@ -127,7 +135,7 @@ export default class ReportDistributionInteractor
         );
         break;
       case AvailableAnalyticMetric.TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE:
-        message = this.transactionAnalyticService.getTransactionCountChangeByPeriod(
+        message = await this.transactionAnalyticService.getTransactionCountChangeByPeriod(
           item.category,
           startDate,
           endDate,
@@ -135,7 +143,7 @@ export default class ReportDistributionInteractor
         );
         break;
       case AvailableAnalyticMetric.TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE:
-        message = this.transactionAnalyticService.getTransactionSumChangeByPeriod(
+        message = await this.transactionAnalyticService.getTransactionSumChangeByPeriod(
           item.category,
           startDate,
           endDate,
@@ -144,9 +152,9 @@ export default class ReportDistributionInteractor
         );
         break;
     }
-    await Promise.all([
-      this.eventDispatcher.emit(new ReportHasBeenGeneratedEvent(item, message)),
-      this.outputPort.processSending(item, message),
-    ]);
+    await this.eventDispatcher.emit(
+      new ReportHasBeenGeneratedEvent(item, message),
+    );
+    return this.outputPort.processSending(item, message);
   }
 }

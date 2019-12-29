@@ -4,22 +4,22 @@ import { OrderCriteria } from '../../../domain/repository.interface';
 import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
 
 export default interface TransactionManagementInputPort {
-  getTransactionDetail(id: string): Promise<void>;
+  getTransactionDetail(id: string): Promise<any>;
   getTransactions(
     page: number,
     perPage: number,
     order: OrderCriteria<ITransaction>,
-  ): Promise<void>;
+  ): Promise<any>;
   getTransactionsByCategory(
     dateStart: Date,
     dateEnd: Date,
     category: ITransactionCategory,
-  ): Promise<void>;
-  search(content: string): Promise<void>;
-  addTransaction(payload: TransactionDto): Promise<void>;
+  ): Promise<any>;
+  search(content: string): Promise<any>;
+  addTransaction(payload: TransactionDto): Promise<any>;
   updateTransaction(
     transaction: ITransaction,
     payload: TransactionDto,
-  ): Promise<void>;
-  deleteTransaction(transaction: ITransaction): Promise<void>;
+  ): Promise<any>;
+  deleteTransaction(transaction: ITransaction): Promise<any>;
 }

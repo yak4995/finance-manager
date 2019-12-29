@@ -3,34 +3,57 @@ import TransactionInteractor from '../transactions/interactors/transaction.inter
 import TransactionAnalyticService from '../../domain/transactions/services/transactionAnalyticService';
 import TransactionCategoryService from '../../domain/transactions/services/transactionCategoryService';
 import FakeCurrencyConverter from '../../domain/test/fakeCurrencyConverter';
-import FakeCategoryRepo, {
+import {
   firstCategory,
-} from '../../domain/test/fakeCategoryRepo';
+  secondCategory,
+  thirdCategory,
+  fourthCategory,
+  fifthCategory,
+  sixthCategory,
+  seventhCategory,
+} from './fakeCategoryRepo';
 import ITransaction from '../../domain/transactions/entities/transaction.interface';
+import ICurrency from '../../domain/transactions/entities/currency.interface';
+import FakeRepo from '../../domain/test/fakeRepo';
+import ITransactionCategory from '../../domain/transactions/entities/transactionCategory.interface';
 
 describe('TransactionInteractor tests', () => {
-  const now = new Date();
+  const now: Date = new Date();
 
-  const fakeCurrency = {
+  const fakeCurrency: ICurrency = {
     id: '1',
     name: 'USD',
     code: 'USD',
   };
 
-  const fakeBaseCurrency = {
+  const fakeBaseCurrency: ICurrency = {
     id: '2',
     name: 'EUR',
     code: 'EUR',
   };
 
-  const transactionAnalyticservice = new TransactionAnalyticService(
+  const transactionAnalyticservice: TransactionAnalyticService = new TransactionAnalyticService(
     [],
     new FakeCurrencyConverter(),
-    new TransactionCategoryService(new FakeCategoryRepo()),
+    new TransactionCategoryService(
+      new FakeRepo<ITransactionCategory>([
+        firstCategory,
+        secondCategory,
+        thirdCategory,
+        fourthCategory,
+        fifthCategory,
+        sixthCategory,
+        seventhCategory,
+      ]),
+    ),
   );
 
-  const dateStartForTransactionChangeMetrics = new Date('2017-09-30 00:00:00');
-  const dateEndForTransactionChangeMetrics = new Date('2019-09-30 00:00:00');
+  const dateStartForTransactionChangeMetrics: Date = new Date(
+    '2017-09-30 00:00:00',
+  );
+  const dateEndForTransactionChangeMetrics: Date = new Date(
+    '2019-09-30 00:00:00',
+  );
   const transactionForTransactionChangeMetrics: ITransaction[] = [
     // 2017-2018: quarters
     {
@@ -119,7 +142,7 @@ describe('TransactionInteractor tests', () => {
   ];
 
   it('check methods existance', () => {
-    const service = new TransactionInteractor(
+    const service: TransactionInteractor = new TransactionInteractor(
       null,
       null,
       null,

@@ -4,21 +4,20 @@
   "author": "yak4995",
   "scripts": {
     "start": "tsc && node dist/index.js",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test": "jest --config jest.config.json --no-cache",
+    "test:cov": "jest --config jest-coverage.config.json --no-cache",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "format": "prettier --write \"src/**/*{.ts, .spec.ts}\""
   },
   "devDependencies": {
-    "@types/jest": "^24.0.18",
+    "@types/jest": "^24.0.25",
     "@types/moment": "^2.13.0",
     "jest": "^24.9.0",
-    "prettier": "^1.18.2",
-    "ts-jest": "^24.0.2",
-    "tslint": "^5.19.0",
-    "typescript": "^3.6.2"
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.2.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4"
   },
   "dependencies": {
     "moment": "^2.24.0"

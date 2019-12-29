@@ -1,11 +1,11 @@
 import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
 
 export default interface TransactionCategoryOutputPort {
-  getTopCategories(result: ITransactionCategory[]): Promise<void>;
-  getCategoryDirectChildren(result: ITransactionCategory[]): Promise<void>;
-  getOwnCategories(result: ITransactionCategory[]): Promise<void>;
-  search(result: ITransactionCategory[]): Promise<void>;
-  addCategory(result: ITransactionCategory): Promise<void>;
-  updateCategory(result: ITransactionCategory): Promise<void>;
-  deleteCategory(category: ITransactionCategory): Promise<void>;
+  getTopCategories(result: ITransactionCategory[]): Promise<any>;
+  getCategoryDirectChildren(result: ITransactionCategory[]): Promise<any>;
+  getOwnCategories(result: ITransactionCategory[]): Promise<any>;
+  search(result: ITransactionCategory[]): Promise<any>;
+  addCategory(result: ITransactionCategory): Promise<any>;
+  updateCategory(result: any): Promise<any>;
+  deleteCategory(category: ITransactionCategory): Promise<any>;
 }

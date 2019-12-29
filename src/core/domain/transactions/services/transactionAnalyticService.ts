@@ -75,7 +75,7 @@ export default class TransactionAnalyticService {
       baseCategory,
       dateStart,
       dateEnd,
-      arg => arg.length,
+      async (arg: ITransaction[]): Promise<number> => arg.length,
     );
   }
 
@@ -89,7 +89,8 @@ export default class TransactionAnalyticService {
       baseCategory,
       dateStart,
       dateEnd,
-      arg => this.getSumByTransactions(arg, baseCurrency),
+      async (arg: ITransaction[]): Promise<number> =>
+        await this.getSumByTransactions(arg, baseCurrency),
     );
   }
 
@@ -105,7 +106,7 @@ export default class TransactionAnalyticService {
       dateStart,
       dateEnd,
       by,
-      arg => arg.length,
+      async (arg: ITransaction[]): Promise<number> => arg.length,
     );
   }
 
@@ -121,7 +122,8 @@ export default class TransactionAnalyticService {
       dateStart,
       dateEnd,
       by,
-      arg => this.getSumByTransactions(arg, baseCurrency),
+      async (arg: ITransaction[]): Promise<number> =>
+        await this.getSumByTransactions(arg, baseCurrency),
     );
   }
 
@@ -131,51 +133,57 @@ export default class TransactionAnalyticService {
     category?: ITransactionCategory;
     categories?: ITransactionCategory[];
   }): Promise<ITransaction[]> {
-    const result = this.transactions.filter(
-      t => t.datetime >= filter.dateStart && t.datetime <= filter.dateEnd,
+    const result: ITransaction[] = this.transactions.filter(
+      (t: ITransaction): boolean =>
+        t.datetime >= filter.dateStart && t.datetime <= filter.dateEnd,
     );
     if (filter.category) {
-      const categoryChildrenIds = (await this.transactionCategoryService.getTransactionCategoryChildren(
+      const categoryChildrenIds: string[] = (await this.transactionCategoryService.getTransactionCategoryChildren(
         filter.category,
-      )).map(childCategory => childCategory.id);
-      return result.filter(t =>
+      )).map((childCategory: ITransactionCategory): string => childCategory.id);
+      return result.filter((t: ITransaction): boolean =>
         categoryChildrenIds.includes(t.transactionCategory.id),
       );
     }
     if (filter.categories) {
-      return result.filter(t =>
-        filter.categories.map(tc => tc.id).includes(t.transactionCategory.id),
+      return result.filter((t: ITransaction): boolean =>
+        filter.categories
+          .map((tc: ITransactionCategory): string => tc.id)
+          .includes(t.transactionCategory.id),
       );
     }
     return result;
   }
 
-  private getSumByTransactions(
+  private async getSumByTransactions(
     transactions: ITransaction[],
     baseCurrency: ICurrency,
-  ): number {
-    return transactions
-      .map(
-        transaction =>
-          this.converter.getRateFor(
-            transaction.currency.code,
-            baseCurrency.code,
-            new Date(),
-          ) * transaction.amount,
-      )
-      .reduce((sum, amount) => sum + amount, 0);
+  ): Promise<number> {
+    const preparedTransactionsValues: number[] = [];
+    for (const transaction of transactions) {
+      const rate = await this.converter.getRateFor(
+        transaction.currency.code,
+        baseCurrency.code,
+        new Date(),
+      );
+      preparedTransactionsValues.push(rate * transaction.amount);
+    }
+    return preparedTransactionsValues.reduce(
+      (sum: number, amount: number): number => sum + amount,
+      0,
+    );
   }
 
   private async processTransactionRatioByCategory(
     baseCategory: ITransactionCategory,
     dateStart: Date,
     dateEnd: Date,
-    processFunction: (transactions: ITransaction[]) => number,
+    processFunction: (transactions: ITransaction[]) => Promise<number>,
   ): Promise<TransactionsComparisonDto> {
-    const directChildren = await this.transactionCategoryService.getTransactionCategoryDirectChildren(
+    const directChildren: ITransactionCategory[] = await this.transactionCategoryService.getTransactionCategoryDirectChildren(
       baseCategory,
     );
-    let general = 0;
+    let general: number = 0;
     const result: TransactionsComparisonDto = {};
     for (const childCategory of directChildren) {
       const transactionsForProcessing = await this.getTransactionsByFilter({
@@ -185,8 +193,11 @@ export default class TransactionAnalyticService {
           childCategory,
         ),
       });
-      general += processFunction(transactionsForProcessing);
-      result[childCategory.id] = processFunction(transactionsForProcessing);
+      const tempResult: number = await processFunction(
+        transactionsForProcessing,
+      );
+      general += tempResult;
+      result[childCategory.id] = tempResult;
     }
     for (const categoryId in result) {
       result[categoryId] = Math.round((result[categoryId] * 100) / general);
@@ -199,8 +210,8 @@ export default class TransactionAnalyticService {
     dateEnd: Date,
     period: Period,
   ): void {
-    const preparedDateStart = moment(dateStart);
-    const preparedDateEnd = moment(dateEnd);
+    const preparedDateStart: moment.Moment = moment(dateStart);
+    const preparedDateEnd: moment.Moment = moment(dateEnd);
     const periodsToDiffUnitsMap: moment.unitOfTime.Diff[] = [
       'months',
       'quarters',
@@ -220,20 +231,22 @@ export default class TransactionAnalyticService {
     dateStart: Date,
     dateEnd: Date,
     by: Period,
-    processFunction: (transactions: ITransaction[]) => number,
+    processFunction: (transactions: ITransaction[]) => Promise<number>,
   ): Promise<TransactionsComparisonDto> {
     try {
       this.checkDateRangeForDynamicAnalytics(dateStart, dateEnd, by);
     } catch (e) {
       throw e;
     }
-    const transactionsForProcessing = await this.getTransactionsByFilter({
-      dateStart,
-      dateEnd,
-      categories: await this.transactionCategoryService.getTransactionCategoryChildren(
-        category,
-      ),
-    });
+    const transactionsForProcessing: ITransaction[] = await this.getTransactionsByFilter(
+      {
+        dateStart,
+        dateEnd,
+        categories: await this.transactionCategoryService.getTransactionCategoryChildren(
+          category,
+        ),
+      },
+    );
     const result: TransactionsComparisonDto = {};
     for (const [
       currentStartDate,
@@ -243,7 +256,7 @@ export default class TransactionAnalyticService {
       dateEnd,
       by,
     )) {
-      result[currentStartDate.toLocaleDateString()] = processFunction(
+      result[currentStartDate.toLocaleDateString()] = await processFunction(
         transactionsForProcessing.filter(
           t => t.datetime >= currentStartDate && t.datetime <= currentEndDate,
         ),
@@ -258,7 +271,7 @@ export default class TransactionAnalyticService {
     by: Period,
   ) {
     while (dateStart < dateEnd) {
-      const currentEndDate = new Date(dateStart);
+      const currentEndDate: Date = new Date(dateStart);
       switch (by) {
         case Period.MONTH:
           if (currentEndDate.getMonth() < 11) {

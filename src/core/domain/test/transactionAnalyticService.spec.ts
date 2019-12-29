@@ -1,17 +1,21 @@
 import 'ts-jest';
 import TransactionAnalyticService from '../transactions/services/transactionAnalyticService';
 import FakeCurrencyConverter from './fakeCurrencyConverter';
-import FakeCategoryRepo, {
+import {
   thirdCategory,
   sixthCategory,
   seventhCategory,
   secondCategory,
   firstCategory,
-} from './fakeCategoryRepo';
+  fourthCategory,
+  fifthCategory,
+} from '../../app/test/fakeCategoryRepo';
 import TransactionCategoryService from '../transactions/services/transactionCategoryService';
 import { Period } from '../period/enums/period.enum';
 import { InvalidDateRangeException } from '../transactions/exceptions/invalidDateRange.exception';
 import ITransaction from '../transactions/entities/transaction.interface';
+import FakeRepo from './fakeRepo';
+import ITransactionCategory from '../transactions/entities/transactionCategory.interface';
 
 describe('TransactionAnalyticService tests', () => {
   const now = new Date();
@@ -31,7 +35,17 @@ describe('TransactionAnalyticService tests', () => {
   const service = new TransactionAnalyticService(
     [],
     new FakeCurrencyConverter(),
-    new TransactionCategoryService(new FakeCategoryRepo()),
+    new TransactionCategoryService(
+      new FakeRepo<ITransactionCategory>([
+        firstCategory,
+        secondCategory,
+        thirdCategory,
+        fourthCategory,
+        fifthCategory,
+        sixthCategory,
+        seventhCategory,
+      ]),
+    ),
   );
 
   const dateStartForTransactionChangeMetrics = new Date('2017-09-30 00:00:00');

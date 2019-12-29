@@ -2,27 +2,27 @@ import ITransaction from '../../../domain/transactions/entities/transaction.inte
 import { TransactionsComparisonDto } from '../../../domain/transactions/dto/transactionsComparison.dto';
 
 export default interface TransactionOutputPort {
-  getTransactionDetail(result: ITransaction): Promise<void>;
-  getTransactions(result: ITransaction[]): Promise<void>;
-  getTransactionsByCategory(result: ITransaction[]): Promise<void>;
-  search(result: ITransaction[]): Promise<void>;
-  addTransaction(result: ITransaction): Promise<void>;
-  updateTransaction(result: ITransaction): Promise<void>;
-  deleteTransaction(transaction: ITransaction): Promise<void>;
-  getTransactionsCountBy(result: number): Promise<void>;
-  getTransactionsSumBy(result: number): Promise<void>;
-  getTransactionsCountForDateRange(result: number): Promise<void>;
-  getTransactionsSumForDateRange(result: number): Promise<void>;
+  getTransactionDetail(result: ITransaction): Promise<any>;
+  getTransactions(result: ITransaction[]): Promise<any>;
+  getTransactionsByCategory(result: ITransaction[]): Promise<any>;
+  search(result: ITransaction[]): Promise<any>;
+  addTransaction(result: ITransaction): Promise<any>;
+  updateTransaction(result: any): Promise<any>;
+  deleteTransaction(transaction: ITransaction): Promise<any>;
+  getTransactionsCountBy(result: number): Promise<any>;
+  getTransactionsSumBy(result: number): Promise<any>;
+  getTransactionsCountForDateRange(result: number): Promise<any>;
+  getTransactionsSumForDateRange(result: number): Promise<any>;
   getTransactionCountRatioByCategories(
     result: TransactionsComparisonDto,
-  ): Promise<void>;
+  ): Promise<any>;
   getTransactionSumRatioByCategories(
     result: TransactionsComparisonDto,
-  ): Promise<void>;
+  ): Promise<any>;
   getTransactionCountChangeByPeriod(
     result: TransactionsComparisonDto,
-  ): Promise<void>;
+  ): Promise<any>;
   getTransactionSumChangeByPeriod(
     result: TransactionsComparisonDto,
-  ): Promise<void>;
+  ): Promise<any>;
 }

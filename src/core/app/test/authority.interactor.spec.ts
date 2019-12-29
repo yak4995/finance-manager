@@ -2,16 +2,37 @@ import 'ts-jest';
 import AuthorityInteractor from '../users/interactors/authority.interactor';
 import FakeAuthorityService from './fakeAuthorityService';
 import FakeEntityFactory from './fakeEntityFactory';
-import FakeUserCredentialRepo from './fakeUserCredentialRepo';
-import FakeEventDispatchService from './fakeEventDispatchService';
+import FakeRegisteredUserEventDispatchService from './fakeRegisteredUserEventDispatchService';
 import FakeAuthorityOutputPort from './fakeAuthorityOutputPort';
+import FakeRepo from '../../domain/test/fakeRepo';
+import { Roles } from '../users/enums/roles.enum';
+import IUserCredential from '../users/entities/userCredential.interface';
+import IRepository from '../../domain/repository.interface';
 
 describe('Authority tests', () => {
+  const userCredentialRepo: IRepository<IUserCredential> = new FakeRepo<
+    IUserCredential
+  >([
+    {
+      id: '1',
+      email: 'existed@example.com',
+      isActive: true,
+      profileImageUrl: null,
+      roles: [Roles.USER],
+    },
+    {
+      id: '2',
+      email: 'incorrectUser@example.com',
+      isActive: true,
+      profileImageUrl: null,
+      roles: [Roles.USER],
+    },
+  ]);
   const service = new AuthorityInteractor(
     new FakeAuthorityService(),
     FakeEntityFactory.getInstance(),
-    new FakeUserCredentialRepo(),
-    new FakeEventDispatchService(),
+    userCredentialRepo,
+    new FakeRegisteredUserEventDispatchService(),
     new FakeAuthorityOutputPort(),
   );
 
@@ -53,11 +74,20 @@ describe('Authority tests', () => {
   });
 
   it('test signUp method: exception if user can`t be saved', async () => {
+    jest.spyOn(userCredentialRepo, 'insert').mockImplementationOnce(
+      async (entity: IUserCredential): Promise<IUserCredential> => {
+        if (entity.email === 'dbDenied@example.com') {
+          throw new Error('DB is not available!');
+        }
+        return entity;
+      },
+    );
     try {
       await service.signUp({ email: 'dbDenied@example.com' });
     } catch (e) {
       expect(e).toEqual(new Error('DB is not available!'));
     }
+    jest.spyOn(userCredentialRepo, 'insert').mockClear();
   });
 
   it('test signUp method', async () => {

@@ -16,8 +16,11 @@ export default class TransactionCategoryInteractor
     private readonly transactionCategoryOutputPort: TransactionCategoryOutputPort,
   ) {}
 
-  async getTopCategories(user: IUser): Promise<void> {
-    const [ownTopCategories, systemTopCategories] = await Promise.all([
+  async getTopCategories(user: IUser): Promise<any> {
+    const [ownTopCategories, systemTopCategories]: [
+      ITransactionCategory[],
+      ITransactionCategory[],
+    ] = await Promise.all([
       this.transactionCategoryRepo.findByAndCriteria({
         isSystem: false,
         parentCategory: null,
@@ -29,7 +32,7 @@ export default class TransactionCategoryInteractor
         owner: null,
       }),
     ]);
-    await this.transactionCategoryOutputPort.getTopCategories([
+    return this.transactionCategoryOutputPort.getTopCategories([
       ...ownTopCategories,
       ...systemTopCategories,
     ]);
@@ -38,8 +41,11 @@ export default class TransactionCategoryInteractor
   async getCategoryDirectChildren(
     user: IUser,
     parentCategory: ITransactionCategory,
-  ): Promise<void> {
-    const [systemCategories, ownCategories] = await Promise.all([
+  ): Promise<any> {
+    const [systemCategories, ownCategories]: [
+      ITransactionCategory[],
+      ITransactionCategory[],
+    ] = await Promise.all([
       this.transactionCategoryRepo.findByAndCriteria({
         parentCategory,
         isSystem: true,
@@ -51,58 +57,65 @@ export default class TransactionCategoryInteractor
         owner: user,
       }),
     ]);
-    await this.transactionCategoryOutputPort.getCategoryDirectChildren([
+    return this.transactionCategoryOutputPort.getCategoryDirectChildren([
       ...systemCategories,
       ...ownCategories,
     ]);
   }
 
-  async getOwnCategories(user: IUser): Promise<void> {
-    const result = await this.transactionCategoryRepo.findByAndCriteria({
-      owner: user,
-      isSystem: false,
-    });
-    await this.transactionCategoryOutputPort.getOwnCategories(result);
+  async getOwnCategories(user: IUser): Promise<any> {
+    const result: ITransactionCategory[] = await this.transactionCategoryRepo.findByAndCriteria(
+      {
+        owner: user,
+        isSystem: false,
+      },
+    );
+    return this.transactionCategoryOutputPort.getOwnCategories(result);
   }
 
-  async search(user: IUser, content: string): Promise<void> {
-    const result = (await this.searchService.search(content, 'name')).filter(
-      c => c.owner.id !== user.id,
-    );
-    await this.transactionCategoryOutputPort.search(result);
+  async search(user: IUser, content: string): Promise<any> {
+    const result: ITransactionCategory[] = (await this.searchService.search(
+      content,
+      'name',
+    )).filter((c: ITransactionCategory): boolean => c.owner.id !== user.id);
+    return this.transactionCategoryOutputPort.search(result);
   }
 
   async addCategory(
     user: IUser,
     payload: TransactionCategoryDto,
-  ): Promise<void> {
+  ): Promise<any> {
     try {
-      const parentCategory = await this.transactionCategoryRepo.findById(
+      const parentCategory: ITransactionCategory = await this.transactionCategoryRepo.findById(
         payload.parentCategoryId,
       );
       if (parentCategory.isOutcome !== payload.isOutcome) {
         throw new Error('isOutcome field is common for all category tree');
       }
-      const createdCategory = this.entityFactory.createTransactionCategory({
-        name: payload.name,
-        parentCategory,
-        owner: user,
-        isOutcome: payload.isOutcome,
-        isSystem: false,
-      });
-      const result = await this.transactionCategoryRepo.insert(createdCategory);
-      await this.transactionCategoryOutputPort.addCategory(result);
+      const createdCategory: ITransactionCategory = this.entityFactory.createTransactionCategory(
+        {
+          name: payload.name,
+          parentCategory,
+          owner: user,
+          isOutcome: payload.isOutcome,
+          isSystem: false,
+        },
+      );
+      const result: ITransactionCategory = await this.transactionCategoryRepo.insert(
+        createdCategory,
+      );
+      return this.transactionCategoryOutputPort.addCategory(result);
     } catch (e) {
-      await this.transactionCategoryOutputPort.addCategory(null);
+      return this.transactionCategoryOutputPort.addCategory(null);
     }
   }
 
   async updateCategory(
     category: ITransactionCategory,
     payload: TransactionCategoryDto,
-  ): Promise<void> {
+  ): Promise<any> {
     try {
-      const parentCategory = await this.transactionCategoryRepo.findById(
+      const parentCategory: ITransactionCategory = await this.transactionCategoryRepo.findById(
         payload.parentCategoryId,
       );
       if (parentCategory.isOutcome !== payload.isOutcome) {
@@ -116,18 +129,18 @@ export default class TransactionCategoryInteractor
         },
         category.id,
       );
-      await this.transactionCategoryOutputPort.updateCategory(result);
+      return this.transactionCategoryOutputPort.updateCategory(result);
     } catch (e) {
-      await this.transactionCategoryOutputPort.updateCategory(null);
+      return this.transactionCategoryOutputPort.updateCategory(null);
     }
   }
 
-  async deleteCategory(category: ITransactionCategory): Promise<void> {
+  async deleteCategory(category: ITransactionCategory): Promise<any> {
     try {
       await this.transactionCategoryRepo.delete({ id: category.id });
-      await this.transactionCategoryOutputPort.deleteCategory(category);
+      return this.transactionCategoryOutputPort.deleteCategory(category);
     } catch (e) {
-      await this.transactionCategoryOutputPort.deleteCategory(null);
+      return this.transactionCategoryOutputPort.deleteCategory(null);
     }
   }
 }

@@ -4,12 +4,12 @@ import { TransactionsComparisonDto } from '../../../domain/transactions/dto/tran
 export default interface ReportDistributionOutputPort {
   processMetricSubscribing(
     result: IDistributingMetricItem[] | null,
-  ): Promise<void>;
+  ): Promise<any>;
   processMetricUnsubscribing(
     result: IDistributingMetricItem[] | null,
-  ): Promise<void>;
+  ): Promise<any>;
   processSending(
     item: IDistributingMetricItem,
     result: number | TransactionsComparisonDto,
-  ): Promise<void>;
+  ): Promise<any>;
 }

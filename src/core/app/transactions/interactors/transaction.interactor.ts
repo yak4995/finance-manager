@@ -14,6 +14,7 @@ import TransactionAnalyticService from '../../../domain/transactions/services/tr
 import TransactionOutputPort from '../ports/transactionOutput.port';
 import ISearchService from '../../search/searchService.interface';
 import TransactionCategoryService from '../../../domain/transactions/services/transactionCategoryService';
+import { TransactionsComparisonDto } from '../../../../core/domain/transactions/dto/transactionsComparison.dto';
 
 export default class TransactionInteractor
   implements TransactionAnalyticInputPort, TransactionManagementInputPort {
@@ -29,12 +30,12 @@ export default class TransactionInteractor
     private readonly transactionOutputPort: TransactionOutputPort,
   ) {}
 
-  async getTransactionDetail(id: string): Promise<void> {
+  async getTransactionDetail(id: string): Promise<any> {
     try {
-      const transaction = await this.transactionRepo.findById(id);
-      await this.transactionOutputPort.getTransactionDetail(transaction);
+      const transaction: ITransaction = await this.transactionRepo.findById(id);
+      return this.transactionOutputPort.getTransactionDetail(transaction);
     } catch (e) {
-      await this.transactionOutputPort.getTransactionDetail(null);
+      return this.transactionOutputPort.getTransactionDetail(null);
     }
   }
 
@@ -42,17 +43,17 @@ export default class TransactionInteractor
     page: number,
     perPage: number,
     order: OrderCriteria<ITransaction>,
-  ): Promise<void> {
+  ): Promise<any> {
     try {
-      const transactions = await this.transactionRepo.findAll(
+      const transactions: ITransaction[] = await this.transactionRepo.findAll(
         page,
         perPage,
         order,
         { owner: this.user },
       );
-      await this.transactionOutputPort.getTransactions(transactions);
+      return this.transactionOutputPort.getTransactions(transactions);
     } catch (e) {
-      await this.transactionOutputPort.getTransactions(null);
+      return this.transactionOutputPort.getTransactions(null);
     }
   }
 
@@ -60,66 +61,78 @@ export default class TransactionInteractor
     dateStart: Date,
     dateEnd: Date,
     category: ITransactionCategory,
-  ): Promise<void> {
+  ): Promise<any> {
     try {
-      const categories = (await this.transactionCategoryService.getTransactionCategoryChildren(
+      const categoryIds: string[] = (await this.transactionCategoryService.getTransactionCategoryChildren(
         category,
-      )).map(c => c.id);
-      const transactions = (await this.transactionRepo.findByAndCriteria({
-        owner: this.user,
-      })).filter(
-        t =>
+      )).map((c: ITransactionCategory): string => c.id);
+      const transactions: ITransaction[] = (await this.transactionRepo.findByAndCriteria(
+        {
+          owner: this.user,
+        },
+      )).filter(
+        (t: ITransaction): boolean =>
           t.datetime >= dateStart &&
           t.datetime <= dateEnd &&
-          categories.includes(t.transactionCategory.id),
+          categoryIds.includes(t.transactionCategory.id),
       );
-      await this.transactionOutputPort.getTransactionsByCategory(transactions);
+      return this.transactionOutputPort.getTransactionsByCategory(transactions);
     } catch (e) {
-      await this.transactionOutputPort.getTransactionsByCategory(null);
+      return this.transactionOutputPort.getTransactionsByCategory(null);
     }
   }
 
-  async search(content: string): Promise<void> {
+  async search(content: string): Promise<any> {
     try {
-      const transactions = await this.searchService.search(
+      const transactions: ITransaction[] = await this.searchService.search(
         content,
         'description',
       );
-      await this.transactionOutputPort.search(
+      return this.transactionOutputPort.search(
         transactions.filter(t => t.owner.id === this.user.id),
       );
     } catch (e) {
-      await this.transactionOutputPort.search(null);
+      return this.transactionOutputPort.search(null);
     }
   }
 
-  async addTransaction(payload: TransactionDto): Promise<void> {
+  async addTransaction(payload: TransactionDto): Promise<any> {
     try {
-      const [transactionCategory, currency] = await Promise.all([
+      const [transactionCategory, currency]: [
+        ITransactionCategory,
+        ICurrency,
+      ] = await Promise.all([
         this.transactionCategoryRepo.findById(payload.transactionCategoryId),
         this.currencyRepo.findById(payload.currencyId),
       ]);
-      const createdTransaction = this.entityFactory.createTransaction({
-        datetime: payload.datetime,
-        owner: this.user,
-        transactionCategory,
-        amount: payload.amount,
-        currency,
-        description: payload.description,
-      });
-      const result = await this.transactionRepo.insert(createdTransaction);
-      await this.transactionOutputPort.addTransaction(result);
+      const createdTransaction: ITransaction = this.entityFactory.createTransaction(
+        {
+          datetime: payload.datetime,
+          owner: this.user,
+          transactionCategory,
+          amount: payload.amount,
+          currency,
+          description: payload.description,
+        },
+      );
+      const result: ITransaction = await this.transactionRepo.insert(
+        createdTransaction,
+      );
+      return this.transactionOutputPort.addTransaction(result);
     } catch (e) {
-      await this.transactionOutputPort.addTransaction(null);
+      return this.transactionOutputPort.addTransaction(null);
     }
   }
 
   async updateTransaction(
     transaction: ITransaction,
     payload: TransactionDto,
-  ): Promise<void> {
+  ): Promise<any> {
     try {
-      const [transactionCategory, currency] = await Promise.all([
+      const [transactionCategory, currency]: [
+        ITransactionCategory,
+        ICurrency,
+      ] = await Promise.all([
         this.transactionCategoryRepo.findById(payload.transactionCategoryId),
         this.currencyRepo.findById(payload.currencyId),
       ]);
@@ -133,18 +146,18 @@ export default class TransactionInteractor
         },
         transaction.id,
       );
-      await this.transactionOutputPort.updateTransaction(result);
+      return this.transactionOutputPort.updateTransaction(result);
     } catch (e) {
-      await this.transactionOutputPort.updateTransaction(null);
+      return this.transactionOutputPort.updateTransaction(null);
     }
   }
 
-  async deleteTransaction(transaction: ITransaction): Promise<void> {
+  async deleteTransaction(transaction: ITransaction): Promise<any> {
     try {
       await this.transactionRepo.delete({ id: transaction.id });
-      await this.transactionOutputPort.deleteTransaction(transaction);
+      return this.transactionOutputPort.deleteTransaction(transaction);
     } catch (e) {
-      await this.transactionOutputPort.deleteTransaction(null);
+      return this.transactionOutputPort.deleteTransaction(null);
     }
   }
 
@@ -152,13 +165,13 @@ export default class TransactionInteractor
     category: ITransactionCategory,
     dateStart: Date,
     dateEnd: Date,
-  ): Promise<void> {
-    const result = await this.transactionAnalyticService.getTransactionsCountBy(
+  ): Promise<any> {
+    const result: number = await this.transactionAnalyticService.getTransactionsCountBy(
       category,
       dateStart,
       dateEnd,
     );
-    await this.transactionOutputPort.getTransactionsCountBy(result);
+    return this.transactionOutputPort.getTransactionsCountBy(result);
   }
 
   async getTransactionsSumBy(
@@ -166,51 +179,51 @@ export default class TransactionInteractor
     dateStart: Date,
     dateEnd: Date,
     baseCurrency: ICurrency,
-  ): Promise<void> {
-    const result = await this.transactionAnalyticService.getTransactionsSumBy(
+  ): Promise<any> {
+    const result: number = await this.transactionAnalyticService.getTransactionsSumBy(
       category,
       dateStart,
       dateEnd,
       baseCurrency,
     );
-    await this.transactionOutputPort.getTransactionsSumBy(result);
+    return this.transactionOutputPort.getTransactionsSumBy(result);
   }
 
   async getTransactionsCountForDateRange(
     dateStart: Date,
     dateEnd: Date,
-  ): Promise<void> {
-    const result = await this.transactionAnalyticService.getTransactionsCountForDateRange(
+  ): Promise<any> {
+    const result: number = await this.transactionAnalyticService.getTransactionsCountForDateRange(
       dateStart,
       dateEnd,
     );
-    await this.transactionOutputPort.getTransactionsCountForDateRange(result);
+    return this.transactionOutputPort.getTransactionsCountForDateRange(result);
   }
 
   async getTransactionsSumForDateRange(
     dateStart: Date,
     dateEnd: Date,
     baseCurrency: ICurrency,
-  ): Promise<void> {
-    const result = await this.transactionAnalyticService.getTransactionsSumForDateRange(
+  ): Promise<any> {
+    const result: number = await this.transactionAnalyticService.getTransactionsSumForDateRange(
       dateStart,
       dateEnd,
       baseCurrency,
     );
-    await this.transactionOutputPort.getTransactionsSumForDateRange(result);
+    return this.transactionOutputPort.getTransactionsSumForDateRange(result);
   }
 
   async getTransactionCountRatioByCategories(
     baseCategory: ITransactionCategory,
     dateStart: Date,
     dateEnd: Date,
-  ): Promise<void> {
-    const result = await this.transactionAnalyticService.getTransactionCountRatioByCategories(
+  ): Promise<any> {
+    const result: TransactionsComparisonDto = await this.transactionAnalyticService.getTransactionCountRatioByCategories(
       baseCategory,
       dateStart,
       dateEnd,
     );
-    await this.transactionOutputPort.getTransactionCountRatioByCategories(
+    return this.transactionOutputPort.getTransactionCountRatioByCategories(
       result,
     );
   }
@@ -220,14 +233,16 @@ export default class TransactionInteractor
     dateStart: Date,
     dateEnd: Date,
     baseCurrency: ICurrency,
-  ): Promise<void> {
-    const result = await this.transactionAnalyticService.getTransactionSumRatioByCategories(
+  ): Promise<any> {
+    const result: TransactionsComparisonDto = await this.transactionAnalyticService.getTransactionSumRatioByCategories(
       baseCategory,
       dateStart,
       dateEnd,
       baseCurrency,
     );
-    await this.transactionOutputPort.getTransactionSumRatioByCategories(result);
+    return this.transactionOutputPort.getTransactionSumRatioByCategories(
+      result,
+    );
   }
 
   async getTransactionCountChangeByPeriod(
@@ -235,14 +250,14 @@ export default class TransactionInteractor
     dateStart: Date,
     dateEnd: Date,
     by: Period,
-  ): Promise<void> {
-    const result = await this.transactionAnalyticService.getTransactionCountChangeByPeriod(
+  ): Promise<any> {
+    const result: TransactionsComparisonDto = await this.transactionAnalyticService.getTransactionCountChangeByPeriod(
       category,
       dateStart,
       dateEnd,
       by,
     );
-    await this.transactionOutputPort.getTransactionCountChangeByPeriod(result);
+    return this.transactionOutputPort.getTransactionCountChangeByPeriod(result);
   }
 
   async getTransactionSumChangeByPeriod(
@@ -251,14 +266,14 @@ export default class TransactionInteractor
     dateEnd: Date,
     by: Period,
     baseCurrency: ICurrency,
-  ): Promise<void> {
-    const result = await this.transactionAnalyticService.getTransactionSumChangeByPeriod(
+  ): Promise<any> {
+    const result: TransactionsComparisonDto = await this.transactionAnalyticService.getTransactionSumChangeByPeriod(
       category,
       dateStart,
       dateEnd,
       by,
       baseCurrency,
     );
-    await this.transactionOutputPort.getTransactionSumChangeByPeriod(result);
+    return this.transactionOutputPort.getTransactionSumChangeByPeriod(result);
   }
 }

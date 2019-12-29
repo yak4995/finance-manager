@@ -11,7 +11,20 @@ export default class FakeEntityFactory extends EntityFactory {
   constructor() {
     super(
       { getInstance: (fields: Criteria<ICurrency>) => null },
-      { getInstance: (fields: Criteria<ITransactionCategory>) => null },
+      {
+        getInstance: (fields: Criteria<ITransactionCategory>) => {
+          return {
+            id: 'fakeId',
+            isOutcome: fields.isOutcome ? fields.isOutcome : true,
+            isSystem: fields.isSystem ? fields.isSystem : false,
+            name: fields.name ? fields.name : '',
+            owner: fields.owner ? fields.owner : null,
+            parentCategory: fields.parentCategory
+              ? fields.parentCategory
+              : null,
+          };
+        },
+      },
       { getInstance: (fields: Criteria<ITransaction>) => null },
       {
         getInstance: (fields: Criteria<IUserCredential>) => {

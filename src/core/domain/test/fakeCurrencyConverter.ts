@@ -2,7 +2,7 @@ import ICurrencyConverterService from '../transactions/services/currencyConverte
 
 export default class FakeCurrencyConverter
   implements ICurrencyConverterService {
-  getRateFor(from: string, to: string, forDate: Date): number {
+  async getRateFor(from: string, to: string, forDate: Date): Promise<number> {
     return from !== to ? 0.8 : 1.0;
   }
 }

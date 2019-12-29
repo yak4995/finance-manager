@@ -11,13 +11,13 @@ export default class TransactionCategoryService {
   public async getTransactionCategoryChildren(
     parentCategory: ITransactionCategory,
   ): Promise<ITransactionCategory[]> {
-    let currentCategories = [parentCategory];
-    let nextIterationCategories = [];
-    const result = [];
+    let currentCategories: ITransactionCategory[] = [parentCategory];
+    let nextIterationCategories: ITransactionCategory[] = [];
+    const result: ITransactionCategory[] = [];
     while (currentCategories.length > 0) {
       for (let i = 0; i < currentCategories.length; i++) {
-        const currentCategory = currentCategories[i];
-        const currentCategoryChildren = await this.transactionCategoryRepository.findByAndCriteria(
+        const currentCategory: ITransactionCategory = currentCategories[i];
+        const currentCategoryChildren: ITransactionCategory[] = await this.transactionCategoryRepository.findByAndCriteria(
           {
             parentCategory: currentCategory,
           },

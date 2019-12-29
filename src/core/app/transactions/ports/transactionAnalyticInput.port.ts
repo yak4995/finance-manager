@@ -7,45 +7,45 @@ export default interface TransactionAnalyticInputPort {
     category: ITransactionCategory,
     dateStart: Date,
     dateEnd: Date,
-  ): Promise<void>;
+  ): Promise<any>;
 
   getTransactionsSumBy(
     category: ITransactionCategory,
     dateStart: Date,
     dateEnd: Date,
     baseCurrency: ICurrency,
-  ): Promise<void>;
+  ): Promise<any>;
 
   getTransactionsCountForDateRange(
     dateStart: Date,
     dateEnd: Date,
-  ): Promise<void>;
+  ): Promise<any>;
 
   getTransactionsSumForDateRange(
     dateStart: Date,
     dateEnd: Date,
     baseCurrency: ICurrency,
-  ): Promise<void>;
+  ): Promise<any>;
 
   getTransactionCountRatioByCategories(
     baseCategory: ITransactionCategory,
     dateStart: Date,
     dateEnd: Date,
-  ): Promise<void>;
+  ): Promise<any>;
 
   getTransactionSumRatioByCategories(
     baseCategory: ITransactionCategory,
     dateStart: Date,
     dateEnd: Date,
     baseCurrency: ICurrency,
-  ): Promise<void>;
+  ): Promise<any>;
 
   getTransactionCountChangeByPeriod(
     category: ITransactionCategory,
     dateStart: Date,
     dateEnd: Date,
     by: Period,
-  ): Promise<void>;
+  ): Promise<any>;
 
   getTransactionSumChangeByPeriod(
     category: ITransactionCategory,
@@ -53,5 +53,5 @@ export default interface TransactionAnalyticInputPort {
     dateEnd: Date,
     by: Period,
     baseCurrency: ICurrency,
-  ): Promise<void>;
+  ): Promise<any>;
 }

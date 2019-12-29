@@ -3,17 +3,17 @@ import TransactionCategoryDto from '../dto/transactionCategory.dto';
 import IUser from '../../../domain/users/entities/user.interface';
 
 export default interface TransactionCategoryInputPort {
-  getTopCategories(user: IUser): Promise<void>;
+  getTopCategories(user: IUser): Promise<any>;
   getCategoryDirectChildren(
     user: IUser,
     parentCategory: ITransactionCategory,
-  ): Promise<void>;
-  getOwnCategories(user: IUser): Promise<void>;
-  search(user: IUser, content: string): Promise<void>;
-  addCategory(user: IUser, payload: TransactionCategoryDto): Promise<void>;
+  ): Promise<any>;
+  getOwnCategories(user: IUser): Promise<any>;
+  search(user: IUser, content: string): Promise<any>;
+  addCategory(user: IUser, payload: TransactionCategoryDto): Promise<any>;
   updateCategory(
     category: ITransactionCategory,
     payload: TransactionCategoryDto,
-  ): Promise<void>;
-  deleteCategory(category: ITransactionCategory): Promise<void>;
+  ): Promise<any>;
+  deleteCategory(category: ITransactionCategory): Promise<any>;
 }

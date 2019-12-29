@@ -24,15 +24,17 @@ export default class AuthorityInteractor
     private readonly outputPort: AuthorityOutputPort,
   ) {}
 
-  public async signUp(payload: UserRegisterDto): Promise<void> {
+  public async signUp(payload: UserRegisterDto): Promise<any> {
     try {
       await this.userCredentialRepo.findOneByAndCriteria({
         email: payload.email,
       });
     } catch (e) {
-      const createdUser = this.entityFactory.createUserCredential({
-        email: payload.email,
-      });
+      const createdUser: IUserCredential = this.entityFactory.createUserCredential(
+        {
+          email: payload.email,
+        },
+      );
       let registrationResult: IUserCredential = null,
         savedUser: IUserCredential = null,
         mailingResult: boolean = false;
@@ -49,39 +51,41 @@ export default class AuthorityInteractor
       } catch (e2) {
         throw e2;
       }
-      await this.outputPort.processRegistration(savedUser, mailingResult);
-      return;
+      return this.outputPort.processRegistration(savedUser, mailingResult);
     }
-    await this.outputPort.processRegistration(null, false);
+    return this.outputPort.processRegistration(null, false);
   }
 
-  public async signIn(payload: UserLoginDto): Promise<void> {
+  public async signIn(payload: UserLoginDto): Promise<any> {
     try {
-      const [loginResult, foundUser] = await Promise.all([
+      const [loginResult, foundUser]: [
+        IUserCredential,
+        IUserCredential,
+      ] = await Promise.all([
         this.authorityService.signIn(payload),
         this.userCredentialRepo.findOneByAndCriteria({
           email: payload.email,
         }),
       ]);
-      await this.outputPort.processLogin(loginResult);
+      return this.outputPort.processLogin(loginResult);
     } catch (e) {
-      await this.outputPort.processLogin(null);
+      return this.outputPort.processLogin(null);
     }
   }
 
-  public async signOut(user: IUser): Promise<void> {
+  public async signOut(user: IUser): Promise<any> {
     try {
-      const result = await this.authorityService.signOut(user);
-      await this.outputPort.processLogout(user, result);
+      const result: boolean = await this.authorityService.signOut(user);
+      return this.outputPort.processLogout(user, result);
     } catch (e) {
-      await this.outputPort.processLogout(null, false);
+      return this.outputPort.processLogout(null, false);
     }
   }
 
   public async changeAccountInfo(
     user: IUser,
     payload: UserInfoDto,
-  ): Promise<void> {
+  ): Promise<any> {
     try {
       await this.userCredentialRepo.update(
         {
@@ -91,33 +95,33 @@ export default class AuthorityInteractor
         },
         user.id,
       );
-      await this.outputPort.processAccountInfoChanging(user);
+      return this.outputPort.processAccountInfoChanging(user);
     } catch (e) {
-      await this.outputPort.processAccountInfoChanging(null);
+      return this.outputPort.processAccountInfoChanging(null);
     }
   }
 
   public async changeProfileImage(
     user: IUser,
     newProfileImagePath: string,
-  ): Promise<void> {
+  ): Promise<any> {
     try {
       await this.userCredentialRepo.update(
         { profileImageUrl: newProfileImagePath },
         user.id,
       );
-      await this.outputPort.processAccountProfileImageChanging(user);
+      return this.outputPort.processAccountProfileImageChanging(user);
     } catch (e) {
-      await this.outputPort.processAccountProfileImageChanging(null);
+      return this.outputPort.processAccountProfileImageChanging(null);
     }
   }
 
-  public async deleteAccount(user: IUser): Promise<void> {
+  public async deleteAccount(user: IUser): Promise<any> {
     try {
-      const result = await this.authorityService.deleteAccount(user);
-      await this.outputPort.processAccountDeleting(user, result);
+      const result: boolean = await this.authorityService.deleteAccount(user);
+      return this.outputPort.processAccountDeleting(user, result);
     } catch (e) {
-      await this.outputPort.processAccountDeleting(user, false);
+      return this.outputPort.processAccountDeleting(user, false);
     }
   }
 }
