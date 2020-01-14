@@ -28,11 +28,13 @@ export default class TransactionAnalyticService {
     dateStart: Date,
     dateEnd: Date,
   ): Promise<number> {
-    return (await this.getTransactionsByFilter({
-      category,
-      dateStart,
-      dateEnd,
-    })).length;
+    return (
+      await this.getTransactionsByFilter({
+        category,
+        dateStart,
+        dateEnd,
+      })
+    ).length;
   }
 
   public async getTransactionsSumBy(
@@ -138,9 +140,11 @@ export default class TransactionAnalyticService {
         t.datetime >= filter.dateStart && t.datetime <= filter.dateEnd,
     );
     if (filter.category) {
-      const categoryChildrenIds: string[] = (await this.transactionCategoryService.getTransactionCategoryChildren(
-        filter.category,
-      )).map((childCategory: ITransactionCategory): string => childCategory.id);
+      const categoryChildrenIds: string[] = (
+        await this.transactionCategoryService.getTransactionCategoryChildren(
+          filter.category,
+        )
+      ).map((childCategory: ITransactionCategory): string => childCategory.id);
       return result.filter((t: ITransaction): boolean =>
         categoryChildrenIds.includes(t.transactionCategory.id),
       );
@@ -200,7 +204,8 @@ export default class TransactionAnalyticService {
       result[childCategory.id] = tempResult;
     }
     for (const categoryId in result) {
-      result[categoryId] = Math.round((result[categoryId] * 100) / general);
+      result[categoryId] =
+        general !== 0 ? Math.round((result[categoryId] * 100) / general) : 0;
     }
     return result;
   }

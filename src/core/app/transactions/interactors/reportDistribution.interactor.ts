@@ -32,9 +32,9 @@ export default class ReportDistributionInteractor
             this.distributionMetricItemRepo.insert(item),
         ),
       );
-      return this.outputPort.processMetricSubscribing(items);
+      return this.outputPort.processMetricSubscribing(items, null);
     } catch (e) {
-      return this.outputPort.processMetricSubscribing(null);
+      return this.outputPort.processMetricSubscribing(null, e);
     }
   }
 
@@ -46,10 +46,9 @@ export default class ReportDistributionInteractor
             this.distributionMetricItemRepo.delete({ id: item.id }),
         ),
       );
-      return this.outputPort.processMetricUnsubscribing(items);
+      return this.outputPort.processMetricUnsubscribing(items, null);
     } catch (e) {
-      console.log(e);
-      return this.outputPort.processMetricUnsubscribing(null);
+      return this.outputPort.processMetricUnsubscribing(null, e);
     }
   }
 
@@ -61,35 +60,7 @@ export default class ReportDistributionInteractor
     );
     this.transactionAnalyticService.transactions = transactions;
     let message: number | TransactionsComparisonDto = null;
-    const startDate: Date = new Date();
-    switch (item.period) {
-      case Period.MONTH:
-        if (startDate.getMonth() > 1) {
-          startDate.setMonth(startDate.getMonth() - 1);
-        } else {
-          startDate.setFullYear(startDate.getFullYear() - 1);
-          startDate.setMonth(11);
-        }
-        break;
-      case Period.QUARTER:
-        if (startDate.getMonth() == 1) {
-          throw new Error('Quarter has not been ended yet!');
-        }
-        if (startDate.getMonth() == 0) {
-          startDate.setFullYear(startDate.getFullYear() - 1);
-          startDate.setMonth(8);
-        } else if (startDate.getMonth() == 2) {
-          startDate.setFullYear(startDate.getFullYear() - 1);
-          startDate.setMonth(11);
-        } else {
-          startDate.setMonth(startDate.getMonth() - 3);
-        }
-        break;
-      case Period.YEAR:
-        startDate.setFullYear(startDate.getFullYear() - 1);
-        break;
-    }
-    const endDate: Date = new Date();
+    const [startDate, endDate] = this.defineDateRange(item.period);
     switch (item.metric) {
       case AvailableAnalyticMetric.TRANSACTIONS_COUNT_BY_CATEGORY_AND_DATE_RANGE:
         message = await this.transactionAnalyticService.getTransactionsCountBy(
@@ -98,7 +69,7 @@ export default class ReportDistributionInteractor
           endDate,
         );
         break;
-      case AvailableAnalyticMetric.TRANSACTIONS_SUMT_BY_CATEGORY_AND_DATE_RANGE:
+      case AvailableAnalyticMetric.TRANSACTIONS_SUM_BY_CATEGORY_AND_DATE_RANGE:
         message = await this.transactionAnalyticService.getTransactionsSumBy(
           item.category,
           startDate,
@@ -112,7 +83,7 @@ export default class ReportDistributionInteractor
           endDate,
         );
         break;
-      case AvailableAnalyticMetric.TRANSACTIONS_SUMT_BY_DATE_RANGE:
+      case AvailableAnalyticMetric.TRANSACTIONS_SUM_BY_DATE_RANGE:
         message = await this.transactionAnalyticService.getTransactionsSumForDateRange(
           startDate,
           endDate,
@@ -155,6 +126,40 @@ export default class ReportDistributionInteractor
     await this.eventDispatcher.emit(
       new ReportHasBeenGeneratedEvent(item, message),
     );
-    return this.outputPort.processSending(item, message);
+    return this.outputPort.processSending(item, message, null);
+  }
+
+  /* istanbul ignore next */
+  public defineDateRange(period: Period): [Date, Date] {
+    const startDate: Date = new Date();
+    switch (period) {
+      case Period.MONTH:
+        if (startDate.getMonth() > 1) {
+          startDate.setMonth(startDate.getMonth() - 1);
+        } else {
+          startDate.setFullYear(startDate.getFullYear() - 1);
+          startDate.setMonth(11);
+        }
+        break;
+      case Period.QUARTER:
+        if (startDate.getMonth() == 1) {
+          throw new Error('Quarter has not been ended yet!');
+        }
+        if (startDate.getMonth() == 0) {
+          startDate.setFullYear(startDate.getFullYear() - 1);
+          startDate.setMonth(8);
+        } else if (startDate.getMonth() == 2) {
+          startDate.setFullYear(startDate.getFullYear() - 1);
+          startDate.setMonth(11);
+        } else {
+          startDate.setMonth(startDate.getMonth() - 3);
+        }
+        break;
+      case Period.YEAR:
+        startDate.setFullYear(startDate.getFullYear() - 1);
+        break;
+    }
+    const endDate: Date = new Date();
+    return [startDate, endDate];
   }
 }

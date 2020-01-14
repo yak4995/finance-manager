@@ -62,7 +62,9 @@ export default class FakeRepo<T extends IPersistantEntity>
     orderBy: OrderCriteria<T>,
     searchCriteria: Criteria<T>,
   ): Promise<T[]> {
-    const resultSet: T[] = await this.findByAndCriteria(searchCriteria);
+    const resultSet: T[] = Array.from<T>(
+      await this.findByAndCriteria(searchCriteria),
+    );
     if (Object.keys(orderBy).length > 0) {
       resultSet.sort((a: T, b: T): number => {
         const key = Object.keys(orderBy)[0];
@@ -92,7 +94,7 @@ export default class FakeRepo<T extends IPersistantEntity>
 
   async findById(id: string): Promise<T> {
     const resultArray = this.repoArr.filter(entity => entity.id === id);
-    if (resultArray.length > 0) {
+    if (resultArray.length === 0) {
       throw new Error('Such entity has not been found!');
     }
     return resultArray[0];
@@ -139,9 +141,9 @@ export default class FakeRepo<T extends IPersistantEntity>
   }
 
   async delete(deleteCriteria: Criteria<T>): Promise<null> {
-    const neededElementsIds: string[] = (await this.findByAndCriteria(
-      deleteCriteria,
-    )).map((entity: T): string => entity.id);
+    const neededElementsIds: string[] = (
+      await this.findByAndCriteria(deleteCriteria)
+    ).map((entity: T): string => entity.id);
     const indexesForDelete: number[] = [];
     for (let i = 0; i < this.repoArr.length; i++) {
       if (neededElementsIds.includes(this.repoArr[i].id)) {
@@ -150,7 +152,7 @@ export default class FakeRepo<T extends IPersistantEntity>
     }
     for (let i = 0; i < indexesForDelete.length; i++) {
       this.repoArr.splice(indexesForDelete[i], 1);
-      for (let j = i + 1; i < indexesForDelete.length; j++) {
+      for (let j = i + 1; j < indexesForDelete.length; j++) {
         if (indexesForDelete[j] > indexesForDelete[i]) {
           indexesForDelete[j]--;
         }

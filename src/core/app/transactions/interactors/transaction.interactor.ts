@@ -33,9 +33,9 @@ export default class TransactionInteractor
   async getTransactionDetail(id: string): Promise<any> {
     try {
       const transaction: ITransaction = await this.transactionRepo.findById(id);
-      return this.transactionOutputPort.getTransactionDetail(transaction);
+      return this.transactionOutputPort.getTransactionDetail(transaction, null);
     } catch (e) {
-      return this.transactionOutputPort.getTransactionDetail(null);
+      return this.transactionOutputPort.getTransactionDetail(null, e);
     }
   }
 
@@ -51,9 +51,9 @@ export default class TransactionInteractor
         order,
         { owner: this.user },
       );
-      return this.transactionOutputPort.getTransactions(transactions);
+      return this.transactionOutputPort.getTransactions(transactions, null);
     } catch (e) {
-      return this.transactionOutputPort.getTransactions(null);
+      return this.transactionOutputPort.getTransactions(null, e);
     }
   }
 
@@ -63,22 +63,27 @@ export default class TransactionInteractor
     category: ITransactionCategory,
   ): Promise<any> {
     try {
-      const categoryIds: string[] = (await this.transactionCategoryService.getTransactionCategoryChildren(
-        category,
-      )).map((c: ITransactionCategory): string => c.id);
-      const transactions: ITransaction[] = (await this.transactionRepo.findByAndCriteria(
-        {
+      const categoryIds: string[] = (
+        await this.transactionCategoryService.getTransactionCategoryChildren(
+          category,
+        )
+      ).map((c: ITransactionCategory): string => c.id);
+      const transactions: ITransaction[] = (
+        await this.transactionRepo.findByAndCriteria({
           owner: this.user,
-        },
-      )).filter(
+        })
+      ).filter(
         (t: ITransaction): boolean =>
           t.datetime >= dateStart &&
           t.datetime <= dateEnd &&
           categoryIds.includes(t.transactionCategory.id),
       );
-      return this.transactionOutputPort.getTransactionsByCategory(transactions);
+      return this.transactionOutputPort.getTransactionsByCategory(
+        transactions,
+        null,
+      );
     } catch (e) {
-      return this.transactionOutputPort.getTransactionsByCategory(null);
+      return this.transactionOutputPort.getTransactionsByCategory(null, e);
     }
   }
 
@@ -90,9 +95,10 @@ export default class TransactionInteractor
       );
       return this.transactionOutputPort.search(
         transactions.filter(t => t.owner.id === this.user.id),
+        null,
       );
     } catch (e) {
-      return this.transactionOutputPort.search(null);
+      return this.transactionOutputPort.search(null, e);
     }
   }
 
@@ -118,9 +124,9 @@ export default class TransactionInteractor
       const result: ITransaction = await this.transactionRepo.insert(
         createdTransaction,
       );
-      return this.transactionOutputPort.addTransaction(result);
+      return this.transactionOutputPort.addTransaction(result, null);
     } catch (e) {
-      return this.transactionOutputPort.addTransaction(null);
+      return this.transactionOutputPort.addTransaction(null, e);
     }
   }
 
@@ -136,7 +142,7 @@ export default class TransactionInteractor
         this.transactionCategoryRepo.findById(payload.transactionCategoryId),
         this.currencyRepo.findById(payload.currencyId),
       ]);
-      const result = await this.transactionRepo.update(
+      await this.transactionRepo.update(
         {
           datetime: payload.datetime,
           transactionCategory,
@@ -146,18 +152,21 @@ export default class TransactionInteractor
         },
         transaction.id,
       );
-      return this.transactionOutputPort.updateTransaction(result);
+      return this.transactionOutputPort.updateTransaction(
+        await this.transactionRepo.findById(transaction.id),
+        null,
+      );
     } catch (e) {
-      return this.transactionOutputPort.updateTransaction(null);
+      return this.transactionOutputPort.updateTransaction(null, e);
     }
   }
 
   async deleteTransaction(transaction: ITransaction): Promise<any> {
     try {
       await this.transactionRepo.delete({ id: transaction.id });
-      return this.transactionOutputPort.deleteTransaction(transaction);
+      return this.transactionOutputPort.deleteTransaction(transaction, null);
     } catch (e) {
-      return this.transactionOutputPort.deleteTransaction(null);
+      return this.transactionOutputPort.deleteTransaction(null, e);
     }
   }
 
@@ -171,7 +180,7 @@ export default class TransactionInteractor
       dateStart,
       dateEnd,
     );
-    return this.transactionOutputPort.getTransactionsCountBy(result);
+    return this.transactionOutputPort.getTransactionsCountBy(result, null);
   }
 
   async getTransactionsSumBy(
@@ -186,7 +195,7 @@ export default class TransactionInteractor
       dateEnd,
       baseCurrency,
     );
-    return this.transactionOutputPort.getTransactionsSumBy(result);
+    return this.transactionOutputPort.getTransactionsSumBy(result, null);
   }
 
   async getTransactionsCountForDateRange(
@@ -197,7 +206,10 @@ export default class TransactionInteractor
       dateStart,
       dateEnd,
     );
-    return this.transactionOutputPort.getTransactionsCountForDateRange(result);
+    return this.transactionOutputPort.getTransactionsCountForDateRange(
+      result,
+      null,
+    );
   }
 
   async getTransactionsSumForDateRange(
@@ -210,7 +222,10 @@ export default class TransactionInteractor
       dateEnd,
       baseCurrency,
     );
-    return this.transactionOutputPort.getTransactionsSumForDateRange(result);
+    return this.transactionOutputPort.getTransactionsSumForDateRange(
+      result,
+      null,
+    );
   }
 
   async getTransactionCountRatioByCategories(
@@ -225,6 +240,7 @@ export default class TransactionInteractor
     );
     return this.transactionOutputPort.getTransactionCountRatioByCategories(
       result,
+      null,
     );
   }
 
@@ -242,6 +258,7 @@ export default class TransactionInteractor
     );
     return this.transactionOutputPort.getTransactionSumRatioByCategories(
       result,
+      null,
     );
   }
 
@@ -257,7 +274,10 @@ export default class TransactionInteractor
       dateEnd,
       by,
     );
-    return this.transactionOutputPort.getTransactionCountChangeByPeriod(result);
+    return this.transactionOutputPort.getTransactionCountChangeByPeriod(
+      result,
+      null,
+    );
   }
 
   async getTransactionSumChangeByPeriod(
@@ -274,6 +294,9 @@ export default class TransactionInteractor
       by,
       baseCurrency,
     );
-    return this.transactionOutputPort.getTransactionSumChangeByPeriod(result);
+    return this.transactionOutputPort.getTransactionSumChangeByPeriod(
+      result,
+      null,
+    );
   }
 }

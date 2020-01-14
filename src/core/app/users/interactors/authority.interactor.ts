@@ -12,6 +12,7 @@ import IAuthorityService from '../interfaces/authorityService.interface';
 import IEventDispatchService from '../../events/eventDispatchService.interface';
 import UserHasBeenCreatedEvent from '../events/userHasBeenCreated.event';
 
+// TODO: handle errors
 export default class AuthorityInteractor
   implements SessionsManagementInputPort, UserCredentialsManagementInputPort {
   constructor(
@@ -51,9 +52,13 @@ export default class AuthorityInteractor
       } catch (e2) {
         throw e2;
       }
-      return this.outputPort.processRegistration(savedUser, mailingResult);
+      return this.outputPort.processRegistration(
+        savedUser,
+        mailingResult,
+        null,
+      );
     }
-    return this.outputPort.processRegistration(null, false);
+    return this.outputPort.processRegistration(null, false, null);
   }
 
   public async signIn(payload: UserLoginDto): Promise<any> {
@@ -67,18 +72,18 @@ export default class AuthorityInteractor
           email: payload.email,
         }),
       ]);
-      return this.outputPort.processLogin(loginResult);
+      return this.outputPort.processLogin(loginResult, null);
     } catch (e) {
-      return this.outputPort.processLogin(null);
+      return this.outputPort.processLogin(null, null);
     }
   }
 
   public async signOut(user: IUser): Promise<any> {
     try {
       const result: boolean = await this.authorityService.signOut(user);
-      return this.outputPort.processLogout(user, result);
+      return this.outputPort.processLogout(user, result, null);
     } catch (e) {
-      return this.outputPort.processLogout(null, false);
+      return this.outputPort.processLogout(null, false, null);
     }
   }
 
@@ -95,9 +100,9 @@ export default class AuthorityInteractor
         },
         user.id,
       );
-      return this.outputPort.processAccountInfoChanging(user);
+      return this.outputPort.processAccountInfoChanging(user, null);
     } catch (e) {
-      return this.outputPort.processAccountInfoChanging(null);
+      return this.outputPort.processAccountInfoChanging(null, null);
     }
   }
 
@@ -110,18 +115,18 @@ export default class AuthorityInteractor
         { profileImageUrl: newProfileImagePath },
         user.id,
       );
-      return this.outputPort.processAccountProfileImageChanging(user);
+      return this.outputPort.processAccountProfileImageChanging(user, null);
     } catch (e) {
-      return this.outputPort.processAccountProfileImageChanging(null);
+      return this.outputPort.processAccountProfileImageChanging(null, null);
     }
   }
 
   public async deleteAccount(user: IUser): Promise<any> {
     try {
       const result: boolean = await this.authorityService.deleteAccount(user);
-      return this.outputPort.processAccountDeleting(user, result);
+      return this.outputPort.processAccountDeleting(user, result, null);
     } catch (e) {
-      return this.outputPort.processAccountDeleting(user, false);
+      return this.outputPort.processAccountDeleting(user, false, null);
     }
   }
 }

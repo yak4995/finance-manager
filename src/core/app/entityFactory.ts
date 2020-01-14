@@ -25,6 +25,7 @@ export default abstract class EntityFactory {
 
   protected static instance: EntityFactory = null;
 
+  /* istanbul ignore next */
   public static getInstance(): EntityFactory {
     if (this.instance !== null) {
       return this.instance;
@@ -32,6 +33,7 @@ export default abstract class EntityFactory {
     return null;
   }
 
+  /* istanbul ignore next */
   public createCurrency(fields: Criteria<ICurrency>): ICurrency {
     return this.currencyCreator.getInstance(fields);
   }
@@ -52,6 +54,7 @@ export default abstract class EntityFactory {
     return this.userCredentialCreator.getInstance(fields);
   }
 
+  /* istanbul ignore next */
   public createDistributingMetricItem(
     fields: Criteria<IDistributingMetricItem>,
   ): IDistributingMetricItem {

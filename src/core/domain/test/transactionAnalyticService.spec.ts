@@ -1,6 +1,7 @@
 import 'ts-jest';
 import TransactionAnalyticService from '../transactions/services/transactionAnalyticService';
 import FakeCurrencyConverter from './fakeCurrencyConverter';
+import { fakeCurrency, fakeBaseCurrency } from './fakeCurrencyConverter';
 import {
   thirdCategory,
   sixthCategory,
@@ -19,18 +20,6 @@ import ITransactionCategory from '../transactions/entities/transactionCategory.i
 
 describe('TransactionAnalyticService tests', () => {
   const now = new Date();
-
-  const fakeCurrency = {
-    id: '1',
-    name: 'USD',
-    code: 'USD',
-  };
-
-  const fakeBaseCurrency = {
-    id: '2',
-    name: 'EUR',
-    code: 'EUR',
-  };
 
   const service = new TransactionAnalyticService(
     [],

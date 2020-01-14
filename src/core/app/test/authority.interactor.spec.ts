@@ -8,6 +8,9 @@ import FakeRepo from '../../domain/test/fakeRepo';
 import { Roles } from '../users/enums/roles.enum';
 import IUserCredential from '../users/entities/userCredential.interface';
 import IRepository from '../../domain/repository.interface';
+import IUser from '../../domain/users/entities/user.interface';
+import UserHasBeenCreatedEvent from '../users/events/userHasBeenCreated.event';
+import { EventStatus } from '../events/eventStatus.enum';
 
 describe('Authority tests', () => {
   const userCredentialRepo: IRepository<IUserCredential> = new FakeRepo<
@@ -43,6 +46,10 @@ describe('Authority tests', () => {
     expect(service.changeAccountInfo).toBeDefined();
     expect(service.changeProfileImage).toBeDefined();
     expect(service.deleteAccount).toBeDefined();
+  });
+
+  it('check UserHasBeenCreatedEvent state', () => {
+    expect(new UserHasBeenCreatedEvent(null).state).toBe(EventStatus.WAITING);
   });
 
   it('test signUp method: exception if user exists', async () => {
@@ -91,9 +98,11 @@ describe('Authority tests', () => {
   });
 
   it('test signUp method', async () => {
-    expect(
-      await service.signUp({ email: 'test@example.com' }),
-    ).not.toBeInstanceOf(Error);
+    const result: [IUserCredential, boolean] = await service.signUp({
+      email: 'test@example.com',
+    });
+    expect(result[0].email).toBe('test@example.com');
+    expect(result[1]).toBe(true);
   });
 
   it('test signIn method: exception if user doesn`t exist', async () => {
@@ -113,9 +122,10 @@ describe('Authority tests', () => {
   });
 
   it('test signIn method', async () => {
-    expect(
-      await service.signIn({ email: 'existed@example.com' }),
-    ).not.toBeInstanceOf(Error);
+    const result: IUserCredential = await service.signIn({
+      email: 'existed@example.com',
+    });
+    expect(result.email).toBe('existed@example.com');
   });
 
   it('test signOut method: exception if user can`t be logged out', async () => {
@@ -126,8 +136,18 @@ describe('Authority tests', () => {
     }
   });
 
+  it('test signOut method: exception if user can`t be logged out', async () => {
+    try {
+      await service.signOut({ id: 'exceptionId' });
+    } catch (e) {
+      expect(e).toEqual(new Error('Such user has not been logged out'));
+    }
+  });
+
   it('test signOut method', async () => {
-    expect(await service.signOut({ id: 'fakeId' })).not.toBeInstanceOf(Error);
+    const result: [IUser, boolean] = await service.signOut({ id: 'fakeId' });
+    expect(result[0].id).toBe('fakeId');
+    expect(result[1]).toBe(true);
   });
 
   it('test changeAccountInfo method: exception if user account info can`t be updated', async () => {
@@ -139,9 +159,8 @@ describe('Authority tests', () => {
   });
 
   it('test changeAccountInfo method', async () => {
-    expect(
-      await service.changeAccountInfo({ id: 'fakeId' }, {}),
-    ).not.toBeInstanceOf(Error);
+    const result: IUser = await service.changeAccountInfo({ id: 'fakeId' }, {});
+    expect(result.id).toBe('fakeId');
   });
 
   it('test changeProfileImage method: exception if user profile image can`t be updated', async () => {
@@ -153,9 +172,11 @@ describe('Authority tests', () => {
   });
 
   it('test changeProfileImage method', async () => {
-    expect(
-      await service.changeProfileImage({ id: 'fakeId' }, ''),
-    ).not.toBeInstanceOf(Error);
+    const result: IUser = await service.changeProfileImage(
+      { id: 'fakeId' },
+      '',
+    );
+    expect(result.id).toBe('fakeId');
   });
 
   it('test deleteAccount method: exception if user can`t be deleted', async () => {
@@ -166,9 +187,19 @@ describe('Authority tests', () => {
     }
   });
 
+  it('test deleteAccount method: exception if user can`t be deleted', async () => {
+    try {
+      await service.deleteAccount({ id: 'exceptionId' });
+    } catch (e) {
+      expect(e).toEqual(new Error('Such user has not been removed'));
+    }
+  });
+
   it('test deleteAccount method', async () => {
-    expect(await service.deleteAccount({ id: 'fakeId' })).not.toBeInstanceOf(
-      Error,
-    );
+    const result: [IUser, boolean] = await service.deleteAccount({
+      id: 'fakeId',
+    });
+    expect(result[0].id).toBe('fakeId');
+    expect(result[1]).toBe(true);
   });
 });

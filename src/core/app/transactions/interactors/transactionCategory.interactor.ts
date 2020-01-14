@@ -32,10 +32,10 @@ export default class TransactionCategoryInteractor
         owner: null,
       }),
     ]);
-    return this.transactionCategoryOutputPort.getTopCategories([
-      ...ownTopCategories,
-      ...systemTopCategories,
-    ]);
+    return this.transactionCategoryOutputPort.getTopCategories(
+      [...ownTopCategories, ...systemTopCategories],
+      null,
+    );
   }
 
   async getCategoryDirectChildren(
@@ -57,10 +57,10 @@ export default class TransactionCategoryInteractor
         owner: user,
       }),
     ]);
-    return this.transactionCategoryOutputPort.getCategoryDirectChildren([
-      ...systemCategories,
-      ...ownCategories,
-    ]);
+    return this.transactionCategoryOutputPort.getCategoryDirectChildren(
+      [...systemCategories, ...ownCategories],
+      null,
+    );
   }
 
   async getOwnCategories(user: IUser): Promise<any> {
@@ -70,15 +70,14 @@ export default class TransactionCategoryInteractor
         isSystem: false,
       },
     );
-    return this.transactionCategoryOutputPort.getOwnCategories(result);
+    return this.transactionCategoryOutputPort.getOwnCategories(result, null);
   }
 
   async search(user: IUser, content: string): Promise<any> {
-    const result: ITransactionCategory[] = (await this.searchService.search(
-      content,
-      'name',
-    )).filter((c: ITransactionCategory): boolean => c.owner.id !== user.id);
-    return this.transactionCategoryOutputPort.search(result);
+    const result: ITransactionCategory[] = (
+      await this.searchService.search(content, 'name')
+    ).filter((c: ITransactionCategory): boolean => c.owner.id !== user.id);
+    return this.transactionCategoryOutputPort.search(result, null);
   }
 
   async addCategory(
@@ -104,9 +103,9 @@ export default class TransactionCategoryInteractor
       const result: ITransactionCategory = await this.transactionCategoryRepo.insert(
         createdCategory,
       );
-      return this.transactionCategoryOutputPort.addCategory(result);
+      return this.transactionCategoryOutputPort.addCategory(result, null);
     } catch (e) {
-      return this.transactionCategoryOutputPort.addCategory(null);
+      return this.transactionCategoryOutputPort.addCategory(null, e);
     }
   }
 
@@ -121,7 +120,7 @@ export default class TransactionCategoryInteractor
       if (parentCategory.isOutcome !== payload.isOutcome) {
         throw new Error('isOutcome field is common for all category tree');
       }
-      const result = await this.transactionCategoryRepo.update(
+      await this.transactionCategoryRepo.update(
         {
           name: payload.name,
           isOutcome: payload.isOutcome,
@@ -129,18 +128,24 @@ export default class TransactionCategoryInteractor
         },
         category.id,
       );
-      return this.transactionCategoryOutputPort.updateCategory(result);
+      return this.transactionCategoryOutputPort.updateCategory(
+        Object.assign({}, category, {
+          name: payload.name,
+          isOutcome: payload.isOutcome,
+        }),
+        null,
+      );
     } catch (e) {
-      return this.transactionCategoryOutputPort.updateCategory(null);
+      return this.transactionCategoryOutputPort.updateCategory(null, e);
     }
   }
 
   async deleteCategory(category: ITransactionCategory): Promise<any> {
     try {
       await this.transactionCategoryRepo.delete({ id: category.id });
-      return this.transactionCategoryOutputPort.deleteCategory(category);
+      return this.transactionCategoryOutputPort.deleteCategory(category, null);
     } catch (e) {
-      return this.transactionCategoryOutputPort.deleteCategory(null);
+      return this.transactionCategoryOutputPort.deleteCategory(null, e);
     }
   }
 }

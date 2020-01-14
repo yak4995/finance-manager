@@ -31,9 +31,15 @@ export default class FakeAuthorityService implements IAuthorityService {
     };
   }
   async signOut(user: IUser): Promise<boolean> {
+    if (user.id === 'exceptionId') {
+      throw new Error('Logout is not available!');
+    }
     return user.id !== 'incorrectId';
   }
   async deleteAccount(user: IUser): Promise<boolean> {
+    if (user.id === 'exceptionId') {
+      throw new Error('Deleting is not available!');
+    }
     return user.id !== 'incorrectId';
   }
 }

@@ -1,17 +1,14 @@
 import ISearchService from '../search/searchService.interface';
-import ITransactionCategory from '../../domain/transactions/entities/transactionCategory.interface';
+import IPersistantEntity from '../../../core/domain/persistantEntity';
 
-export default class FakeSearchService
-  implements ISearchService<ITransactionCategory> {
-  public repoArr: ITransactionCategory[] = [];
+export default class FakeSearchService<T extends IPersistantEntity>
+  implements ISearchService<T> {
+  constructor(public readonly repoArr: T[]) {}
 
-  async search(
-    content: string,
-    ...fields: (keyof ITransactionCategory)[]
-  ): Promise<ITransactionCategory[]> {
-    return this.repoArr.filter((tc: ITransactionCategory): boolean => {
+  async search(content: string, ...fields: Array<keyof T>): Promise<T[]> {
+    return this.repoArr.filter((tc: T): boolean => {
       for (const fieldName of fields) {
-        if ((tc[fieldName] as string).indexOf(content) !== -1) {
+        if (((tc[fieldName] as unknown) as string).indexOf(content) !== -1) {
           return true;
         }
       }
