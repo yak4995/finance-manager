@@ -142,13 +142,13 @@ export default class ReportDistributionInteractor
         }
         break;
       case Period.QUARTER:
-        if (startDate.getMonth() == 1) {
+        if (startDate.getMonth() === 1) {
           throw new Error('Quarter has not been ended yet!');
         }
-        if (startDate.getMonth() == 0) {
+        if (startDate.getMonth() === 0) {
           startDate.setFullYear(startDate.getFullYear() - 1);
           startDate.setMonth(8);
-        } else if (startDate.getMonth() == 2) {
+        } else if (startDate.getMonth() === 2) {
           startDate.setFullYear(startDate.getFullYear() - 1);
           startDate.setMonth(11);
         } else {
