@@ -1,6 +1,6 @@
-import IEventListener from '../events/eventListener.interface';
-import ReportHasBeenGeneratedEvent from '../transactions/events/reportHasBeenGenerated.event';
-import { EventStatus } from '../events/eventStatus.enum';
+import IEventListener from '../../events/eventListener.interface';
+import ReportHasBeenGeneratedEvent from '../../transactions/events/reportHasBeenGenerated.event';
+import { EventStatus } from '../../events/eventStatus.enum';
 
 export default class FakeReportHasBeenGeneratedEventListener
   implements IEventListener<ReportHasBeenGeneratedEvent> {

@@ -1,4 +1,4 @@
-import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
+import ITransactionCategory from '../../transactions/entities/transactionCategory.interface';
 
 export const firstCategory: ITransactionCategory = {
   id: '1',
@@ -62,3 +62,32 @@ export const seventhCategory: ITransactionCategory = {
   isSystem: true,
   isOutcome: true,
 };
+
+export const testCategoriesChildrenMap: Array<[
+  string,
+  ITransactionCategory,
+  string[],
+]> = [
+  [firstCategory.id, firstCategory, ['1', '2', '3', '4', '5', '6', '7']],
+  [thirdCategory.id, thirdCategory, ['3', '6', '7']],
+];
+
+export const testCategoriesSiblingsMap: Array<[
+  string,
+  ITransactionCategory,
+  string[],
+]> = [
+  [firstCategory.id, firstCategory, ['1']],
+  [thirdCategory.id, thirdCategory, ['2', '3', '4']],
+];
+
+export const transactionCategoriesForSearch: ITransactionCategory[] = [
+  {
+    id: 'abc',
+    isSystem: false,
+    parentCategory: null,
+    owner: { id: 'fakeId' },
+    name: 'smth',
+    isOutcome: true,
+  },
+];

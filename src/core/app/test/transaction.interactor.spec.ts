@@ -1,11 +1,34 @@
 import 'ts-jest';
-import TransactionInteractor from '../transactions/interactors/transaction.interactor';
+
+import IRepository, {
+  OrderCriteria,
+  Criteria,
+} from '../../domain/repository.interface';
+import ITransaction from '../../domain/transactions/entities/transaction.interface';
+import ITransactionCategory from '../../domain/transactions/entities/transactionCategory.interface';
+import ICurrency from '../../domain/transactions/entities/currency.interface';
+import TransactionCategoryAbstractFactory from '../../domain/transactions/factories/transactionCategoryFactory';
+import TransactionAbstractFactory from '../../domain/transactions/factories/transactionFactory';
+import CurrencyAbstractFactory from '../../domain/transactions/factories/currencyFactory';
+import { Period } from '../../domain/period/enums/period.enum';
+import ISearchService from '../search/searchService.interface';
+import ICurrencyConverterService from '../../domain/transactions/services/currencyConverterService.interface';
 import TransactionAnalyticService from '../../domain/transactions/services/transactionAnalyticService';
 import TransactionCategoryService from '../../domain/transactions/services/transactionCategoryService';
-import FakeCurrencyConverter, {
-  fakeCurrency,
+import TransactionInteractor from '../transactions/interactors/transaction.interactor';
+import TransactionOutputPort from '../transactions/ports/transactionOutput.port';
+
+import FakeCurrencyConverter from '../../domain/test/mocks/fakeCurrencyConverter';
+import FakeTransactionFactory from './mocks/fakeTransactionFactory';
+import FakeTransactionCategoryFactory from './mocks/fakeTransactionCategoryFactory';
+import FakeCurrencyFactory from './mocks/fakeCurrencyFactory';
+import FakeSearchService from './mocks/FakeSearchService';
+import FakeTransactionOutputPort from './mocks/fakeTransactionOutputPort';
+
+import {
   fakeBaseCurrency,
-} from '../../domain/test/fakeCurrencyConverter';
+  fakeCurrency,
+} from '../../domain/test/fixtures/currencies';
 import {
   firstCategory,
   secondCategory,
@@ -14,154 +37,94 @@ import {
   fifthCategory,
   sixthCategory,
   seventhCategory,
-} from './fakeCategoryRepo';
-import ITransaction from '../../domain/transactions/entities/transaction.interface';
-import FakeRepo from '../../domain/test/fakeRepo';
-import ITransactionCategory from '../../domain/transactions/entities/transactionCategory.interface';
-import FakeEntityFactory from './fakeEntityFactory';
-import IRepository from '../../domain/repository.interface';
-import ICurrency from '../../domain/transactions/entities/currency.interface';
-import FakeSearchService from './FakeSearchService';
-import FakeTransactionOutputPort from './fakeTransactionOutputPort';
-import { Period } from '../../domain/period/enums/period.enum';
+} from '../../domain/test/fixtures/transactionCategories';
+import {
+  transactionForTransactionChangeMetrics,
+  generateTransactionsForSearch,
+} from '../../domain/test/fixtures/transactions';
+import {
+  dateStartForTransactionChangeMetrics,
+  dateEndForTransactionChangeMetrics,
+} from '../../domain/test/fixtures/dateRanges';
 
 describe('TransactionInteractor tests', () => {
   const now: Date = new Date();
-  const fakeTransactionCategoryRepo: IRepository<ITransactionCategory> = new FakeRepo<
-    ITransactionCategory
-  >([
-    firstCategory,
-    secondCategory,
-    thirdCategory,
-    fourthCategory,
-    fifthCategory,
-    sixthCategory,
-    seventhCategory,
-  ]);
+  TransactionCategoryAbstractFactory.setInstance(
+    new FakeTransactionCategoryFactory(
+      [
+        firstCategory,
+        secondCategory,
+        thirdCategory,
+        fourthCategory,
+        fifthCategory,
+        sixthCategory,
+        seventhCategory,
+      ],
+      {
+        getInstance: (fields: Criteria<ITransactionCategory>) => ({
+          id: 'fakeId',
+          isOutcome: fields.isOutcome ? fields.isOutcome : true,
+          isSystem: fields.isSystem ? fields.isSystem : false,
+          name: fields.name ? fields.name : '',
+          owner: fields.owner ? fields.owner : null,
+          parentCategory: fields.parentCategory ? fields.parentCategory : null,
+        }),
+      },
+    ),
+  );
+  const transactionSet: ITransaction[] = transactionForTransactionChangeMetrics.map(
+    (t: ITransaction): ITransaction => {
+      t.owner = { id: 'fakeId' };
+      return t;
+    },
+  );
+  TransactionAbstractFactory.setInstance(
+    new FakeTransactionFactory(transactionSet, {
+      getInstance: (fields: Criteria<ITransaction>) => ({
+        id: 'fakeId',
+        amount: fields.amount ? fields.amount : 0,
+        currency: fields.currency ? fields.currency : null,
+        datetime: fields.datetime ? fields.datetime : new Date(),
+        owner: fields.owner ? fields.owner : null,
+        transactionCategory: fields.transactionCategory,
+        description: fields.description ? fields.description : null,
+      }),
+    }),
+  );
+  CurrencyAbstractFactory.setInstance(
+    new FakeCurrencyFactory([fakeCurrency, fakeBaseCurrency], {
+      getInstance: (fields: Criteria<ICurrency>) => null,
+    }),
+  );
+  const fakeTransactionFactory: TransactionAbstractFactory = FakeTransactionFactory.getInstance();
+  const fakeTransactionCategoryFactory: TransactionCategoryAbstractFactory = FakeTransactionCategoryFactory.getInstance();
+  const fakeCurrencyFactory: CurrencyAbstractFactory = FakeCurrencyFactory.getInstance();
+  const fakeTransactionCategoryRepo: IRepository<ITransactionCategory> = fakeTransactionCategoryFactory.createTransactionCategoryRepo();
   const transactionCategoryService: TransactionCategoryService = new TransactionCategoryService(
     fakeTransactionCategoryRepo,
   );
-  const transactionsSet: ITransaction[] = [
-    // 2017-2018: quarters
-    {
-      id: '1',
-      owner: { id: 'fakeId' },
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2017-10-01 00:00:00'),
-    },
-    {
-      id: '2',
-      owner: { id: 'fakeId' },
-      amount: 5_01,
-      currency: fakeBaseCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2018-01-01 00:00:00'),
-    },
-    {
-      id: '3',
-      owner: { id: 'fakeId' },
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2018-04-01 00:00:00'),
-    },
-    {
-      id: '4',
-      owner: { id: 'fakeId' },
-      amount: 5_01,
-      currency: fakeBaseCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2018-07-01 00:00:00'),
-    },
-    // 2018-2019: quarters
-    {
-      id: '5',
-      owner: { id: 'fakeId' },
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2018-10-01 00:00:00'),
-    },
-    {
-      id: '6',
-      owner: { id: 'fakeId' },
-      amount: 5_01,
-      currency: fakeBaseCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2019-01-01 00:00:00'),
-    },
-    {
-      id: '7',
-      owner: { id: 'fakeId' },
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2019-04-01 00:00:00'),
-    },
-    {
-      id: '8',
-      owner: { id: 'fakeId' },
-      amount: 5_01,
-      currency: fakeBaseCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2019-07-01 00:00:00'),
-    },
-    // 2017-2018: additional transaction for some month
-    {
-      id: '9',
-      owner: { id: 'fakeId' },
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2018-06-15 00:00:00'),
-    },
-    // 2017-2018: additional transaction for some month
-    {
-      id: '10',
-      owner: { id: 'fakeId' },
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2019-06-15 00:00:00'),
-    },
-  ];
-  const fakeTransactionRepo: IRepository<ITransaction> = new FakeRepo<
-    ITransaction
-  >(transactionsSet);
+  const fakeTransactionRepo: IRepository<ITransaction> = fakeTransactionFactory.createTransactionRepo();
+  const fakeCurrencyConverter: ICurrencyConverterService = new FakeCurrencyConverter();
   const transactionAnalyticservice: TransactionAnalyticService = new TransactionAnalyticService(
-    transactionsSet,
-    new FakeCurrencyConverter(),
+    transactionSet,
+    fakeCurrencyConverter,
     transactionCategoryService,
   );
+  const fakeCurrencyRepo: IRepository<ICurrency> = fakeCurrencyFactory.createCurrencyRepo();
+  const fakeTransactionsSearchService: ISearchService<ITransaction> = new FakeSearchService<
+    ITransaction
+  >(generateTransactionsForSearch(now));
+  const fakeTransactionOutputPort: TransactionOutputPort = new FakeTransactionOutputPort();
   const service: TransactionInteractor = new TransactionInteractor(
     { id: 'fakeId' },
-    FakeEntityFactory.getInstance(),
+    fakeTransactionFactory,
     transactionCategoryService,
     fakeTransactionCategoryRepo,
     fakeTransactionRepo,
-    new FakeRepo<ICurrency>([fakeCurrency, fakeBaseCurrency]),
+    fakeCurrencyRepo,
     transactionAnalyticservice,
-    new FakeSearchService<ITransaction>([
-      {
-        id: 'abc',
-        amount: 0,
-        currency: fakeBaseCurrency,
-        datetime: new Date(),
-        owner: { id: 'fakeId' },
-        transactionCategory: firstCategory,
-        description: 'smth',
-      },
-    ]),
-    new FakeTransactionOutputPort(),
-  );
-
-  const dateStartForTransactionChangeMetrics: Date = new Date(
-    '2017-09-30 00:00:00',
-  );
-  const dateEndForTransactionChangeMetrics: Date = new Date(
-    '2019-09-30 00:00:00',
+    fakeTransactionsSearchService,
+    fakeTransactionOutputPort,
   );
 
   it('check methods existance', () => {
@@ -183,94 +146,123 @@ describe('TransactionInteractor tests', () => {
   });
 
   it('check getTransactionDetail method: Such entity has not been found error', async () => {
-    expect(await service.getTransactionDetail('fakeId')).toBe(null);
+    try {
+      await service.getTransactionDetail('fakeId');
+    } catch (e) {
+      expect(e.message).toBe('Such entity has not been found!');
+    }
   });
 
   it('check getTransactionDetail method', async () => {
-    expect(await service.getTransactionDetail('1')).toEqual({
-      id: '1',
-      owner: { id: 'fakeId' },
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2017-10-01 00:00:00'),
-    });
+    expect(await service.getTransactionDetail('1')).toEqual(transactionSet[0]);
+  });
+
+  it('check getTransactions method: smth error', async () => {
+    jest
+      .spyOn(fakeTransactionRepo, 'findAll')
+      .mockImplementationOnce(
+        (
+          page: number,
+          perPage: number,
+          orderBy: OrderCriteria<ITransaction>,
+          searchCriteria: Criteria<ITransaction>,
+        ) => {
+          throw new Error('findAll exception');
+        },
+      );
+    try {
+      await service.getTransactions(1, 2, { id: 'ASC' });
+    } catch (e) {
+      expect(e.message).toBe('findAll exception');
+    }
+    jest.spyOn(fakeTransactionRepo, 'findAll').mockClear();
   });
 
   it('check getTransactions method', async () => {
     expect(await service.getTransactions(1, 2, { id: 'ASC' })).toEqual([
-      {
-        id: '1',
-        owner: { id: 'fakeId' },
-        amount: 100_00,
-        currency: fakeCurrency,
-        transactionCategory: firstCategory,
-        datetime: new Date('2017-10-01 00:00:00'),
-      },
-      {
-        id: '10',
-        owner: { id: 'fakeId' },
-        amount: 100_00,
-        currency: fakeCurrency,
-        transactionCategory: firstCategory,
-        datetime: new Date('2019-06-15 00:00:00'),
-      },
+      transactionSet[0],
+      transactionSet[9],
     ]);
   });
 
-  it('check getTransactionDetail method', async () => {
+  it('check getTransactionsByCategory method', async () => {
+    jest
+      .spyOn(transactionCategoryService, 'getTransactionCategoryChildren')
+      .mockImplementationOnce((parentCategory: ITransactionCategory) => {
+        throw new Error('Incorrect category exception');
+      });
+    try {
+      await service.getTransactionsByCategory(
+        new Date('2017-10-01 00:00:00'),
+        new Date('2018-01-01 00:00:00'),
+        firstCategory,
+      );
+    } catch (e) {
+      expect(e.message).toBe('Incorrect category exception');
+    }
+    jest
+      .spyOn(transactionCategoryService, 'getTransactionCategoryChildren')
+      .mockClear();
+  });
+
+  it('check getTransactionsByCategory method', async () => {
     expect(
       await service.getTransactionsByCategory(
         new Date('2017-10-01 00:00:00'),
         new Date('2018-01-01 00:00:00'),
         firstCategory,
       ),
-    ).toEqual([
+    ).toEqual([transactionSet[0], transactionSet[1]]);
+  });
+
+  it('check search method: search error', async () => {
+    try {
+      await service.search('wrong');
+    } catch (e) {
+      expect(e.message).toBe('Incorrect content');
+    }
+  });
+
+  it('check search method', async () => {
+    expect(await service.search('smth')).toEqual([
       {
-        id: '1',
-        owner: { id: 'fakeId' },
-        amount: 100_00,
-        currency: fakeCurrency,
-        transactionCategory: firstCategory,
-        datetime: new Date('2017-10-01 00:00:00'),
-      },
-      {
-        id: '2',
-        owner: { id: 'fakeId' },
-        amount: 5_01,
+        id: 'abc',
+        amount: 0,
         currency: fakeBaseCurrency,
+        datetime: now,
+        owner: { id: 'fakeId' },
         transactionCategory: firstCategory,
-        datetime: new Date('2018-01-01 00:00:00'),
+        description: 'smth',
       },
     ]);
   });
 
-  it('check search method', async () => {
-    expect(await service.search('smth')).toEqual([]);
-  });
-
   it('check addTransaction method: unexisting category error', async () => {
-    expect(
+    try {
       await service.addTransaction({
         datetime: new Date(),
         amount: 1_00,
         transactionCategoryId: 'fakeId',
         currencyId: fakeBaseCurrency.id,
         description: '',
-      }),
-    ).toBe(null);
+      });
+    } catch (e) {
+      expect(e.message).toBe('Such entity has not been found!');
+    }
   });
 
   it('check addTransaction method: unexisting currency error', async () => {
-    expect(
+    try {
       await service.addTransaction({
         datetime: new Date(),
         amount: 1_00,
         transactionCategoryId: firstCategory.id,
         currencyId: 'fakeId',
         description: '',
-      }),
-    ).toBe(null);
+      });
+    } catch (e) {
+      expect(e.message).toBe('Such entity has not been found!');
+    }
   });
 
   it('check addTransaction method', async () => {
@@ -307,7 +299,7 @@ describe('TransactionInteractor tests', () => {
   });
 
   it('check updateTransaction method: unexisting category error', async () => {
-    expect(
+    try {
       await service.updateTransaction(
         {
           amount: 100,
@@ -338,12 +330,14 @@ describe('TransactionInteractor tests', () => {
           currencyId: fakeBaseCurrency.id,
           description: '',
         },
-      ),
-    ).toBe(null);
+      );
+    } catch (e) {
+      expect(e.message).toBe('Such entity has not been found!');
+    }
   });
 
   it('check updateTransaction method: unexisting currency error', async () => {
-    expect(
+    try {
       await service.updateTransaction(
         {
           amount: 100,
@@ -374,8 +368,10 @@ describe('TransactionInteractor tests', () => {
           currencyId: 'fakeId',
           description: '',
         },
-      ),
-    ).toBe(null);
+      );
+    } catch (e) {
+      expect(e.message).toBe('Such entity has not been found!');
+    }
   });
 
   it('check updateTransaction method', async () => {
@@ -433,6 +429,41 @@ describe('TransactionInteractor tests', () => {
         parentCategory: null,
       },
     });
+  });
+
+  it('check deleteTransaction method: some deletion error', async () => {
+    jest
+      .spyOn(fakeTransactionRepo, 'delete')
+      .mockImplementationOnce((deleteCriteria: Criteria<ITransaction>) => {
+        throw new Error('Deletion error');
+      });
+    try {
+      await service.deleteTransaction({
+        amount: 100_00,
+        currency: {
+          code: 'EUR',
+          id: '2',
+          name: 'EUR',
+        },
+        datetime: now,
+        description: '',
+        id: 'fakeId',
+        owner: {
+          id: 'fakeId',
+        },
+        transactionCategory: {
+          id: '1',
+          isOutcome: true,
+          isSystem: true,
+          name: '',
+          owner: null,
+          parentCategory: null,
+        },
+      });
+    } catch (e) {
+      expect(e.message).toBe('Deletion error');
+    }
+    jest.spyOn(fakeTransactionRepo, 'delete').mockClear();
   });
 
   it('check deleteTransaction method', async () => {
@@ -568,8 +599,8 @@ describe('TransactionInteractor tests', () => {
         fakeBaseCurrency,
       ),
     ).toEqual({
-      '2017-9-30': 25002,
-      '2018-9-30': 25002,
+      '2017-9-30': 250_02,
+      '2018-9-30': 250_02,
     });
   });
 });

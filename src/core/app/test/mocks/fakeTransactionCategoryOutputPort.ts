@@ -1,5 +1,5 @@
-import TransactionCategoryOutputPort from '../transactions/ports/transactionCategoryOutput.port';
-import ITransactionCategory from '../../domain/transactions/entities/transactionCategory.interface';
+import TransactionCategoryOutputPort from '../../transactions/ports/transactionCategoryOutput.port';
+import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
 
 export default class FakeTransactionCategoryOutputPort
   implements TransactionCategoryOutputPort {

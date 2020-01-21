@@ -1,6 +1,6 @@
-import TransactionOutputPort from '../transactions/ports/transactionOutput.port';
-import ITransaction from '../../../core/domain/transactions/entities/transaction.interface';
-import { TransactionsComparisonDto } from '../../../core/domain/transactions/dto/transactionsComparison.dto';
+import TransactionOutputPort from '../../transactions/ports/transactionOutput.port';
+import ITransaction from '../../../domain/transactions/entities/transaction.interface';
+import { TransactionsComparisonDto } from '../../../domain/transactions/dto/transactionsComparison.dto';
 
 export default class FakeTransactionOutputPort
   implements TransactionOutputPort {

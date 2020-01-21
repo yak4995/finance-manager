@@ -1,16 +1,16 @@
 import TransactionCategoryInputPort from '../ports/transactionCategotyInput.port';
 import IRepository from '../../../domain/repository.interface';
 import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
-import EntityFactory from '../../entityFactory';
 import IUser from '../../../domain/users/entities/user.interface';
 import TransactionCategoryDto from '../dto/transactionCategory.dto';
 import TransactionCategoryOutputPort from '../ports/transactionCategoryOutput.port';
 import ISearchService from '../../search/searchService.interface';
+import TransactionCategoryAbstractFactory from '../../../domain/transactions/factories/transactionCategoryFactory';
 
 export default class TransactionCategoryInteractor
   implements TransactionCategoryInputPort {
   constructor(
-    private readonly entityFactory: EntityFactory,
+    private readonly transactionCategoryFactory: TransactionCategoryAbstractFactory,
     private readonly transactionCategoryRepo: IRepository<ITransactionCategory>,
     private readonly searchService: ISearchService<ITransactionCategory>,
     private readonly transactionCategoryOutputPort: TransactionCategoryOutputPort,
@@ -91,7 +91,7 @@ export default class TransactionCategoryInteractor
       if (parentCategory.isOutcome !== payload.isOutcome) {
         throw new Error('isOutcome field is common for all category tree');
       }
-      const createdCategory: ITransactionCategory = this.entityFactory.createTransactionCategory(
+      const createdCategory: ITransactionCategory = this.transactionCategoryFactory.createTransactionCategory(
         {
           name: payload.name,
           parentCategory,

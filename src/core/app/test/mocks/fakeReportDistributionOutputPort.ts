@@ -1,6 +1,6 @@
-import IDistributingMetricItem from '../transactions/entities/distributingMetricItem.interface';
-import { TransactionsComparisonDto } from '../../../core/domain/transactions/dto/transactionsComparison.dto';
-import ReportDistributionOutputPort from '../transactions/ports/reportDistributionOutput.port';
+import IDistributingMetricItem from '../../transactions/entities/distributingMetricItem.interface';
+import { TransactionsComparisonDto } from '../../../domain/transactions/dto/transactionsComparison.dto';
+import ReportDistributionOutputPort from '../../transactions/ports/reportDistributionOutput.port';
 
 export default class FakeReportDistributionOutputPort
   implements ReportDistributionOutputPort {

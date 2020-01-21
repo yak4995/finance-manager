@@ -1,6 +1,6 @@
-import IEventListener from '../events/eventListener.interface';
-import UserHasBeenCreatedEvent from '../users/events/userHasBeenCreated.event';
-import { EventStatus } from '../events/eventStatus.enum';
+import IEventListener from '../../events/eventListener.interface';
+import UserHasBeenCreatedEvent from '../../users/events/userHasBeenCreated.event';
+import { EventStatus } from '../../events/eventStatus.enum';
 
 export default class FakeUserHasBeenCreatedEventListener
   implements IEventListener<UserHasBeenCreatedEvent> {

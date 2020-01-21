@@ -1,7 +1,18 @@
 import 'ts-jest';
+
+import IRepository from '../repository.interface';
+import ITransactionCategory from '../transactions/entities/transactionCategory.interface';
+import ICurrencyConverterService from '../transactions/services/currencyConverterService.interface';
+import TransactionCategoryService from '../transactions/services/transactionCategoryService';
 import TransactionAnalyticService from '../transactions/services/transactionAnalyticService';
-import FakeCurrencyConverter from './fakeCurrencyConverter';
-import { fakeCurrency, fakeBaseCurrency } from './fakeCurrencyConverter';
+
+import { Period } from '../period/enums/period.enum';
+import { InvalidDateRangeException } from '../transactions/exceptions/invalidDateRange.exception';
+
+import FakeRepo from './mocks/fakeRepo';
+import FakeCurrencyConverter from './mocks/fakeCurrencyConverter';
+
+import { fakeBaseCurrency } from './fixtures/currencies';
 import {
   thirdCategory,
   sixthCategory,
@@ -10,124 +21,48 @@ import {
   firstCategory,
   fourthCategory,
   fifthCategory,
-} from '../../app/test/fakeCategoryRepo';
-import TransactionCategoryService from '../transactions/services/transactionCategoryService';
-import { Period } from '../period/enums/period.enum';
-import { InvalidDateRangeException } from '../transactions/exceptions/invalidDateRange.exception';
-import ITransaction from '../transactions/entities/transaction.interface';
-import FakeRepo from './fakeRepo';
-import ITransactionCategory from '../transactions/entities/transactionCategory.interface';
+} from './fixtures/transactionCategories';
+import {
+  transactionForTransactionChangeMetrics,
+  generateTransactionsForSumMetrics,
+  generateTransactionsForCountMetrics,
+  generateTransactionsForRatioByCategories,
+  getTransactionCountChangeByMonthPeriodResult,
+  getTransactionCountChangeByQuarterPeriodResult,
+  getTransactionCountChangeByYearPeriodResult,
+  getTransactionSumChangeByMonthPeriodResult,
+  getTransactionSumChangeByQuarterPeriodResult,
+  getTransactionSumChangeByYearPeriodResult,
+} from './fixtures/transactions';
+import {
+  dateStartForTransactionChangeMetrics,
+  dateEndForTransactionChangeMetrics,
+} from './fixtures/dateRanges';
 
 describe('TransactionAnalyticService tests', () => {
-  const now = new Date();
-
-  const service = new TransactionAnalyticService(
+  const now: Date = new Date();
+  const fakeCurrencyConverter: ICurrencyConverterService = new FakeCurrencyConverter();
+  const fakeTransactionCategoryRepo: IRepository<ITransactionCategory> = new FakeRepo<
+    ITransactionCategory
+  >([
+    firstCategory,
+    secondCategory,
+    thirdCategory,
+    fourthCategory,
+    fifthCategory,
+    sixthCategory,
+    seventhCategory,
+  ]);
+  const transactionCategoryService: TransactionCategoryService = new TransactionCategoryService(
+    fakeTransactionCategoryRepo,
+  );
+  const service: TransactionAnalyticService = new TransactionAnalyticService(
     [],
-    new FakeCurrencyConverter(),
-    new TransactionCategoryService(
-      new FakeRepo<ITransactionCategory>([
-        firstCategory,
-        secondCategory,
-        thirdCategory,
-        fourthCategory,
-        fifthCategory,
-        sixthCategory,
-        seventhCategory,
-      ]),
-    ),
+    fakeCurrencyConverter,
+    transactionCategoryService,
   );
 
-  const dateStartForTransactionChangeMetrics = new Date('2017-09-30 00:00:00');
-  const dateEndForTransactionChangeMetrics = new Date('2019-09-30 00:00:00');
-  const transactionForTransactionChangeMetrics: ITransaction[] = [
-    // 2017-2018: quarters
-    {
-      id: '1',
-      owner: null,
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2017-10-01 00:00:00'),
-    },
-    {
-      id: '2',
-      owner: null,
-      amount: 5_01,
-      currency: fakeBaseCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2018-01-01 00:00:00'),
-    },
-    {
-      id: '3',
-      owner: null,
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2018-04-01 00:00:00'),
-    },
-    {
-      id: '4',
-      owner: null,
-      amount: 5_01,
-      currency: fakeBaseCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2018-07-01 00:00:00'),
-    },
-    // 2018-2019: quarters
-    {
-      id: '5',
-      owner: null,
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2018-10-01 00:00:00'),
-    },
-    {
-      id: '6',
-      owner: null,
-      amount: 5_01,
-      currency: fakeBaseCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2019-01-01 00:00:00'),
-    },
-    {
-      id: '7',
-      owner: null,
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2019-04-01 00:00:00'),
-    },
-    {
-      id: '8',
-      owner: null,
-      amount: 5_01,
-      currency: fakeBaseCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2019-07-01 00:00:00'),
-    },
-    // 2017-2018: additional transaction for some month
-    {
-      id: '9',
-      owner: null,
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2018-06-15 00:00:00'),
-    },
-    // 2017-2018: additional transaction for some month
-    {
-      id: '10',
-      owner: null,
-      amount: 100_00,
-      currency: fakeCurrency,
-      transactionCategory: firstCategory,
-      datetime: new Date('2019-06-15 00:00:00'),
-    },
-  ];
-
   it('check methods existance', () => {
-    const service = new TransactionAnalyticService([], null, null);
     expect(service.getTransactionsCountBy).toBeDefined();
     expect(service.getTransactionsSumBy).toBeDefined();
     expect(service.getTransactionsCountForDateRange).toBeDefined();
@@ -139,61 +74,18 @@ describe('TransactionAnalyticService tests', () => {
   });
 
   it('check getTransactionsCountBy', async () => {
-    service.transactions = [
-      {
-        id: '1',
-        currency: fakeCurrency,
-        owner: null,
-        transactionCategory: thirdCategory,
-        datetime: now,
-        amount: 100_00,
-      },
-      {
-        id: '2',
-        currency: fakeBaseCurrency,
-        owner: null,
-        transactionCategory: secondCategory,
-        datetime: now,
-        amount: 5_01,
-      },
-    ];
+    service.transactions = generateTransactionsForCountMetrics(now);
     try {
       expect(
         await service.getTransactionsCountBy(thirdCategory, now, now),
       ).toBe(1);
     } catch (e) {
-      console.log(e);
       throw e;
     }
   });
 
   it('check getTransactionsSumBy', async () => {
-    service.transactions = [
-      {
-        id: '1',
-        currency: fakeCurrency,
-        owner: null,
-        transactionCategory: thirdCategory,
-        datetime: now,
-        amount: 100_00,
-      },
-      {
-        id: '2',
-        currency: fakeBaseCurrency,
-        owner: null,
-        transactionCategory: thirdCategory,
-        datetime: now,
-        amount: 5_01,
-      },
-      {
-        id: '3',
-        currency: fakeBaseCurrency,
-        owner: null,
-        transactionCategory: secondCategory,
-        datetime: now,
-        amount: 5_01,
-      },
-    ];
+    service.transactions = generateTransactionsForSumMetrics(now);
     try {
       expect(
         await service.getTransactionsSumBy(
@@ -204,34 +96,15 @@ describe('TransactionAnalyticService tests', () => {
         ),
       ).toBe(85_01);
     } catch (e) {
-      console.log(e);
       throw e;
     }
   });
 
   it('check getTransactionsCountForDateRange', async () => {
-    service.transactions = [
-      {
-        id: '1',
-        currency: fakeCurrency,
-        owner: null,
-        transactionCategory: thirdCategory,
-        datetime: now,
-        amount: 100,
-      },
-      {
-        id: '2',
-        currency: fakeBaseCurrency,
-        owner: null,
-        transactionCategory: secondCategory,
-        datetime: now,
-        amount: 5.01,
-      },
-    ];
+    service.transactions = generateTransactionsForCountMetrics(now);
     try {
       expect(await service.getTransactionsCountForDateRange(now, now)).toBe(2);
     } catch (e) {
-      console.log(e);
       throw e;
     }
   });
@@ -239,32 +112,7 @@ describe('TransactionAnalyticService tests', () => {
   it('check getTransactionsSumForDateRange', async () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    service.transactions = [
-      {
-        id: '1',
-        currency: fakeCurrency,
-        owner: null,
-        transactionCategory: thirdCategory,
-        datetime: now,
-        amount: 100_00,
-      },
-      {
-        id: '2',
-        currency: fakeBaseCurrency,
-        owner: null,
-        transactionCategory: thirdCategory,
-        datetime: now,
-        amount: 5_01,
-      },
-      {
-        id: '3',
-        currency: fakeBaseCurrency,
-        owner: null,
-        transactionCategory: thirdCategory,
-        datetime: tomorrow,
-        amount: 5_01,
-      },
-    ];
+    service.transactions = generateTransactionsForSumMetrics(now);
     try {
       expect(
         await service.getTransactionsSumForDateRange(
@@ -272,40 +120,14 @@ describe('TransactionAnalyticService tests', () => {
           now,
           fakeBaseCurrency,
         ),
-      ).toBe(85_01);
+      ).toBe(90_02);
     } catch (e) {
-      console.log(e);
       throw e;
     }
   });
 
   it('check getTransactionCountRatioByCategories', async () => {
-    service.transactions = [
-      {
-        id: '1',
-        currency: fakeCurrency,
-        owner: null,
-        transactionCategory: thirdCategory,
-        datetime: now,
-        amount: 100_00,
-      },
-      {
-        id: '2',
-        currency: fakeBaseCurrency,
-        owner: null,
-        transactionCategory: sixthCategory,
-        datetime: now,
-        amount: 5_01,
-      },
-      {
-        id: '3',
-        currency: fakeBaseCurrency,
-        owner: null,
-        transactionCategory: seventhCategory,
-        datetime: now,
-        amount: 5_01,
-      },
-    ];
+    service.transactions = generateTransactionsForRatioByCategories(now);
     try {
       expect(
         await service.getTransactionCountRatioByCategories(
@@ -315,38 +137,12 @@ describe('TransactionAnalyticService tests', () => {
         ),
       ).toEqual({ '6': 50, '7': 50 });
     } catch (e) {
-      console.log(e);
       throw e;
     }
   });
 
   it('check getTransactionSumRatioByCategories', async () => {
-    service.transactions = [
-      {
-        id: '1',
-        currency: fakeCurrency,
-        owner: null,
-        transactionCategory: thirdCategory,
-        datetime: now,
-        amount: 100_00,
-      },
-      {
-        id: '2',
-        currency: fakeCurrency,
-        owner: null,
-        transactionCategory: sixthCategory,
-        datetime: now,
-        amount: 100_00,
-      },
-      {
-        id: '3',
-        currency: fakeBaseCurrency,
-        owner: null,
-        transactionCategory: seventhCategory,
-        datetime: now,
-        amount: 5_01,
-      },
-    ];
+    service.transactions = generateTransactionsForRatioByCategories(now);
     try {
       expect(
         await service.getTransactionSumRatioByCategories(
@@ -357,7 +153,6 @@ describe('TransactionAnalyticService tests', () => {
         ),
       ).toEqual({ '6': 94, '7': 6 });
     } catch (e) {
-      console.log(e);
       throw e;
     }
   });
@@ -388,32 +183,7 @@ describe('TransactionAnalyticService tests', () => {
           dateEndForTransactionChangeMetrics,
           Period.MONTH,
         ),
-      ).toEqual({
-        '2017-10-30': 0,
-        '2017-11-30': 0,
-        '2017-12-30': 1,
-        '2017-9-30': 1,
-        '2018-1-30': 0,
-        '2018-10-2': 0,
-        '2018-11-2': 0,
-        '2018-12-2': 1,
-        '2018-3-2': 1,
-        '2018-4-2': 0,
-        '2018-5-2': 0,
-        '2018-6-2': 2,
-        '2018-7-2': 0,
-        '2018-8-2': 0,
-        '2018-9-2': 1,
-        '2019-1-2': 0,
-        '2019-2-2': 0,
-        '2019-3-2': 1,
-        '2019-4-2': 0,
-        '2019-5-2': 0,
-        '2019-6-2': 2,
-        '2019-7-2': 0,
-        '2019-8-2': 0,
-        '2019-9-2': 0,
-      });
+      ).toEqual(getTransactionCountChangeByMonthPeriodResult);
     } catch (e) {
       throw e;
     }
@@ -429,16 +199,7 @@ describe('TransactionAnalyticService tests', () => {
           dateEndForTransactionChangeMetrics,
           Period.QUARTER,
         ),
-      ).toEqual({
-        '2017-12-30': 1,
-        '2017-9-30': 1,
-        '2018-12-30': 1,
-        '2018-3-30': 2,
-        '2018-6-30': 1,
-        '2018-9-30': 1,
-        '2019-3-30': 2,
-        '2019-6-30': 1,
-      });
+      ).toEqual(getTransactionCountChangeByQuarterPeriodResult);
     } catch (e) {
       throw e;
     }
@@ -454,10 +215,7 @@ describe('TransactionAnalyticService tests', () => {
           dateEndForTransactionChangeMetrics,
           Period.YEAR,
         ),
-      ).toEqual({
-        '2017-9-30': 5,
-        '2018-9-30': 5,
-      });
+      ).toEqual(getTransactionCountChangeByYearPeriodResult);
     } catch (e) {
       throw e;
     }
@@ -491,32 +249,7 @@ describe('TransactionAnalyticService tests', () => {
           Period.MONTH,
           fakeBaseCurrency,
         ),
-      ).toEqual({
-        '2017-10-30': 0,
-        '2017-11-30': 0,
-        '2017-12-30': 5_01,
-        '2017-9-30': 80_00,
-        '2018-1-30': 0,
-        '2018-10-2': 0,
-        '2018-11-2': 0,
-        '2018-12-2': 5_01,
-        '2018-3-2': 80_00,
-        '2018-4-2': 0,
-        '2018-5-2': 0,
-        '2018-6-2': 85_01,
-        '2018-7-2': 0,
-        '2018-8-2': 0,
-        '2018-9-2': 80_00,
-        '2019-1-2': 0,
-        '2019-2-2': 0,
-        '2019-3-2': 80_00,
-        '2019-4-2': 0,
-        '2019-5-2': 0,
-        '2019-6-2': 85_01,
-        '2019-7-2': 0,
-        '2019-8-2': 0,
-        '2019-9-2': 0,
-      });
+      ).toEqual(getTransactionSumChangeByMonthPeriodResult);
     } catch (e) {
       throw e;
     }
@@ -533,16 +266,7 @@ describe('TransactionAnalyticService tests', () => {
           Period.QUARTER,
           fakeBaseCurrency,
         ),
-      ).toEqual({
-        '2017-12-30': 5_01,
-        '2017-9-30': 80_00,
-        '2018-12-30': 5_01,
-        '2018-3-30': 160_00,
-        '2018-6-30': 5_01,
-        '2018-9-30': 80_00,
-        '2019-3-30': 160_00,
-        '2019-6-30': 5_01,
-      });
+      ).toEqual(getTransactionSumChangeByQuarterPeriodResult);
     } catch (e) {
       throw e;
     }
@@ -559,10 +283,7 @@ describe('TransactionAnalyticService tests', () => {
           Period.YEAR,
           fakeBaseCurrency,
         ),
-      ).toEqual({
-        '2017-9-30': 250_02,
-        '2018-9-30': 250_02,
-      });
+      ).toEqual(getTransactionSumChangeByYearPeriodResult);
     } catch (e) {
       throw e;
     }

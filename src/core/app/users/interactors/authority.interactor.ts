@@ -7,17 +7,16 @@ import UserRegisterDto from '../dto/userRegister.dto';
 import UserLoginDto from '../dto/userLogin.dto';
 import IRepository from '../../../domain/repository.interface';
 import IUserCredential from '../entities/userCredential.interface';
-import EntityFactory from '../../entityFactory';
 import IAuthorityService from '../interfaces/authorityService.interface';
 import IEventDispatchService from '../../events/eventDispatchService.interface';
 import UserHasBeenCreatedEvent from '../events/userHasBeenCreated.event';
+import UserCredentialAbstractFactory from '../factories/userCredentialFactory';
 
-// TODO: handle errors
 export default class AuthorityInteractor
   implements SessionsManagementInputPort, UserCredentialsManagementInputPort {
   constructor(
     private readonly authorityService: IAuthorityService,
-    private readonly entityFactory: EntityFactory,
+    private readonly userCredentialFactory: UserCredentialAbstractFactory,
     private readonly userCredentialRepo: IRepository<IUserCredential>,
     private readonly eventDispatcher: IEventDispatchService<
       UserHasBeenCreatedEvent
@@ -31,7 +30,7 @@ export default class AuthorityInteractor
         email: payload.email,
       });
     } catch (e) {
-      const createdUser: IUserCredential = this.entityFactory.createUserCredential(
+      const createdUser: IUserCredential = this.userCredentialFactory.createUserCredential(
         {
           email: payload.email,
         },
@@ -50,7 +49,7 @@ export default class AuthorityInteractor
           );
         }
       } catch (e2) {
-        throw e2;
+        return this.outputPort.processRegistration(null, false, e2);
       }
       return this.outputPort.processRegistration(
         savedUser,
@@ -58,7 +57,11 @@ export default class AuthorityInteractor
         null,
       );
     }
-    return this.outputPort.processRegistration(null, false, null);
+    return this.outputPort.processRegistration(
+      null,
+      false,
+      new Error('Such user already exists'),
+    );
   }
 
   public async signIn(payload: UserLoginDto): Promise<any> {
@@ -74,7 +77,7 @@ export default class AuthorityInteractor
       ]);
       return this.outputPort.processLogin(loginResult, null);
     } catch (e) {
-      return this.outputPort.processLogin(null, null);
+      return this.outputPort.processLogin(null, e);
     }
   }
 
@@ -83,7 +86,7 @@ export default class AuthorityInteractor
       const result: boolean = await this.authorityService.signOut(user);
       return this.outputPort.processLogout(user, result, null);
     } catch (e) {
-      return this.outputPort.processLogout(null, false, null);
+      return this.outputPort.processLogout(null, false, e);
     }
   }
 
@@ -102,7 +105,7 @@ export default class AuthorityInteractor
       );
       return this.outputPort.processAccountInfoChanging(user, null);
     } catch (e) {
-      return this.outputPort.processAccountInfoChanging(null, null);
+      return this.outputPort.processAccountInfoChanging(null, e);
     }
   }
 
@@ -117,7 +120,7 @@ export default class AuthorityInteractor
       );
       return this.outputPort.processAccountProfileImageChanging(user, null);
     } catch (e) {
-      return this.outputPort.processAccountProfileImageChanging(null, null);
+      return this.outputPort.processAccountProfileImageChanging(null, e);
     }
   }
 
@@ -126,7 +129,7 @@ export default class AuthorityInteractor
       const result: boolean = await this.authorityService.deleteAccount(user);
       return this.outputPort.processAccountDeleting(user, result, null);
     } catch (e) {
-      return this.outputPort.processAccountDeleting(user, false, null);
+      return this.outputPort.processAccountDeleting(user, false, e);
     }
   }
 }

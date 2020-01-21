@@ -9,18 +9,18 @@ import ITransactionCategory from '../../../domain/transactions/entities/transact
 import ICurrency from '../../../domain/transactions/entities/currency.interface';
 import IUser from '../../../domain/users/entities/user.interface';
 import { Period } from '../../../domain/period/enums/period.enum';
-import EntityFactory from '../../entityFactory';
 import TransactionAnalyticService from '../../../domain/transactions/services/transactionAnalyticService';
 import TransactionOutputPort from '../ports/transactionOutput.port';
 import ISearchService from '../../search/searchService.interface';
 import TransactionCategoryService from '../../../domain/transactions/services/transactionCategoryService';
 import { TransactionsComparisonDto } from '../../../../core/domain/transactions/dto/transactionsComparison.dto';
+import TransactionAbstractFactory from '../../../domain/transactions/factories/transactionFactory';
 
 export default class TransactionInteractor
   implements TransactionAnalyticInputPort, TransactionManagementInputPort {
   constructor(
     private readonly user: IUser,
-    private readonly entityFactory: EntityFactory,
+    private readonly transactionFactory: TransactionAbstractFactory,
     private readonly transactionCategoryService: TransactionCategoryService,
     private readonly transactionCategoryRepo: IRepository<ITransactionCategory>,
     private readonly transactionRepo: IRepository<ITransaction>,
@@ -111,7 +111,7 @@ export default class TransactionInteractor
         this.transactionCategoryRepo.findById(payload.transactionCategoryId),
         this.currencyRepo.findById(payload.currencyId),
       ]);
-      const createdTransaction: ITransaction = this.entityFactory.createTransaction(
+      const createdTransaction: ITransaction = this.transactionFactory.createTransaction(
         {
           datetime: payload.datetime,
           owner: this.user,

@@ -1,42 +1,47 @@
 import 'ts-jest';
-import AuthorityInteractor from '../users/interactors/authority.interactor';
-import FakeAuthorityService from './fakeAuthorityService';
-import FakeEntityFactory from './fakeEntityFactory';
-import FakeRegisteredUserEventDispatchService from './fakeRegisteredUserEventDispatchService';
-import FakeAuthorityOutputPort from './fakeAuthorityOutputPort';
-import FakeRepo from '../../domain/test/fakeRepo';
-import { Roles } from '../users/enums/roles.enum';
-import IUserCredential from '../users/entities/userCredential.interface';
-import IRepository from '../../domain/repository.interface';
+
+import IRepository, { Criteria } from '../../domain/repository.interface';
 import IUser from '../../domain/users/entities/user.interface';
+import IUserCredential from '../users/entities/userCredential.interface';
+import { Roles } from '../users/enums/roles.enum';
+import UserCredentialAbstractFactory from '../users/factories/userCredentialFactory';
 import UserHasBeenCreatedEvent from '../users/events/userHasBeenCreated.event';
 import { EventStatus } from '../events/eventStatus.enum';
+import IEventDispatchService from '../events/eventDispatchService.interface';
+import IAuthorityService from '../users/interfaces/authorityService.interface';
+import AuthorityInteractor from '../users/interactors/authority.interactor';
+import AuthorityOutputPort from '../users/ports/authorityOutput.port';
 
-describe('Authority tests', () => {
-  const userCredentialRepo: IRepository<IUserCredential> = new FakeRepo<
-    IUserCredential
-  >([
-    {
-      id: '1',
-      email: 'existed@example.com',
-      isActive: true,
-      profileImageUrl: null,
-      roles: [Roles.USER],
-    },
-    {
-      id: '2',
-      email: 'incorrectUser@example.com',
-      isActive: true,
-      profileImageUrl: null,
-      roles: [Roles.USER],
-    },
-  ]);
-  const service = new AuthorityInteractor(
-    new FakeAuthorityService(),
-    FakeEntityFactory.getInstance(),
+import FakeAuthorityService from './mocks/fakeAuthorityService';
+import FakeUserCredentialFactory from './mocks/fakeUserCredentialFactory';
+import FakeRegisteredUserEventDispatchService from './mocks/fakeRegisteredUserEventDispatchService';
+import FakeAuthorityOutputPort from './mocks/fakeAuthorityOutputPort';
+
+import { usersRepoSet } from './fixtures/users';
+
+describe('AuthorityInteractor tests', () => {
+  UserCredentialAbstractFactory.setInstance(
+    new FakeUserCredentialFactory(usersRepoSet, {
+      getInstance: (fields: Criteria<IUserCredential>) => ({
+        id: 'fakeId',
+        email: fields.email ? fields.email : 'test@example.com',
+        isActive: fields.isActive ? fields.isActive : true,
+        profileImageUrl: fields.profileImageUrl ? fields.profileImageUrl : '',
+        roles: fields.roles ? fields.roles : [Roles.USER],
+      }),
+    }),
+  );
+  const fakeUserCredentialFactory: UserCredentialAbstractFactory = FakeUserCredentialFactory.getInstance();
+  const userCredentialRepo: IRepository<IUserCredential> = fakeUserCredentialFactory.createUserCredentialRepo();
+  const fakeAuthorityService: IAuthorityService = new FakeAuthorityService();
+  const fakeRegisteredUserEventDispatchService: IEventDispatchService<UserHasBeenCreatedEvent> = new FakeRegisteredUserEventDispatchService();
+  const fakeAuthorityOutputPort: AuthorityOutputPort = new FakeAuthorityOutputPort();
+  const service: AuthorityInteractor = new AuthorityInteractor(
+    fakeAuthorityService,
+    fakeUserCredentialFactory,
     userCredentialRepo,
-    new FakeRegisteredUserEventDispatchService(),
-    new FakeAuthorityOutputPort(),
+    fakeRegisteredUserEventDispatchService,
+    fakeAuthorityOutputPort,
   );
 
   it('check methods existance', () => {
@@ -56,7 +61,7 @@ describe('Authority tests', () => {
     try {
       await service.signUp({ email: 'existed@example.com' });
     } catch (e) {
-      expect(e).toEqual(new Error('Such user already exists'));
+      expect(e.message).toBe('Such user already exists');
     }
   });
 
@@ -64,9 +69,7 @@ describe('Authority tests', () => {
     try {
       await service.signUp({ email: 'badEmail@example.com' });
     } catch (e) {
-      expect(e).toEqual(
-        new Error('Mailing event has not been emitted correctly'),
-      );
+      expect(e.message).toBe('Mailing event has not been emitted correctly');
     }
   });
 
@@ -74,9 +77,7 @@ describe('Authority tests', () => {
     try {
       await service.signUp({ email: 'registrationDenied@example.com' });
     } catch (e) {
-      expect(e).toEqual(
-        new Error('Registration process has been interrupted!'),
-      );
+      expect(e.message).toBe('Registration process has been interrupted!');
     }
   });
 
@@ -92,7 +93,7 @@ describe('Authority tests', () => {
     try {
       await service.signUp({ email: 'dbDenied@example.com' });
     } catch (e) {
-      expect(e).toEqual(new Error('DB is not available!'));
+      expect(e.message).toBe('DB is not available!');
     }
     jest.spyOn(userCredentialRepo, 'insert').mockClear();
   });
@@ -109,7 +110,7 @@ describe('Authority tests', () => {
     try {
       await service.signIn({ email: 'incorrectUser@example.com' });
     } catch (e) {
-      expect(e).toEqual(new Error('Such user doesn`t exist'));
+      expect(e.message).toBe('This user has not been found in auth service!');
     }
   });
 
@@ -117,7 +118,7 @@ describe('Authority tests', () => {
     try {
       await service.signIn({ email: 'non-existed@example.com' });
     } catch (e) {
-      expect(e).toEqual(new Error('Such user doesn`t exist'));
+      expect(e.message).toBe('Such entity has not been found!');
     }
   });
 
@@ -132,7 +133,7 @@ describe('Authority tests', () => {
     try {
       await service.signOut({ id: 'incorrectId' });
     } catch (e) {
-      expect(e).toEqual(new Error('Such user has not been logged out'));
+      expect(e.message).toBe('Such user has not been logged out');
     }
   });
 
@@ -140,7 +141,7 @@ describe('Authority tests', () => {
     try {
       await service.signOut({ id: 'exceptionId' });
     } catch (e) {
-      expect(e).toEqual(new Error('Such user has not been logged out'));
+      expect(e.message).toBe('Logout is not available!');
     }
   });
 
@@ -154,7 +155,9 @@ describe('Authority tests', () => {
     try {
       await service.changeAccountInfo({ id: 'incorrectId' }, {});
     } catch (e) {
-      expect(e).toEqual(new Error('Such user doesn`t exists'));
+      expect(e.message).toBe(
+        'Entity with this id has not been found in the repo!',
+      );
     }
   });
 
@@ -167,7 +170,9 @@ describe('Authority tests', () => {
     try {
       await service.changeProfileImage({ id: 'incorrectId' }, '');
     } catch (e) {
-      expect(e).toEqual(new Error('Such user doesn`t exists'));
+      expect(e.message).toBe(
+        'Entity with this id has not been found in the repo!',
+      );
     }
   });
 
@@ -183,7 +188,7 @@ describe('Authority tests', () => {
     try {
       await service.deleteAccount({ id: 'incorrectId' });
     } catch (e) {
-      expect(e).toEqual(new Error('Such user has not been removed'));
+      expect(e.message).toBe('Such user has not been removed');
     }
   });
 
@@ -191,7 +196,7 @@ describe('Authority tests', () => {
     try {
       await service.deleteAccount({ id: 'exceptionId' });
     } catch (e) {
-      expect(e).toEqual(new Error('Such user has not been removed'));
+      expect(e.message).toBe('Deleting is not available!');
     }
   });
 

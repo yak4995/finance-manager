@@ -3,7 +3,9 @@
   "Version": "0.0.1",
   "author": "yak4995",
   "scripts": {
-    "start": "tsc && node dist/index.js",
+    "start": "rimraf dist && tsc && node dist/index.js",
+    "start:dev": "nodemon",
+    "start:debug": "nodemon --config nodemon-debug.json",
     "test": "jest --config jest.config.json --no-cache",
     "test:cov": "jest --config jest-coverage.config.json --no-cache",
     "test:e2e": "jest --config ./test/jest-e2e.json",
@@ -14,7 +16,9 @@
     "@types/jest": "^24.0.25",
     "@types/moment": "^2.13.0",
     "jest": "^24.9.0",
+    "nodemon": "^2.0.2",
     "prettier": "^1.19.1",
+    "rimraf": "^3.0.0",
     "ts-jest": "^24.2.0",
     "tslint": "^5.20.1",
     "typescript": "^3.7.4"

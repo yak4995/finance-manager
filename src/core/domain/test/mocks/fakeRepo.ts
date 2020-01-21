@@ -1,5 +1,8 @@
-import IRepository, { OrderCriteria, Criteria } from '../repository.interface';
-import IPersistantEntity from '../persistantEntity';
+import IRepository, {
+  OrderCriteria,
+  Criteria,
+} from '../../repository.interface';
+import IPersistantEntity from '../../persistantEntity';
 
 export default class FakeRepo<T extends IPersistantEntity>
   implements IRepository<T> {

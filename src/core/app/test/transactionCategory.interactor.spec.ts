@@ -1,8 +1,14 @@
 import 'ts-jest';
+
+import IRepository, { Criteria } from '../../domain/repository.interface';
+import ITransactionCategory from '../../domain/transactions/entities/transactionCategory.interface';
+import TransactionCategoryAbstractFactory from '../../domain/transactions/factories/transactionCategoryFactory';
 import TransactionCategoryInteractor from '../transactions/interactors/transactionCategory.interactor';
-import FakeEntityFactory from './fakeEntityFactory';
-import FakeSearchService from './FakeSearchService';
-import FakeTransactionCategoryOutputPort from './fakeTransactionCategoryOutputPort';
+
+import FakeSearchService from './mocks/FakeSearchService';
+import FakeTransactionCategoryOutputPort from './mocks/fakeTransactionCategoryOutputPort';
+import FakeTransactionCategoryFactory from './mocks/fakeTransactionCategoryFactory';
+
 import {
   firstCategory,
   secondCategory,
@@ -11,36 +17,39 @@ import {
   fifthCategory,
   sixthCategory,
   seventhCategory,
-} from './fakeCategoryRepo';
-import FakeRepo from '../../domain/test/fakeRepo';
-import ITransactionCategory from '../../domain/transactions/entities/transactionCategory.interface';
-import IRepository, { Criteria } from '../../domain/repository.interface';
+  transactionCategoriesForSearch,
+} from '../../domain/test/fixtures/transactionCategories';
 
 describe('TransactionCategoryInteractor tests', () => {
-  const fakeTransactionCategoryRepo: IRepository<ITransactionCategory> = new FakeRepo<
-    ITransactionCategory
-  >([
-    firstCategory,
-    secondCategory,
-    thirdCategory,
-    fourthCategory,
-    fifthCategory,
-    sixthCategory,
-    seventhCategory,
-  ]);
-  const service: TransactionCategoryInteractor = new TransactionCategoryInteractor(
-    FakeEntityFactory.getInstance(),
-    fakeTransactionCategoryRepo,
-    new FakeSearchService<ITransactionCategory>([
+  TransactionCategoryAbstractFactory.setInstance(
+    new FakeTransactionCategoryFactory(
+      [
+        firstCategory,
+        secondCategory,
+        thirdCategory,
+        fourthCategory,
+        fifthCategory,
+        sixthCategory,
+        seventhCategory,
+      ],
       {
-        id: 'abc',
-        isSystem: false,
-        parentCategory: null,
-        owner: { id: 'fakeId' },
-        name: 'smth',
-        isOutcome: true,
+        getInstance: (fields: Criteria<ITransactionCategory>) => ({
+          id: 'fakeId',
+          isOutcome: fields.isOutcome ? fields.isOutcome : true,
+          isSystem: fields.isSystem ? fields.isSystem : false,
+          name: fields.name ? fields.name : '',
+          owner: fields.owner ? fields.owner : null,
+          parentCategory: fields.parentCategory ? fields.parentCategory : null,
+        }),
       },
-    ]),
+    ),
+  );
+  const fakeTransactionCategoryFactory: TransactionCategoryAbstractFactory = FakeTransactionCategoryFactory.getInstance();
+  const fakeTransactionCategoryRepo: IRepository<ITransactionCategory> = fakeTransactionCategoryFactory.createTransactionCategoryRepo();
+  const service: TransactionCategoryInteractor = new TransactionCategoryInteractor(
+    fakeTransactionCategoryFactory,
+    fakeTransactionCategoryRepo,
+    new FakeSearchService<ITransactionCategory>(transactionCategoriesForSearch),
     new FakeTransactionCategoryOutputPort(),
   );
 
