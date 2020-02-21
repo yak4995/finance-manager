@@ -19,21 +19,48 @@ type UserCredential {
   profileImageUrl: String
   roles: [Role]!
   isActive: Boolean!
+  transactionCategories: [TransactionCategory!]
+  transactions: [Transaction!]
+  distributingMetricItems: [DistributingMetricItem!]
 }
 
 type Currency {
   id: ID!
   name: String!
   code: String!
+  distributingMetricItems: [DistributingMetricItem!]
+  transactions: [Transaction!]
 }
 
 type TransactionCategory {
   id: ID!
   name: String!
   parentCategory: TransactionCategory
+  owner: UserCredential
   isSystem: Boolean!
   isOutcome: Boolean!
-  childCategories: [TransactionCategory!]!
+  childCategories: [TransactionCategory!]
+  transactions: [Transaction!]
+  distributingMetricItems: [DistributingMetricItem!]
+}
+
+type Transaction {
+  id: ID!
+  datetime: String!
+  description: String
+  amount: Int!
+  owner: UserCredential!
+  transactionCategory: TransactionCategory!
+  currency: Currency!
+}
+
+type DistributingMetricItem {
+  id: ID!
+  user: UserCredential!
+  period: Period!
+  metric: AnalyticMetric!
+  category: TransactionCategory
+  baseCurrency: Currency
 }
 
 input UpdateRole {

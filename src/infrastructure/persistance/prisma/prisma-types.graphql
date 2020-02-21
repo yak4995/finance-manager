@@ -1,5 +1,5 @@
 # source: https://eu1.prisma.sh/yuriy-kryvokhyzha/finance-manager/dev
-# timestamp: Fri Feb 21 2020 13:34:26 GMT+0200 (GMT+02:00)
+# timestamp: Fri Feb 21 2020 15:33:32 GMT+0200 (GMT+02:00)
 
 type AggregateAnalyticMetric {
   count: Int!
@@ -9,11 +9,19 @@ type AggregateCurrency {
   count: Int!
 }
 
+type AggregateDistributingMetricItem {
+  count: Int!
+}
+
 type AggregatePeriod {
   count: Int!
 }
 
 type AggregateRole {
+  count: Int!
+}
+
+type AggregateTransaction {
   count: Int!
 }
 
@@ -43,6 +51,11 @@ type AnalyticMetricConnection {
 input AnalyticMetricCreateInput {
   id: ID
   name: String!
+}
+
+input AnalyticMetricCreateOneInput {
+  create: AnalyticMetricCreateInput
+  connect: AnalyticMetricWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -103,12 +116,28 @@ input AnalyticMetricSubscriptionWhereInput {
   node: AnalyticMetricWhereInput
 }
 
+input AnalyticMetricUpdateDataInput {
+  name: String
+}
+
 input AnalyticMetricUpdateInput {
   name: String
 }
 
 input AnalyticMetricUpdateManyMutationInput {
   name: String
+}
+
+input AnalyticMetricUpdateOneRequiredInput {
+  create: AnalyticMetricCreateInput
+  connect: AnalyticMetricWhereUniqueInput
+  update: AnalyticMetricUpdateDataInput
+  upsert: AnalyticMetricUpsertNestedInput
+}
+
+input AnalyticMetricUpsertNestedInput {
+  update: AnalyticMetricUpdateDataInput!
+  create: AnalyticMetricCreateInput!
 }
 
 input AnalyticMetricWhereInput {
@@ -216,6 +245,8 @@ type Currency implements Node {
   id: ID!
   name: String!
   code: String!
+  distributingMetricItems(where: DistributingMetricItemWhereInput, orderBy: DistributingMetricItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [DistributingMetricItem!]
+  transactions(where: TransactionWhereInput, orderBy: TransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Transaction!]
 }
 
 """A connection to a list of items."""
@@ -232,6 +263,32 @@ input CurrencyCreateInput {
   id: ID
   name: String!
   code: String!
+  distributingMetricItems: DistributingMetricItemCreateManyWithoutBaseCurrencyInput
+  transactions: TransactionCreateManyWithoutCurrencyInput
+}
+
+input CurrencyCreateOneWithoutDistributingMetricItemsInput {
+  create: CurrencyCreateWithoutDistributingMetricItemsInput
+  connect: CurrencyWhereUniqueInput
+}
+
+input CurrencyCreateOneWithoutTransactionsInput {
+  create: CurrencyCreateWithoutTransactionsInput
+  connect: CurrencyWhereUniqueInput
+}
+
+input CurrencyCreateWithoutDistributingMetricItemsInput {
+  id: ID
+  name: String!
+  code: String!
+  transactions: TransactionCreateManyWithoutCurrencyInput
+}
+
+input CurrencyCreateWithoutTransactionsInput {
+  id: ID
+  name: String!
+  code: String!
+  distributingMetricItems: DistributingMetricItemCreateManyWithoutBaseCurrencyInput
 }
 
 """An edge in a connection."""
@@ -298,11 +355,51 @@ input CurrencySubscriptionWhereInput {
 input CurrencyUpdateInput {
   name: String
   code: String
+  distributingMetricItems: DistributingMetricItemUpdateManyWithoutBaseCurrencyInput
+  transactions: TransactionUpdateManyWithoutCurrencyInput
 }
 
 input CurrencyUpdateManyMutationInput {
   name: String
   code: String
+}
+
+input CurrencyUpdateOneRequiredWithoutTransactionsInput {
+  create: CurrencyCreateWithoutTransactionsInput
+  connect: CurrencyWhereUniqueInput
+  update: CurrencyUpdateWithoutTransactionsDataInput
+  upsert: CurrencyUpsertWithoutTransactionsInput
+}
+
+input CurrencyUpdateOneWithoutDistributingMetricItemsInput {
+  create: CurrencyCreateWithoutDistributingMetricItemsInput
+  connect: CurrencyWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: CurrencyUpdateWithoutDistributingMetricItemsDataInput
+  upsert: CurrencyUpsertWithoutDistributingMetricItemsInput
+}
+
+input CurrencyUpdateWithoutDistributingMetricItemsDataInput {
+  name: String
+  code: String
+  transactions: TransactionUpdateManyWithoutCurrencyInput
+}
+
+input CurrencyUpdateWithoutTransactionsDataInput {
+  name: String
+  code: String
+  distributingMetricItems: DistributingMetricItemUpdateManyWithoutBaseCurrencyInput
+}
+
+input CurrencyUpsertWithoutDistributingMetricItemsInput {
+  update: CurrencyUpdateWithoutDistributingMetricItemsDataInput!
+  create: CurrencyCreateWithoutDistributingMetricItemsInput!
+}
+
+input CurrencyUpsertWithoutTransactionsInput {
+  update: CurrencyUpdateWithoutTransactionsDataInput!
+  create: CurrencyCreateWithoutTransactionsInput!
 }
 
 input CurrencyWhereInput {
@@ -434,9 +531,345 @@ input CurrencyWhereInput {
 
   """All values not ending with the given string."""
   code_not_ends_with: String
+  distributingMetricItems_every: DistributingMetricItemWhereInput
+  distributingMetricItems_some: DistributingMetricItemWhereInput
+  distributingMetricItems_none: DistributingMetricItemWhereInput
+  transactions_every: TransactionWhereInput
+  transactions_some: TransactionWhereInput
+  transactions_none: TransactionWhereInput
 }
 
 input CurrencyWhereUniqueInput {
+  id: ID
+}
+
+scalar DateTime
+
+type DistributingMetricItem implements Node {
+  id: ID!
+  user: UserCredential!
+  period: Period!
+  metric: AnalyticMetric!
+  category: TransactionCategory
+  baseCurrency: Currency
+}
+
+"""A connection to a list of items."""
+type DistributingMetricItemConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [DistributingMetricItemEdge]!
+  aggregate: AggregateDistributingMetricItem!
+}
+
+input DistributingMetricItemCreateInput {
+  id: ID
+  user: UserCredentialCreateOneWithoutDistributingMetricItemsInput!
+  period: PeriodCreateOneInput!
+  metric: AnalyticMetricCreateOneInput!
+  category: TransactionCategoryCreateOneWithoutDistributingMetricItemsInput
+  baseCurrency: CurrencyCreateOneWithoutDistributingMetricItemsInput
+}
+
+input DistributingMetricItemCreateManyWithoutBaseCurrencyInput {
+  create: [DistributingMetricItemCreateWithoutBaseCurrencyInput!]
+  connect: [DistributingMetricItemWhereUniqueInput!]
+}
+
+input DistributingMetricItemCreateManyWithoutCategoryInput {
+  create: [DistributingMetricItemCreateWithoutCategoryInput!]
+  connect: [DistributingMetricItemWhereUniqueInput!]
+}
+
+input DistributingMetricItemCreateManyWithoutUserInput {
+  create: [DistributingMetricItemCreateWithoutUserInput!]
+  connect: [DistributingMetricItemWhereUniqueInput!]
+}
+
+input DistributingMetricItemCreateWithoutBaseCurrencyInput {
+  id: ID
+  user: UserCredentialCreateOneWithoutDistributingMetricItemsInput!
+  period: PeriodCreateOneInput!
+  metric: AnalyticMetricCreateOneInput!
+  category: TransactionCategoryCreateOneWithoutDistributingMetricItemsInput
+}
+
+input DistributingMetricItemCreateWithoutCategoryInput {
+  id: ID
+  user: UserCredentialCreateOneWithoutDistributingMetricItemsInput!
+  period: PeriodCreateOneInput!
+  metric: AnalyticMetricCreateOneInput!
+  baseCurrency: CurrencyCreateOneWithoutDistributingMetricItemsInput
+}
+
+input DistributingMetricItemCreateWithoutUserInput {
+  id: ID
+  period: PeriodCreateOneInput!
+  metric: AnalyticMetricCreateOneInput!
+  category: TransactionCategoryCreateOneWithoutDistributingMetricItemsInput
+  baseCurrency: CurrencyCreateOneWithoutDistributingMetricItemsInput
+}
+
+"""An edge in a connection."""
+type DistributingMetricItemEdge {
+  """The item at the end of the edge."""
+  node: DistributingMetricItem!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum DistributingMetricItemOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type DistributingMetricItemPreviousValues {
+  id: ID!
+}
+
+input DistributingMetricItemScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [DistributingMetricItemScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [DistributingMetricItemScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [DistributingMetricItemScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+}
+
+type DistributingMetricItemSubscriptionPayload {
+  mutation: MutationType!
+  node: DistributingMetricItem
+  updatedFields: [String!]
+  previousValues: DistributingMetricItemPreviousValues
+}
+
+input DistributingMetricItemSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [DistributingMetricItemSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [DistributingMetricItemSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [DistributingMetricItemSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: DistributingMetricItemWhereInput
+}
+
+input DistributingMetricItemUpdateInput {
+  user: UserCredentialUpdateOneRequiredWithoutDistributingMetricItemsInput
+  period: PeriodUpdateOneRequiredInput
+  metric: AnalyticMetricUpdateOneRequiredInput
+  category: TransactionCategoryUpdateOneWithoutDistributingMetricItemsInput
+  baseCurrency: CurrencyUpdateOneWithoutDistributingMetricItemsInput
+}
+
+input DistributingMetricItemUpdateManyWithoutBaseCurrencyInput {
+  create: [DistributingMetricItemCreateWithoutBaseCurrencyInput!]
+  connect: [DistributingMetricItemWhereUniqueInput!]
+  set: [DistributingMetricItemWhereUniqueInput!]
+  disconnect: [DistributingMetricItemWhereUniqueInput!]
+  delete: [DistributingMetricItemWhereUniqueInput!]
+  update: [DistributingMetricItemUpdateWithWhereUniqueWithoutBaseCurrencyInput!]
+  deleteMany: [DistributingMetricItemScalarWhereInput!]
+  upsert: [DistributingMetricItemUpsertWithWhereUniqueWithoutBaseCurrencyInput!]
+}
+
+input DistributingMetricItemUpdateManyWithoutCategoryInput {
+  create: [DistributingMetricItemCreateWithoutCategoryInput!]
+  connect: [DistributingMetricItemWhereUniqueInput!]
+  set: [DistributingMetricItemWhereUniqueInput!]
+  disconnect: [DistributingMetricItemWhereUniqueInput!]
+  delete: [DistributingMetricItemWhereUniqueInput!]
+  update: [DistributingMetricItemUpdateWithWhereUniqueWithoutCategoryInput!]
+  deleteMany: [DistributingMetricItemScalarWhereInput!]
+  upsert: [DistributingMetricItemUpsertWithWhereUniqueWithoutCategoryInput!]
+}
+
+input DistributingMetricItemUpdateManyWithoutUserInput {
+  create: [DistributingMetricItemCreateWithoutUserInput!]
+  connect: [DistributingMetricItemWhereUniqueInput!]
+  set: [DistributingMetricItemWhereUniqueInput!]
+  disconnect: [DistributingMetricItemWhereUniqueInput!]
+  delete: [DistributingMetricItemWhereUniqueInput!]
+  update: [DistributingMetricItemUpdateWithWhereUniqueWithoutUserInput!]
+  deleteMany: [DistributingMetricItemScalarWhereInput!]
+  upsert: [DistributingMetricItemUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input DistributingMetricItemUpdateWithoutBaseCurrencyDataInput {
+  user: UserCredentialUpdateOneRequiredWithoutDistributingMetricItemsInput
+  period: PeriodUpdateOneRequiredInput
+  metric: AnalyticMetricUpdateOneRequiredInput
+  category: TransactionCategoryUpdateOneWithoutDistributingMetricItemsInput
+}
+
+input DistributingMetricItemUpdateWithoutCategoryDataInput {
+  user: UserCredentialUpdateOneRequiredWithoutDistributingMetricItemsInput
+  period: PeriodUpdateOneRequiredInput
+  metric: AnalyticMetricUpdateOneRequiredInput
+  baseCurrency: CurrencyUpdateOneWithoutDistributingMetricItemsInput
+}
+
+input DistributingMetricItemUpdateWithoutUserDataInput {
+  period: PeriodUpdateOneRequiredInput
+  metric: AnalyticMetricUpdateOneRequiredInput
+  category: TransactionCategoryUpdateOneWithoutDistributingMetricItemsInput
+  baseCurrency: CurrencyUpdateOneWithoutDistributingMetricItemsInput
+}
+
+input DistributingMetricItemUpdateWithWhereUniqueWithoutBaseCurrencyInput {
+  where: DistributingMetricItemWhereUniqueInput!
+  data: DistributingMetricItemUpdateWithoutBaseCurrencyDataInput!
+}
+
+input DistributingMetricItemUpdateWithWhereUniqueWithoutCategoryInput {
+  where: DistributingMetricItemWhereUniqueInput!
+  data: DistributingMetricItemUpdateWithoutCategoryDataInput!
+}
+
+input DistributingMetricItemUpdateWithWhereUniqueWithoutUserInput {
+  where: DistributingMetricItemWhereUniqueInput!
+  data: DistributingMetricItemUpdateWithoutUserDataInput!
+}
+
+input DistributingMetricItemUpsertWithWhereUniqueWithoutBaseCurrencyInput {
+  where: DistributingMetricItemWhereUniqueInput!
+  update: DistributingMetricItemUpdateWithoutBaseCurrencyDataInput!
+  create: DistributingMetricItemCreateWithoutBaseCurrencyInput!
+}
+
+input DistributingMetricItemUpsertWithWhereUniqueWithoutCategoryInput {
+  where: DistributingMetricItemWhereUniqueInput!
+  update: DistributingMetricItemUpdateWithoutCategoryDataInput!
+  create: DistributingMetricItemCreateWithoutCategoryInput!
+}
+
+input DistributingMetricItemUpsertWithWhereUniqueWithoutUserInput {
+  where: DistributingMetricItemWhereUniqueInput!
+  update: DistributingMetricItemUpdateWithoutUserDataInput!
+  create: DistributingMetricItemCreateWithoutUserInput!
+}
+
+input DistributingMetricItemWhereInput {
+  """Logical AND on all given filters."""
+  AND: [DistributingMetricItemWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [DistributingMetricItemWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [DistributingMetricItemWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  user: UserCredentialWhereInput
+  period: PeriodWhereInput
+  metric: AnalyticMetricWhereInput
+  category: TransactionCategoryWhereInput
+  baseCurrency: CurrencyWhereInput
+}
+
+input DistributingMetricItemWhereUniqueInput {
   id: ID
 }
 
@@ -447,42 +880,53 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createAnalyticMetric(data: AnalyticMetricCreateInput!): AnalyticMetric!
-  createPeriod(data: PeriodCreateInput!): Period!
   createUserCredential(data: UserCredentialCreateInput!): UserCredential!
   createCurrency(data: CurrencyCreateInput!): Currency!
   createTransactionCategory(data: TransactionCategoryCreateInput!): TransactionCategory!
+  createTransaction(data: TransactionCreateInput!): Transaction!
+  createDistributingMetricItem(data: DistributingMetricItemCreateInput!): DistributingMetricItem!
   createRole(data: RoleCreateInput!): Role!
-  updateAnalyticMetric(data: AnalyticMetricUpdateInput!, where: AnalyticMetricWhereUniqueInput!): AnalyticMetric
-  updatePeriod(data: PeriodUpdateInput!, where: PeriodWhereUniqueInput!): Period
+  createAnalyticMetric(data: AnalyticMetricCreateInput!): AnalyticMetric!
+  createPeriod(data: PeriodCreateInput!): Period!
   updateUserCredential(data: UserCredentialUpdateInput!, where: UserCredentialWhereUniqueInput!): UserCredential
   updateCurrency(data: CurrencyUpdateInput!, where: CurrencyWhereUniqueInput!): Currency
   updateTransactionCategory(data: TransactionCategoryUpdateInput!, where: TransactionCategoryWhereUniqueInput!): TransactionCategory
+  updateTransaction(data: TransactionUpdateInput!, where: TransactionWhereUniqueInput!): Transaction
+  updateDistributingMetricItem(data: DistributingMetricItemUpdateInput!, where: DistributingMetricItemWhereUniqueInput!): DistributingMetricItem
   updateRole(data: RoleUpdateInput!, where: RoleWhereUniqueInput!): Role
-  deleteAnalyticMetric(where: AnalyticMetricWhereUniqueInput!): AnalyticMetric
-  deletePeriod(where: PeriodWhereUniqueInput!): Period
+  updateAnalyticMetric(data: AnalyticMetricUpdateInput!, where: AnalyticMetricWhereUniqueInput!): AnalyticMetric
+  updatePeriod(data: PeriodUpdateInput!, where: PeriodWhereUniqueInput!): Period
   deleteUserCredential(where: UserCredentialWhereUniqueInput!): UserCredential
   deleteCurrency(where: CurrencyWhereUniqueInput!): Currency
   deleteTransactionCategory(where: TransactionCategoryWhereUniqueInput!): TransactionCategory
+  deleteTransaction(where: TransactionWhereUniqueInput!): Transaction
+  deleteDistributingMetricItem(where: DistributingMetricItemWhereUniqueInput!): DistributingMetricItem
   deleteRole(where: RoleWhereUniqueInput!): Role
-  upsertAnalyticMetric(where: AnalyticMetricWhereUniqueInput!, create: AnalyticMetricCreateInput!, update: AnalyticMetricUpdateInput!): AnalyticMetric!
-  upsertPeriod(where: PeriodWhereUniqueInput!, create: PeriodCreateInput!, update: PeriodUpdateInput!): Period!
+  deleteAnalyticMetric(where: AnalyticMetricWhereUniqueInput!): AnalyticMetric
+  deletePeriod(where: PeriodWhereUniqueInput!): Period
   upsertUserCredential(where: UserCredentialWhereUniqueInput!, create: UserCredentialCreateInput!, update: UserCredentialUpdateInput!): UserCredential!
   upsertCurrency(where: CurrencyWhereUniqueInput!, create: CurrencyCreateInput!, update: CurrencyUpdateInput!): Currency!
   upsertTransactionCategory(where: TransactionCategoryWhereUniqueInput!, create: TransactionCategoryCreateInput!, update: TransactionCategoryUpdateInput!): TransactionCategory!
+  upsertTransaction(where: TransactionWhereUniqueInput!, create: TransactionCreateInput!, update: TransactionUpdateInput!): Transaction!
+  upsertDistributingMetricItem(where: DistributingMetricItemWhereUniqueInput!, create: DistributingMetricItemCreateInput!, update: DistributingMetricItemUpdateInput!): DistributingMetricItem!
   upsertRole(where: RoleWhereUniqueInput!, create: RoleCreateInput!, update: RoleUpdateInput!): Role!
-  updateManyAnalyticMetrics(data: AnalyticMetricUpdateManyMutationInput!, where: AnalyticMetricWhereInput): BatchPayload!
-  updateManyPeriods(data: PeriodUpdateManyMutationInput!, where: PeriodWhereInput): BatchPayload!
+  upsertAnalyticMetric(where: AnalyticMetricWhereUniqueInput!, create: AnalyticMetricCreateInput!, update: AnalyticMetricUpdateInput!): AnalyticMetric!
+  upsertPeriod(where: PeriodWhereUniqueInput!, create: PeriodCreateInput!, update: PeriodUpdateInput!): Period!
   updateManyUserCredentials(data: UserCredentialUpdateManyMutationInput!, where: UserCredentialWhereInput): BatchPayload!
   updateManyCurrencies(data: CurrencyUpdateManyMutationInput!, where: CurrencyWhereInput): BatchPayload!
   updateManyTransactionCategories(data: TransactionCategoryUpdateManyMutationInput!, where: TransactionCategoryWhereInput): BatchPayload!
+  updateManyTransactions(data: TransactionUpdateManyMutationInput!, where: TransactionWhereInput): BatchPayload!
   updateManyRoles(data: RoleUpdateManyMutationInput!, where: RoleWhereInput): BatchPayload!
-  deleteManyAnalyticMetrics(where: AnalyticMetricWhereInput): BatchPayload!
-  deleteManyPeriods(where: PeriodWhereInput): BatchPayload!
+  updateManyAnalyticMetrics(data: AnalyticMetricUpdateManyMutationInput!, where: AnalyticMetricWhereInput): BatchPayload!
+  updateManyPeriods(data: PeriodUpdateManyMutationInput!, where: PeriodWhereInput): BatchPayload!
   deleteManyUserCredentials(where: UserCredentialWhereInput): BatchPayload!
   deleteManyCurrencies(where: CurrencyWhereInput): BatchPayload!
   deleteManyTransactionCategories(where: TransactionCategoryWhereInput): BatchPayload!
+  deleteManyTransactions(where: TransactionWhereInput): BatchPayload!
+  deleteManyDistributingMetricItems(where: DistributingMetricItemWhereInput): BatchPayload!
   deleteManyRoles(where: RoleWhereInput): BatchPayload!
+  deleteManyAnalyticMetrics(where: AnalyticMetricWhereInput): BatchPayload!
+  deleteManyPeriods(where: PeriodWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -530,6 +974,11 @@ type PeriodConnection {
 input PeriodCreateInput {
   id: ID
   name: String!
+}
+
+input PeriodCreateOneInput {
+  create: PeriodCreateInput
+  connect: PeriodWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -590,12 +1039,28 @@ input PeriodSubscriptionWhereInput {
   node: PeriodWhereInput
 }
 
+input PeriodUpdateDataInput {
+  name: String
+}
+
 input PeriodUpdateInput {
   name: String
 }
 
 input PeriodUpdateManyMutationInput {
   name: String
+}
+
+input PeriodUpdateOneRequiredInput {
+  create: PeriodCreateInput
+  connect: PeriodWhereUniqueInput
+  update: PeriodUpdateDataInput
+  upsert: PeriodUpsertNestedInput
+}
+
+input PeriodUpsertNestedInput {
+  update: PeriodUpdateDataInput!
+  create: PeriodCreateInput!
 }
 
 input PeriodWhereInput {
@@ -695,24 +1160,30 @@ input PeriodWhereUniqueInput {
 }
 
 type Query {
-  analyticMetrics(where: AnalyticMetricWhereInput, orderBy: AnalyticMetricOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AnalyticMetric]!
-  periods(where: PeriodWhereInput, orderBy: PeriodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Period]!
   userCredentials(where: UserCredentialWhereInput, orderBy: UserCredentialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserCredential]!
   currencies(where: CurrencyWhereInput, orderBy: CurrencyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Currency]!
   transactionCategories(where: TransactionCategoryWhereInput, orderBy: TransactionCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TransactionCategory]!
+  transactions(where: TransactionWhereInput, orderBy: TransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Transaction]!
+  distributingMetricItems(where: DistributingMetricItemWhereInput, orderBy: DistributingMetricItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [DistributingMetricItem]!
   roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role]!
-  analyticMetric(where: AnalyticMetricWhereUniqueInput!): AnalyticMetric
-  period(where: PeriodWhereUniqueInput!): Period
+  analyticMetrics(where: AnalyticMetricWhereInput, orderBy: AnalyticMetricOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AnalyticMetric]!
+  periods(where: PeriodWhereInput, orderBy: PeriodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Period]!
   userCredential(where: UserCredentialWhereUniqueInput!): UserCredential
   currency(where: CurrencyWhereUniqueInput!): Currency
   transactionCategory(where: TransactionCategoryWhereUniqueInput!): TransactionCategory
+  transaction(where: TransactionWhereUniqueInput!): Transaction
+  distributingMetricItem(where: DistributingMetricItemWhereUniqueInput!): DistributingMetricItem
   role(where: RoleWhereUniqueInput!): Role
-  analyticMetricsConnection(where: AnalyticMetricWhereInput, orderBy: AnalyticMetricOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AnalyticMetricConnection!
-  periodsConnection(where: PeriodWhereInput, orderBy: PeriodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PeriodConnection!
+  analyticMetric(where: AnalyticMetricWhereUniqueInput!): AnalyticMetric
+  period(where: PeriodWhereUniqueInput!): Period
   userCredentialsConnection(where: UserCredentialWhereInput, orderBy: UserCredentialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserCredentialConnection!
   currenciesConnection(where: CurrencyWhereInput, orderBy: CurrencyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CurrencyConnection!
   transactionCategoriesConnection(where: TransactionCategoryWhereInput, orderBy: TransactionCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TransactionCategoryConnection!
+  transactionsConnection(where: TransactionWhereInput, orderBy: TransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TransactionConnection!
+  distributingMetricItemsConnection(where: DistributingMetricItemWhereInput, orderBy: DistributingMetricItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DistributingMetricItemConnection!
   rolesConnection(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RoleConnection!
+  analyticMetricsConnection(where: AnalyticMetricWhereInput, orderBy: AnalyticMetricOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AnalyticMetricConnection!
+  periodsConnection(where: PeriodWhereInput, orderBy: PeriodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PeriodConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -1036,21 +1507,36 @@ input RoleWhereUniqueInput {
 }
 
 type Subscription {
-  analyticMetric(where: AnalyticMetricSubscriptionWhereInput): AnalyticMetricSubscriptionPayload
-  period(where: PeriodSubscriptionWhereInput): PeriodSubscriptionPayload
   userCredential(where: UserCredentialSubscriptionWhereInput): UserCredentialSubscriptionPayload
   currency(where: CurrencySubscriptionWhereInput): CurrencySubscriptionPayload
   transactionCategory(where: TransactionCategorySubscriptionWhereInput): TransactionCategorySubscriptionPayload
+  transaction(where: TransactionSubscriptionWhereInput): TransactionSubscriptionPayload
+  distributingMetricItem(where: DistributingMetricItemSubscriptionWhereInput): DistributingMetricItemSubscriptionPayload
   role(where: RoleSubscriptionWhereInput): RoleSubscriptionPayload
+  analyticMetric(where: AnalyticMetricSubscriptionWhereInput): AnalyticMetricSubscriptionPayload
+  period(where: PeriodSubscriptionWhereInput): PeriodSubscriptionPayload
+}
+
+type Transaction implements Node {
+  id: ID!
+  datetime: DateTime!
+  description: String
+  amount: Int!
+  owner: UserCredential!
+  transactionCategory: TransactionCategory!
+  currency: Currency!
 }
 
 type TransactionCategory implements Node {
   id: ID!
   name: String!
   parentCategory: TransactionCategory
+  owner: UserCredential
   isSystem: Boolean!
   isOutcome: Boolean!
   childCategories(where: TransactionCategoryWhereInput, orderBy: TransactionCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TransactionCategory!]
+  transactions(where: TransactionWhereInput, orderBy: TransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Transaction!]
+  distributingMetricItems(where: DistributingMetricItemWhereInput, orderBy: DistributingMetricItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [DistributingMetricItem!]
 }
 
 """A connection to a list of items."""
@@ -1069,7 +1555,15 @@ input TransactionCategoryCreateInput {
   isSystem: Boolean
   isOutcome: Boolean
   parentCategory: TransactionCategoryCreateOneWithoutChildCategoriesInput
+  owner: UserCredentialCreateOneWithoutTransactionCategoriesInput
   childCategories: TransactionCategoryCreateManyWithoutParentCategoryInput
+  transactions: TransactionCreateManyWithoutTransactionCategoryInput
+  distributingMetricItems: DistributingMetricItemCreateManyWithoutCategoryInput
+}
+
+input TransactionCategoryCreateManyWithoutOwnerInput {
+  create: [TransactionCategoryCreateWithoutOwnerInput!]
+  connect: [TransactionCategoryWhereUniqueInput!]
 }
 
 input TransactionCategoryCreateManyWithoutParentCategoryInput {
@@ -1082,12 +1576,47 @@ input TransactionCategoryCreateOneWithoutChildCategoriesInput {
   connect: TransactionCategoryWhereUniqueInput
 }
 
+input TransactionCategoryCreateOneWithoutDistributingMetricItemsInput {
+  create: TransactionCategoryCreateWithoutDistributingMetricItemsInput
+  connect: TransactionCategoryWhereUniqueInput
+}
+
+input TransactionCategoryCreateOneWithoutTransactionsInput {
+  create: TransactionCategoryCreateWithoutTransactionsInput
+  connect: TransactionCategoryWhereUniqueInput
+}
+
 input TransactionCategoryCreateWithoutChildCategoriesInput {
   id: ID
   name: String!
   isSystem: Boolean
   isOutcome: Boolean
   parentCategory: TransactionCategoryCreateOneWithoutChildCategoriesInput
+  owner: UserCredentialCreateOneWithoutTransactionCategoriesInput
+  transactions: TransactionCreateManyWithoutTransactionCategoryInput
+  distributingMetricItems: DistributingMetricItemCreateManyWithoutCategoryInput
+}
+
+input TransactionCategoryCreateWithoutDistributingMetricItemsInput {
+  id: ID
+  name: String!
+  isSystem: Boolean
+  isOutcome: Boolean
+  parentCategory: TransactionCategoryCreateOneWithoutChildCategoriesInput
+  owner: UserCredentialCreateOneWithoutTransactionCategoriesInput
+  childCategories: TransactionCategoryCreateManyWithoutParentCategoryInput
+  transactions: TransactionCreateManyWithoutTransactionCategoryInput
+}
+
+input TransactionCategoryCreateWithoutOwnerInput {
+  id: ID
+  name: String!
+  isSystem: Boolean
+  isOutcome: Boolean
+  parentCategory: TransactionCategoryCreateOneWithoutChildCategoriesInput
+  childCategories: TransactionCategoryCreateManyWithoutParentCategoryInput
+  transactions: TransactionCreateManyWithoutTransactionCategoryInput
+  distributingMetricItems: DistributingMetricItemCreateManyWithoutCategoryInput
 }
 
 input TransactionCategoryCreateWithoutParentCategoryInput {
@@ -1095,7 +1624,21 @@ input TransactionCategoryCreateWithoutParentCategoryInput {
   name: String!
   isSystem: Boolean
   isOutcome: Boolean
+  owner: UserCredentialCreateOneWithoutTransactionCategoriesInput
   childCategories: TransactionCategoryCreateManyWithoutParentCategoryInput
+  transactions: TransactionCreateManyWithoutTransactionCategoryInput
+  distributingMetricItems: DistributingMetricItemCreateManyWithoutCategoryInput
+}
+
+input TransactionCategoryCreateWithoutTransactionsInput {
+  id: ID
+  name: String!
+  isSystem: Boolean
+  isOutcome: Boolean
+  parentCategory: TransactionCategoryCreateOneWithoutChildCategoriesInput
+  owner: UserCredentialCreateOneWithoutTransactionCategoriesInput
+  childCategories: TransactionCategoryCreateManyWithoutParentCategoryInput
+  distributingMetricItems: DistributingMetricItemCreateManyWithoutCategoryInput
 }
 
 """An edge in a connection."""
@@ -1266,7 +1809,10 @@ input TransactionCategoryUpdateInput {
   isSystem: Boolean
   isOutcome: Boolean
   parentCategory: TransactionCategoryUpdateOneWithoutChildCategoriesInput
+  owner: UserCredentialUpdateOneWithoutTransactionCategoriesInput
   childCategories: TransactionCategoryUpdateManyWithoutParentCategoryInput
+  transactions: TransactionUpdateManyWithoutTransactionCategoryInput
+  distributingMetricItems: DistributingMetricItemUpdateManyWithoutCategoryInput
 }
 
 input TransactionCategoryUpdateManyDataInput {
@@ -1279,6 +1825,18 @@ input TransactionCategoryUpdateManyMutationInput {
   name: String
   isSystem: Boolean
   isOutcome: Boolean
+}
+
+input TransactionCategoryUpdateManyWithoutOwnerInput {
+  create: [TransactionCategoryCreateWithoutOwnerInput!]
+  connect: [TransactionCategoryWhereUniqueInput!]
+  set: [TransactionCategoryWhereUniqueInput!]
+  disconnect: [TransactionCategoryWhereUniqueInput!]
+  delete: [TransactionCategoryWhereUniqueInput!]
+  update: [TransactionCategoryUpdateWithWhereUniqueWithoutOwnerInput!]
+  updateMany: [TransactionCategoryUpdateManyWithWhereNestedInput!]
+  deleteMany: [TransactionCategoryScalarWhereInput!]
+  upsert: [TransactionCategoryUpsertWithWhereUniqueWithoutOwnerInput!]
 }
 
 input TransactionCategoryUpdateManyWithoutParentCategoryInput {
@@ -1298,6 +1856,13 @@ input TransactionCategoryUpdateManyWithWhereNestedInput {
   data: TransactionCategoryUpdateManyDataInput!
 }
 
+input TransactionCategoryUpdateOneRequiredWithoutTransactionsInput {
+  create: TransactionCategoryCreateWithoutTransactionsInput
+  connect: TransactionCategoryWhereUniqueInput
+  update: TransactionCategoryUpdateWithoutTransactionsDataInput
+  upsert: TransactionCategoryUpsertWithoutTransactionsInput
+}
+
 input TransactionCategoryUpdateOneWithoutChildCategoriesInput {
   create: TransactionCategoryCreateWithoutChildCategoriesInput
   connect: TransactionCategoryWhereUniqueInput
@@ -1307,18 +1872,68 @@ input TransactionCategoryUpdateOneWithoutChildCategoriesInput {
   upsert: TransactionCategoryUpsertWithoutChildCategoriesInput
 }
 
+input TransactionCategoryUpdateOneWithoutDistributingMetricItemsInput {
+  create: TransactionCategoryCreateWithoutDistributingMetricItemsInput
+  connect: TransactionCategoryWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: TransactionCategoryUpdateWithoutDistributingMetricItemsDataInput
+  upsert: TransactionCategoryUpsertWithoutDistributingMetricItemsInput
+}
+
 input TransactionCategoryUpdateWithoutChildCategoriesDataInput {
   name: String
   isSystem: Boolean
   isOutcome: Boolean
   parentCategory: TransactionCategoryUpdateOneWithoutChildCategoriesInput
+  owner: UserCredentialUpdateOneWithoutTransactionCategoriesInput
+  transactions: TransactionUpdateManyWithoutTransactionCategoryInput
+  distributingMetricItems: DistributingMetricItemUpdateManyWithoutCategoryInput
+}
+
+input TransactionCategoryUpdateWithoutDistributingMetricItemsDataInput {
+  name: String
+  isSystem: Boolean
+  isOutcome: Boolean
+  parentCategory: TransactionCategoryUpdateOneWithoutChildCategoriesInput
+  owner: UserCredentialUpdateOneWithoutTransactionCategoriesInput
+  childCategories: TransactionCategoryUpdateManyWithoutParentCategoryInput
+  transactions: TransactionUpdateManyWithoutTransactionCategoryInput
+}
+
+input TransactionCategoryUpdateWithoutOwnerDataInput {
+  name: String
+  isSystem: Boolean
+  isOutcome: Boolean
+  parentCategory: TransactionCategoryUpdateOneWithoutChildCategoriesInput
+  childCategories: TransactionCategoryUpdateManyWithoutParentCategoryInput
+  transactions: TransactionUpdateManyWithoutTransactionCategoryInput
+  distributingMetricItems: DistributingMetricItemUpdateManyWithoutCategoryInput
 }
 
 input TransactionCategoryUpdateWithoutParentCategoryDataInput {
   name: String
   isSystem: Boolean
   isOutcome: Boolean
+  owner: UserCredentialUpdateOneWithoutTransactionCategoriesInput
   childCategories: TransactionCategoryUpdateManyWithoutParentCategoryInput
+  transactions: TransactionUpdateManyWithoutTransactionCategoryInput
+  distributingMetricItems: DistributingMetricItemUpdateManyWithoutCategoryInput
+}
+
+input TransactionCategoryUpdateWithoutTransactionsDataInput {
+  name: String
+  isSystem: Boolean
+  isOutcome: Boolean
+  parentCategory: TransactionCategoryUpdateOneWithoutChildCategoriesInput
+  owner: UserCredentialUpdateOneWithoutTransactionCategoriesInput
+  childCategories: TransactionCategoryUpdateManyWithoutParentCategoryInput
+  distributingMetricItems: DistributingMetricItemUpdateManyWithoutCategoryInput
+}
+
+input TransactionCategoryUpdateWithWhereUniqueWithoutOwnerInput {
+  where: TransactionCategoryWhereUniqueInput!
+  data: TransactionCategoryUpdateWithoutOwnerDataInput!
 }
 
 input TransactionCategoryUpdateWithWhereUniqueWithoutParentCategoryInput {
@@ -1329,6 +1944,22 @@ input TransactionCategoryUpdateWithWhereUniqueWithoutParentCategoryInput {
 input TransactionCategoryUpsertWithoutChildCategoriesInput {
   update: TransactionCategoryUpdateWithoutChildCategoriesDataInput!
   create: TransactionCategoryCreateWithoutChildCategoriesInput!
+}
+
+input TransactionCategoryUpsertWithoutDistributingMetricItemsInput {
+  update: TransactionCategoryUpdateWithoutDistributingMetricItemsDataInput!
+  create: TransactionCategoryCreateWithoutDistributingMetricItemsInput!
+}
+
+input TransactionCategoryUpsertWithoutTransactionsInput {
+  update: TransactionCategoryUpdateWithoutTransactionsDataInput!
+  create: TransactionCategoryCreateWithoutTransactionsInput!
+}
+
+input TransactionCategoryUpsertWithWhereUniqueWithoutOwnerInput {
+  where: TransactionCategoryWhereUniqueInput!
+  update: TransactionCategoryUpdateWithoutOwnerDataInput!
+  create: TransactionCategoryCreateWithoutOwnerInput!
 }
 
 input TransactionCategoryUpsertWithWhereUniqueWithoutParentCategoryInput {
@@ -1435,12 +2066,541 @@ input TransactionCategoryWhereInput {
   """All values that are not equal to given value."""
   isOutcome_not: Boolean
   parentCategory: TransactionCategoryWhereInput
+  owner: UserCredentialWhereInput
   childCategories_every: TransactionCategoryWhereInput
   childCategories_some: TransactionCategoryWhereInput
   childCategories_none: TransactionCategoryWhereInput
+  transactions_every: TransactionWhereInput
+  transactions_some: TransactionWhereInput
+  transactions_none: TransactionWhereInput
+  distributingMetricItems_every: DistributingMetricItemWhereInput
+  distributingMetricItems_some: DistributingMetricItemWhereInput
+  distributingMetricItems_none: DistributingMetricItemWhereInput
 }
 
 input TransactionCategoryWhereUniqueInput {
+  id: ID
+}
+
+"""A connection to a list of items."""
+type TransactionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [TransactionEdge]!
+  aggregate: AggregateTransaction!
+}
+
+input TransactionCreateInput {
+  id: ID
+  datetime: DateTime!
+  description: String
+  amount: Int!
+  owner: UserCredentialCreateOneWithoutTransactionsInput!
+  transactionCategory: TransactionCategoryCreateOneWithoutTransactionsInput!
+  currency: CurrencyCreateOneWithoutTransactionsInput!
+}
+
+input TransactionCreateManyWithoutCurrencyInput {
+  create: [TransactionCreateWithoutCurrencyInput!]
+  connect: [TransactionWhereUniqueInput!]
+}
+
+input TransactionCreateManyWithoutOwnerInput {
+  create: [TransactionCreateWithoutOwnerInput!]
+  connect: [TransactionWhereUniqueInput!]
+}
+
+input TransactionCreateManyWithoutTransactionCategoryInput {
+  create: [TransactionCreateWithoutTransactionCategoryInput!]
+  connect: [TransactionWhereUniqueInput!]
+}
+
+input TransactionCreateWithoutCurrencyInput {
+  id: ID
+  datetime: DateTime!
+  description: String
+  amount: Int!
+  owner: UserCredentialCreateOneWithoutTransactionsInput!
+  transactionCategory: TransactionCategoryCreateOneWithoutTransactionsInput!
+}
+
+input TransactionCreateWithoutOwnerInput {
+  id: ID
+  datetime: DateTime!
+  description: String
+  amount: Int!
+  transactionCategory: TransactionCategoryCreateOneWithoutTransactionsInput!
+  currency: CurrencyCreateOneWithoutTransactionsInput!
+}
+
+input TransactionCreateWithoutTransactionCategoryInput {
+  id: ID
+  datetime: DateTime!
+  description: String
+  amount: Int!
+  owner: UserCredentialCreateOneWithoutTransactionsInput!
+  currency: CurrencyCreateOneWithoutTransactionsInput!
+}
+
+"""An edge in a connection."""
+type TransactionEdge {
+  """The item at the end of the edge."""
+  node: Transaction!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum TransactionOrderByInput {
+  id_ASC
+  id_DESC
+  datetime_ASC
+  datetime_DESC
+  description_ASC
+  description_DESC
+  amount_ASC
+  amount_DESC
+}
+
+type TransactionPreviousValues {
+  id: ID!
+  datetime: DateTime!
+  description: String
+  amount: Int!
+}
+
+input TransactionScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TransactionScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TransactionScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TransactionScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  datetime: DateTime
+
+  """All values that are not equal to given value."""
+  datetime_not: DateTime
+
+  """All values that are contained in given list."""
+  datetime_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  datetime_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  datetime_lt: DateTime
+
+  """All values less than or equal the given value."""
+  datetime_lte: DateTime
+
+  """All values greater than the given value."""
+  datetime_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  datetime_gte: DateTime
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  amount: Int
+
+  """All values that are not equal to given value."""
+  amount_not: Int
+
+  """All values that are contained in given list."""
+  amount_in: [Int!]
+
+  """All values that are not contained in given list."""
+  amount_not_in: [Int!]
+
+  """All values less than the given value."""
+  amount_lt: Int
+
+  """All values less than or equal the given value."""
+  amount_lte: Int
+
+  """All values greater than the given value."""
+  amount_gt: Int
+
+  """All values greater than or equal the given value."""
+  amount_gte: Int
+}
+
+type TransactionSubscriptionPayload {
+  mutation: MutationType!
+  node: Transaction
+  updatedFields: [String!]
+  previousValues: TransactionPreviousValues
+}
+
+input TransactionSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TransactionSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TransactionSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TransactionSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: TransactionWhereInput
+}
+
+input TransactionUpdateInput {
+  datetime: DateTime
+  description: String
+  amount: Int
+  owner: UserCredentialUpdateOneRequiredWithoutTransactionsInput
+  transactionCategory: TransactionCategoryUpdateOneRequiredWithoutTransactionsInput
+  currency: CurrencyUpdateOneRequiredWithoutTransactionsInput
+}
+
+input TransactionUpdateManyDataInput {
+  datetime: DateTime
+  description: String
+  amount: Int
+}
+
+input TransactionUpdateManyMutationInput {
+  datetime: DateTime
+  description: String
+  amount: Int
+}
+
+input TransactionUpdateManyWithoutCurrencyInput {
+  create: [TransactionCreateWithoutCurrencyInput!]
+  connect: [TransactionWhereUniqueInput!]
+  set: [TransactionWhereUniqueInput!]
+  disconnect: [TransactionWhereUniqueInput!]
+  delete: [TransactionWhereUniqueInput!]
+  update: [TransactionUpdateWithWhereUniqueWithoutCurrencyInput!]
+  updateMany: [TransactionUpdateManyWithWhereNestedInput!]
+  deleteMany: [TransactionScalarWhereInput!]
+  upsert: [TransactionUpsertWithWhereUniqueWithoutCurrencyInput!]
+}
+
+input TransactionUpdateManyWithoutOwnerInput {
+  create: [TransactionCreateWithoutOwnerInput!]
+  connect: [TransactionWhereUniqueInput!]
+  set: [TransactionWhereUniqueInput!]
+  disconnect: [TransactionWhereUniqueInput!]
+  delete: [TransactionWhereUniqueInput!]
+  update: [TransactionUpdateWithWhereUniqueWithoutOwnerInput!]
+  updateMany: [TransactionUpdateManyWithWhereNestedInput!]
+  deleteMany: [TransactionScalarWhereInput!]
+  upsert: [TransactionUpsertWithWhereUniqueWithoutOwnerInput!]
+}
+
+input TransactionUpdateManyWithoutTransactionCategoryInput {
+  create: [TransactionCreateWithoutTransactionCategoryInput!]
+  connect: [TransactionWhereUniqueInput!]
+  set: [TransactionWhereUniqueInput!]
+  disconnect: [TransactionWhereUniqueInput!]
+  delete: [TransactionWhereUniqueInput!]
+  update: [TransactionUpdateWithWhereUniqueWithoutTransactionCategoryInput!]
+  updateMany: [TransactionUpdateManyWithWhereNestedInput!]
+  deleteMany: [TransactionScalarWhereInput!]
+  upsert: [TransactionUpsertWithWhereUniqueWithoutTransactionCategoryInput!]
+}
+
+input TransactionUpdateManyWithWhereNestedInput {
+  where: TransactionScalarWhereInput!
+  data: TransactionUpdateManyDataInput!
+}
+
+input TransactionUpdateWithoutCurrencyDataInput {
+  datetime: DateTime
+  description: String
+  amount: Int
+  owner: UserCredentialUpdateOneRequiredWithoutTransactionsInput
+  transactionCategory: TransactionCategoryUpdateOneRequiredWithoutTransactionsInput
+}
+
+input TransactionUpdateWithoutOwnerDataInput {
+  datetime: DateTime
+  description: String
+  amount: Int
+  transactionCategory: TransactionCategoryUpdateOneRequiredWithoutTransactionsInput
+  currency: CurrencyUpdateOneRequiredWithoutTransactionsInput
+}
+
+input TransactionUpdateWithoutTransactionCategoryDataInput {
+  datetime: DateTime
+  description: String
+  amount: Int
+  owner: UserCredentialUpdateOneRequiredWithoutTransactionsInput
+  currency: CurrencyUpdateOneRequiredWithoutTransactionsInput
+}
+
+input TransactionUpdateWithWhereUniqueWithoutCurrencyInput {
+  where: TransactionWhereUniqueInput!
+  data: TransactionUpdateWithoutCurrencyDataInput!
+}
+
+input TransactionUpdateWithWhereUniqueWithoutOwnerInput {
+  where: TransactionWhereUniqueInput!
+  data: TransactionUpdateWithoutOwnerDataInput!
+}
+
+input TransactionUpdateWithWhereUniqueWithoutTransactionCategoryInput {
+  where: TransactionWhereUniqueInput!
+  data: TransactionUpdateWithoutTransactionCategoryDataInput!
+}
+
+input TransactionUpsertWithWhereUniqueWithoutCurrencyInput {
+  where: TransactionWhereUniqueInput!
+  update: TransactionUpdateWithoutCurrencyDataInput!
+  create: TransactionCreateWithoutCurrencyInput!
+}
+
+input TransactionUpsertWithWhereUniqueWithoutOwnerInput {
+  where: TransactionWhereUniqueInput!
+  update: TransactionUpdateWithoutOwnerDataInput!
+  create: TransactionCreateWithoutOwnerInput!
+}
+
+input TransactionUpsertWithWhereUniqueWithoutTransactionCategoryInput {
+  where: TransactionWhereUniqueInput!
+  update: TransactionUpdateWithoutTransactionCategoryDataInput!
+  create: TransactionCreateWithoutTransactionCategoryInput!
+}
+
+input TransactionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TransactionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TransactionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TransactionWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  datetime: DateTime
+
+  """All values that are not equal to given value."""
+  datetime_not: DateTime
+
+  """All values that are contained in given list."""
+  datetime_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  datetime_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  datetime_lt: DateTime
+
+  """All values less than or equal the given value."""
+  datetime_lte: DateTime
+
+  """All values greater than the given value."""
+  datetime_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  datetime_gte: DateTime
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  amount: Int
+
+  """All values that are not equal to given value."""
+  amount_not: Int
+
+  """All values that are contained in given list."""
+  amount_in: [Int!]
+
+  """All values that are not contained in given list."""
+  amount_not_in: [Int!]
+
+  """All values less than the given value."""
+  amount_lt: Int
+
+  """All values less than or equal the given value."""
+  amount_lte: Int
+
+  """All values greater than the given value."""
+  amount_gt: Int
+
+  """All values greater than or equal the given value."""
+  amount_gte: Int
+  owner: UserCredentialWhereInput
+  transactionCategory: TransactionCategoryWhereInput
+  currency: CurrencyWhereInput
+}
+
+input TransactionWhereUniqueInput {
   id: ID
 }
 
@@ -1450,6 +2610,9 @@ type UserCredential implements Node {
   profileImageUrl: String
   roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role!]
   isActive: Boolean!
+  transactionCategories(where: TransactionCategoryWhereInput, orderBy: TransactionCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TransactionCategory!]
+  transactions(where: TransactionWhereInput, orderBy: TransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Transaction!]
+  distributingMetricItems(where: DistributingMetricItemWhereInput, orderBy: DistributingMetricItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [DistributingMetricItem!]
 }
 
 """A connection to a list of items."""
@@ -1468,6 +2631,54 @@ input UserCredentialCreateInput {
   profileImageUrl: String
   isActive: Boolean
   roles: RoleCreateManyInput
+  transactionCategories: TransactionCategoryCreateManyWithoutOwnerInput
+  transactions: TransactionCreateManyWithoutOwnerInput
+  distributingMetricItems: DistributingMetricItemCreateManyWithoutUserInput
+}
+
+input UserCredentialCreateOneWithoutDistributingMetricItemsInput {
+  create: UserCredentialCreateWithoutDistributingMetricItemsInput
+  connect: UserCredentialWhereUniqueInput
+}
+
+input UserCredentialCreateOneWithoutTransactionCategoriesInput {
+  create: UserCredentialCreateWithoutTransactionCategoriesInput
+  connect: UserCredentialWhereUniqueInput
+}
+
+input UserCredentialCreateOneWithoutTransactionsInput {
+  create: UserCredentialCreateWithoutTransactionsInput
+  connect: UserCredentialWhereUniqueInput
+}
+
+input UserCredentialCreateWithoutDistributingMetricItemsInput {
+  id: ID
+  email: String!
+  profileImageUrl: String
+  isActive: Boolean
+  roles: RoleCreateManyInput
+  transactionCategories: TransactionCategoryCreateManyWithoutOwnerInput
+  transactions: TransactionCreateManyWithoutOwnerInput
+}
+
+input UserCredentialCreateWithoutTransactionCategoriesInput {
+  id: ID
+  email: String!
+  profileImageUrl: String
+  isActive: Boolean
+  roles: RoleCreateManyInput
+  transactions: TransactionCreateManyWithoutOwnerInput
+  distributingMetricItems: DistributingMetricItemCreateManyWithoutUserInput
+}
+
+input UserCredentialCreateWithoutTransactionsInput {
+  id: ID
+  email: String!
+  profileImageUrl: String
+  isActive: Boolean
+  roles: RoleCreateManyInput
+  transactionCategories: TransactionCategoryCreateManyWithoutOwnerInput
+  distributingMetricItems: DistributingMetricItemCreateManyWithoutUserInput
 }
 
 """An edge in a connection."""
@@ -1539,12 +2750,80 @@ input UserCredentialUpdateInput {
   profileImageUrl: String
   isActive: Boolean
   roles: RoleUpdateManyInput
+  transactionCategories: TransactionCategoryUpdateManyWithoutOwnerInput
+  transactions: TransactionUpdateManyWithoutOwnerInput
+  distributingMetricItems: DistributingMetricItemUpdateManyWithoutUserInput
 }
 
 input UserCredentialUpdateManyMutationInput {
   email: String
   profileImageUrl: String
   isActive: Boolean
+}
+
+input UserCredentialUpdateOneRequiredWithoutDistributingMetricItemsInput {
+  create: UserCredentialCreateWithoutDistributingMetricItemsInput
+  connect: UserCredentialWhereUniqueInput
+  update: UserCredentialUpdateWithoutDistributingMetricItemsDataInput
+  upsert: UserCredentialUpsertWithoutDistributingMetricItemsInput
+}
+
+input UserCredentialUpdateOneRequiredWithoutTransactionsInput {
+  create: UserCredentialCreateWithoutTransactionsInput
+  connect: UserCredentialWhereUniqueInput
+  update: UserCredentialUpdateWithoutTransactionsDataInput
+  upsert: UserCredentialUpsertWithoutTransactionsInput
+}
+
+input UserCredentialUpdateOneWithoutTransactionCategoriesInput {
+  create: UserCredentialCreateWithoutTransactionCategoriesInput
+  connect: UserCredentialWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: UserCredentialUpdateWithoutTransactionCategoriesDataInput
+  upsert: UserCredentialUpsertWithoutTransactionCategoriesInput
+}
+
+input UserCredentialUpdateWithoutDistributingMetricItemsDataInput {
+  email: String
+  profileImageUrl: String
+  isActive: Boolean
+  roles: RoleUpdateManyInput
+  transactionCategories: TransactionCategoryUpdateManyWithoutOwnerInput
+  transactions: TransactionUpdateManyWithoutOwnerInput
+}
+
+input UserCredentialUpdateWithoutTransactionCategoriesDataInput {
+  email: String
+  profileImageUrl: String
+  isActive: Boolean
+  roles: RoleUpdateManyInput
+  transactions: TransactionUpdateManyWithoutOwnerInput
+  distributingMetricItems: DistributingMetricItemUpdateManyWithoutUserInput
+}
+
+input UserCredentialUpdateWithoutTransactionsDataInput {
+  email: String
+  profileImageUrl: String
+  isActive: Boolean
+  roles: RoleUpdateManyInput
+  transactionCategories: TransactionCategoryUpdateManyWithoutOwnerInput
+  distributingMetricItems: DistributingMetricItemUpdateManyWithoutUserInput
+}
+
+input UserCredentialUpsertWithoutDistributingMetricItemsInput {
+  update: UserCredentialUpdateWithoutDistributingMetricItemsDataInput!
+  create: UserCredentialCreateWithoutDistributingMetricItemsInput!
+}
+
+input UserCredentialUpsertWithoutTransactionCategoriesInput {
+  update: UserCredentialUpdateWithoutTransactionCategoriesDataInput!
+  create: UserCredentialCreateWithoutTransactionCategoriesInput!
+}
+
+input UserCredentialUpsertWithoutTransactionsInput {
+  update: UserCredentialUpdateWithoutTransactionsDataInput!
+  create: UserCredentialCreateWithoutTransactionsInput!
 }
 
 input UserCredentialWhereInput {
@@ -1683,6 +2962,15 @@ input UserCredentialWhereInput {
   roles_every: RoleWhereInput
   roles_some: RoleWhereInput
   roles_none: RoleWhereInput
+  transactionCategories_every: TransactionCategoryWhereInput
+  transactionCategories_some: TransactionCategoryWhereInput
+  transactionCategories_none: TransactionCategoryWhereInput
+  transactions_every: TransactionWhereInput
+  transactions_some: TransactionWhereInput
+  transactions_none: TransactionWhereInput
+  distributingMetricItems_every: DistributingMetricItemWhereInput
+  distributingMetricItems_some: DistributingMetricItemWhereInput
+  distributingMetricItems_none: DistributingMetricItemWhereInput
 }
 
 input UserCredentialWhereUniqueInput {
