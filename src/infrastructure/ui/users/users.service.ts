@@ -4,6 +4,6 @@ import { Injectable } from '@nestjs/common';
 export class UsersService {
   constructor() {}
   async findOne(username: string): Promise<any> {
-    return null;
+    return { userId: '1', username, password: '123' };
   }
 }

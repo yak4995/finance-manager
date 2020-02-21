@@ -1,0 +1,11 @@
+projects:
+    database:
+      schemaPath: src/infrastructure/persistance/prisma/prisma-types.graphql
+      extensions:
+        endpoints:
+          default: <paste your link here>
+        codegen:
+          - generator: prisma-binding
+            language: typescript
+            output:
+              binding: src/infrastructure/persistance/prisma/prisma.binding.ts

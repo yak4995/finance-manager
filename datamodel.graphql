@@ -1,0 +1,64 @@
+type Role {
+  id: ID! @id
+  name: String! @unique
+}
+
+type AnalyticMetric {
+  id: ID! @id
+  name: String! @unique
+}
+
+type Period {
+  id: ID! @id
+  name: String! @unique
+}
+
+type UserCredential {
+  id: ID! @id
+  email: String! @unique
+  profileImageUrl: String
+  roles: [Role]!
+  isActive: Boolean! @default(value: false)
+  #transactionCategories: [TransactionCategory!] @relation(name: "TransactionCategoryOwner", onDelete: CASCADE)
+  #transactions: [Transaction!] @relation(name: "TransactionOwner", onDelete: CASCADE)
+  #distributingMetricItems: [DistributingMetricItem!] @relation(name: "DistributingMetricItemUser", onDelete: CASCADE)
+}
+
+type Currency {
+  id: ID! @id
+  name: String!
+  code: String!
+  #distributingMetricItems: [DistributingMetricItem!] @relation(name: "DistributingMetricItemBCurrency", onDelete: CASCADE)
+  #transactions: [Transaction!] @relation(name: "TransactionCurrency", onDelete: CASCADE)
+}
+
+type TransactionCategory {
+  id: ID! @id
+  name: String!
+  parentCategory: TransactionCategory @relation(name: "ParentTransactionCategory", onDelete: SET_NULL)
+  #owner: UserCredential @relation(name: "TransactionCategoryOwner", onDelete: SET_NULL)
+  isSystem: Boolean! @default(value: false)
+  isOutcome: Boolean! @default(value: true)
+  childCategories: [TransactionCategory!]! @relation(name: "ParentTransactionCategory", onDelete: CASCADE)
+  #transactions: [Transaction!] @relation(name: "TransactionCategoryOfTransaction", onDelete: CASCADE)
+  #distributingMetricItems: [DistributingMetricItem!] @relation(name: "DistributingMetricItemTCategory", onDelete: CASCADE)
+}
+
+#type Transaction {
+#  id: ID! @id
+#  datetime: DateTime!
+#  description: String
+#  amount: Int!
+#  owner: UserCredential! @relation(name: "TransactionOwner", onDelete: SET_NULL)
+#  transactionCategory: TransactionCategory! @relation(name: "TransactionCategoryOfTransaction", onDelete: SET_NULL)
+#  currency: Currency! @relation(name: "TransactionCurrency", onDelete: SET_NULL)
+#}
+#
+#type DistributingMetricItem {
+#  id: ID! @id
+#  user: UserCredential! @relation(name: "DistributingMetricItemUser", onDelete: SET_NULL)
+#  period: Period! @relation(onDelete: SET_NULL)
+#  metric: AnalyticMetric! @relation(onDelete: SET_NULL)
+#  category: TransactionCategory @relation(name: "DistributingMetricItemTCategory", onDelete: SET_NULL)
+#  baseCurrency: Currency @relation(name: "DistributingMetricItemBCurrency", onDelete: SET_NULL)
+#}

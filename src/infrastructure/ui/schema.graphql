@@ -1,0 +1,64 @@
+type Role {
+  id: ID!
+  name: String!
+}
+
+type AnalyticMetric {
+  id: ID!
+  name: String!
+}
+
+type Period {
+  id: ID!
+  name: String!
+}
+
+type UserCredential {
+  id: ID!
+  email: String!
+  profileImageUrl: String
+  roles: [Role]!
+  isActive: Boolean!
+}
+
+type Currency {
+  id: ID!
+  name: String!
+  code: String!
+}
+
+type TransactionCategory {
+  id: ID!
+  name: String!
+  parentCategory: TransactionCategory
+  isSystem: Boolean!
+  isOutcome: Boolean!
+  childCategories: [TransactionCategory!]!
+}
+
+input UpdateRole {
+  id: String!
+}
+
+input UpdateRolesInput {
+  connect: [UpdateRole!]
+  set: [UpdateRole!]
+  disconnect: [UpdateRole!]
+}
+
+input UpdateUserCredentialInput {
+  id: String!
+  email: String
+  profileImageUrl: String
+  isActive: Boolean
+  roles: UpdateRolesInput
+}
+
+type Query {
+  userCredentials: [UserCredential!]!
+  userCredential(id: String!): UserCredential
+}
+
+type Mutation {
+  updateUserCredential(data: UpdateUserCredentialInput!): UserCredential
+}

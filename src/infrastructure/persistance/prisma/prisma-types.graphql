@@ -1,0 +1,1691 @@
+# source: https://eu1.prisma.sh/yuriy-kryvokhyzha/finance-manager/dev
+# timestamp: Fri Feb 21 2020 13:34:26 GMT+0200 (GMT+02:00)
+
+type AggregateAnalyticMetric {
+  count: Int!
+}
+
+type AggregateCurrency {
+  count: Int!
+}
+
+type AggregatePeriod {
+  count: Int!
+}
+
+type AggregateRole {
+  count: Int!
+}
+
+type AggregateTransactionCategory {
+  count: Int!
+}
+
+type AggregateUserCredential {
+  count: Int!
+}
+
+type AnalyticMetric implements Node {
+  id: ID!
+  name: String!
+}
+
+"""A connection to a list of items."""
+type AnalyticMetricConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AnalyticMetricEdge]!
+  aggregate: AggregateAnalyticMetric!
+}
+
+input AnalyticMetricCreateInput {
+  id: ID
+  name: String!
+}
+
+"""An edge in a connection."""
+type AnalyticMetricEdge {
+  """The item at the end of the edge."""
+  node: AnalyticMetric!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum AnalyticMetricOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+}
+
+type AnalyticMetricPreviousValues {
+  id: ID!
+  name: String!
+}
+
+type AnalyticMetricSubscriptionPayload {
+  mutation: MutationType!
+  node: AnalyticMetric
+  updatedFields: [String!]
+  previousValues: AnalyticMetricPreviousValues
+}
+
+input AnalyticMetricSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AnalyticMetricSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AnalyticMetricSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AnalyticMetricSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: AnalyticMetricWhereInput
+}
+
+input AnalyticMetricUpdateInput {
+  name: String
+}
+
+input AnalyticMetricUpdateManyMutationInput {
+  name: String
+}
+
+input AnalyticMetricWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AnalyticMetricWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AnalyticMetricWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AnalyticMetricWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+input AnalyticMetricWhereUniqueInput {
+  id: ID
+  name: String
+}
+
+type BatchPayload {
+  """The number of nodes that have been affected by the Batch operation."""
+  count: Long!
+}
+
+type Currency implements Node {
+  id: ID!
+  name: String!
+  code: String!
+}
+
+"""A connection to a list of items."""
+type CurrencyConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CurrencyEdge]!
+  aggregate: AggregateCurrency!
+}
+
+input CurrencyCreateInput {
+  id: ID
+  name: String!
+  code: String!
+}
+
+"""An edge in a connection."""
+type CurrencyEdge {
+  """The item at the end of the edge."""
+  node: Currency!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CurrencyOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  code_ASC
+  code_DESC
+}
+
+type CurrencyPreviousValues {
+  id: ID!
+  name: String!
+  code: String!
+}
+
+type CurrencySubscriptionPayload {
+  mutation: MutationType!
+  node: Currency
+  updatedFields: [String!]
+  previousValues: CurrencyPreviousValues
+}
+
+input CurrencySubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CurrencySubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CurrencySubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CurrencySubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CurrencyWhereInput
+}
+
+input CurrencyUpdateInput {
+  name: String
+  code: String
+}
+
+input CurrencyUpdateManyMutationInput {
+  name: String
+  code: String
+}
+
+input CurrencyWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CurrencyWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CurrencyWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CurrencyWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  code: String
+
+  """All values that are not equal to given value."""
+  code_not: String
+
+  """All values that are contained in given list."""
+  code_in: [String!]
+
+  """All values that are not contained in given list."""
+  code_not_in: [String!]
+
+  """All values less than the given value."""
+  code_lt: String
+
+  """All values less than or equal the given value."""
+  code_lte: String
+
+  """All values greater than the given value."""
+  code_gt: String
+
+  """All values greater than or equal the given value."""
+  code_gte: String
+
+  """All values containing the given string."""
+  code_contains: String
+
+  """All values not containing the given string."""
+  code_not_contains: String
+
+  """All values starting with the given string."""
+  code_starts_with: String
+
+  """All values not starting with the given string."""
+  code_not_starts_with: String
+
+  """All values ending with the given string."""
+  code_ends_with: String
+
+  """All values not ending with the given string."""
+  code_not_ends_with: String
+}
+
+input CurrencyWhereUniqueInput {
+  id: ID
+}
+
+"""
+The `Long` scalar type represents non-fractional signed whole numeric values.
+Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long
+
+type Mutation {
+  createAnalyticMetric(data: AnalyticMetricCreateInput!): AnalyticMetric!
+  createPeriod(data: PeriodCreateInput!): Period!
+  createUserCredential(data: UserCredentialCreateInput!): UserCredential!
+  createCurrency(data: CurrencyCreateInput!): Currency!
+  createTransactionCategory(data: TransactionCategoryCreateInput!): TransactionCategory!
+  createRole(data: RoleCreateInput!): Role!
+  updateAnalyticMetric(data: AnalyticMetricUpdateInput!, where: AnalyticMetricWhereUniqueInput!): AnalyticMetric
+  updatePeriod(data: PeriodUpdateInput!, where: PeriodWhereUniqueInput!): Period
+  updateUserCredential(data: UserCredentialUpdateInput!, where: UserCredentialWhereUniqueInput!): UserCredential
+  updateCurrency(data: CurrencyUpdateInput!, where: CurrencyWhereUniqueInput!): Currency
+  updateTransactionCategory(data: TransactionCategoryUpdateInput!, where: TransactionCategoryWhereUniqueInput!): TransactionCategory
+  updateRole(data: RoleUpdateInput!, where: RoleWhereUniqueInput!): Role
+  deleteAnalyticMetric(where: AnalyticMetricWhereUniqueInput!): AnalyticMetric
+  deletePeriod(where: PeriodWhereUniqueInput!): Period
+  deleteUserCredential(where: UserCredentialWhereUniqueInput!): UserCredential
+  deleteCurrency(where: CurrencyWhereUniqueInput!): Currency
+  deleteTransactionCategory(where: TransactionCategoryWhereUniqueInput!): TransactionCategory
+  deleteRole(where: RoleWhereUniqueInput!): Role
+  upsertAnalyticMetric(where: AnalyticMetricWhereUniqueInput!, create: AnalyticMetricCreateInput!, update: AnalyticMetricUpdateInput!): AnalyticMetric!
+  upsertPeriod(where: PeriodWhereUniqueInput!, create: PeriodCreateInput!, update: PeriodUpdateInput!): Period!
+  upsertUserCredential(where: UserCredentialWhereUniqueInput!, create: UserCredentialCreateInput!, update: UserCredentialUpdateInput!): UserCredential!
+  upsertCurrency(where: CurrencyWhereUniqueInput!, create: CurrencyCreateInput!, update: CurrencyUpdateInput!): Currency!
+  upsertTransactionCategory(where: TransactionCategoryWhereUniqueInput!, create: TransactionCategoryCreateInput!, update: TransactionCategoryUpdateInput!): TransactionCategory!
+  upsertRole(where: RoleWhereUniqueInput!, create: RoleCreateInput!, update: RoleUpdateInput!): Role!
+  updateManyAnalyticMetrics(data: AnalyticMetricUpdateManyMutationInput!, where: AnalyticMetricWhereInput): BatchPayload!
+  updateManyPeriods(data: PeriodUpdateManyMutationInput!, where: PeriodWhereInput): BatchPayload!
+  updateManyUserCredentials(data: UserCredentialUpdateManyMutationInput!, where: UserCredentialWhereInput): BatchPayload!
+  updateManyCurrencies(data: CurrencyUpdateManyMutationInput!, where: CurrencyWhereInput): BatchPayload!
+  updateManyTransactionCategories(data: TransactionCategoryUpdateManyMutationInput!, where: TransactionCategoryWhereInput): BatchPayload!
+  updateManyRoles(data: RoleUpdateManyMutationInput!, where: RoleWhereInput): BatchPayload!
+  deleteManyAnalyticMetrics(where: AnalyticMetricWhereInput): BatchPayload!
+  deleteManyPeriods(where: PeriodWhereInput): BatchPayload!
+  deleteManyUserCredentials(where: UserCredentialWhereInput): BatchPayload!
+  deleteManyCurrencies(where: CurrencyWhereInput): BatchPayload!
+  deleteManyTransactionCategories(where: TransactionCategoryWhereInput): BatchPayload!
+  deleteManyRoles(where: RoleWhereInput): BatchPayload!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type Period implements Node {
+  id: ID!
+  name: String!
+}
+
+"""A connection to a list of items."""
+type PeriodConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PeriodEdge]!
+  aggregate: AggregatePeriod!
+}
+
+input PeriodCreateInput {
+  id: ID
+  name: String!
+}
+
+"""An edge in a connection."""
+type PeriodEdge {
+  """The item at the end of the edge."""
+  node: Period!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum PeriodOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+}
+
+type PeriodPreviousValues {
+  id: ID!
+  name: String!
+}
+
+type PeriodSubscriptionPayload {
+  mutation: MutationType!
+  node: Period
+  updatedFields: [String!]
+  previousValues: PeriodPreviousValues
+}
+
+input PeriodSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PeriodSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PeriodSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PeriodSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PeriodWhereInput
+}
+
+input PeriodUpdateInput {
+  name: String
+}
+
+input PeriodUpdateManyMutationInput {
+  name: String
+}
+
+input PeriodWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PeriodWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PeriodWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PeriodWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+input PeriodWhereUniqueInput {
+  id: ID
+  name: String
+}
+
+type Query {
+  analyticMetrics(where: AnalyticMetricWhereInput, orderBy: AnalyticMetricOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AnalyticMetric]!
+  periods(where: PeriodWhereInput, orderBy: PeriodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Period]!
+  userCredentials(where: UserCredentialWhereInput, orderBy: UserCredentialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserCredential]!
+  currencies(where: CurrencyWhereInput, orderBy: CurrencyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Currency]!
+  transactionCategories(where: TransactionCategoryWhereInput, orderBy: TransactionCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TransactionCategory]!
+  roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role]!
+  analyticMetric(where: AnalyticMetricWhereUniqueInput!): AnalyticMetric
+  period(where: PeriodWhereUniqueInput!): Period
+  userCredential(where: UserCredentialWhereUniqueInput!): UserCredential
+  currency(where: CurrencyWhereUniqueInput!): Currency
+  transactionCategory(where: TransactionCategoryWhereUniqueInput!): TransactionCategory
+  role(where: RoleWhereUniqueInput!): Role
+  analyticMetricsConnection(where: AnalyticMetricWhereInput, orderBy: AnalyticMetricOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AnalyticMetricConnection!
+  periodsConnection(where: PeriodWhereInput, orderBy: PeriodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PeriodConnection!
+  userCredentialsConnection(where: UserCredentialWhereInput, orderBy: UserCredentialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserCredentialConnection!
+  currenciesConnection(where: CurrencyWhereInput, orderBy: CurrencyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CurrencyConnection!
+  transactionCategoriesConnection(where: TransactionCategoryWhereInput, orderBy: TransactionCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TransactionCategoryConnection!
+  rolesConnection(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RoleConnection!
+
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+}
+
+type Role implements Node {
+  id: ID!
+  name: String!
+}
+
+"""A connection to a list of items."""
+type RoleConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [RoleEdge]!
+  aggregate: AggregateRole!
+}
+
+input RoleCreateInput {
+  id: ID
+  name: String!
+}
+
+input RoleCreateManyInput {
+  create: [RoleCreateInput!]
+  connect: [RoleWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type RoleEdge {
+  """The item at the end of the edge."""
+  node: Role!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum RoleOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+}
+
+type RolePreviousValues {
+  id: ID!
+  name: String!
+}
+
+input RoleScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [RoleScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [RoleScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [RoleScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+type RoleSubscriptionPayload {
+  mutation: MutationType!
+  node: Role
+  updatedFields: [String!]
+  previousValues: RolePreviousValues
+}
+
+input RoleSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [RoleSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [RoleSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [RoleSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: RoleWhereInput
+}
+
+input RoleUpdateDataInput {
+  name: String
+}
+
+input RoleUpdateInput {
+  name: String
+}
+
+input RoleUpdateManyDataInput {
+  name: String
+}
+
+input RoleUpdateManyInput {
+  create: [RoleCreateInput!]
+  connect: [RoleWhereUniqueInput!]
+  set: [RoleWhereUniqueInput!]
+  disconnect: [RoleWhereUniqueInput!]
+  delete: [RoleWhereUniqueInput!]
+  update: [RoleUpdateWithWhereUniqueNestedInput!]
+  updateMany: [RoleUpdateManyWithWhereNestedInput!]
+  deleteMany: [RoleScalarWhereInput!]
+  upsert: [RoleUpsertWithWhereUniqueNestedInput!]
+}
+
+input RoleUpdateManyMutationInput {
+  name: String
+}
+
+input RoleUpdateManyWithWhereNestedInput {
+  where: RoleScalarWhereInput!
+  data: RoleUpdateManyDataInput!
+}
+
+input RoleUpdateWithWhereUniqueNestedInput {
+  where: RoleWhereUniqueInput!
+  data: RoleUpdateDataInput!
+}
+
+input RoleUpsertWithWhereUniqueNestedInput {
+  where: RoleWhereUniqueInput!
+  update: RoleUpdateDataInput!
+  create: RoleCreateInput!
+}
+
+input RoleWhereInput {
+  """Logical AND on all given filters."""
+  AND: [RoleWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [RoleWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [RoleWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+input RoleWhereUniqueInput {
+  id: ID
+  name: String
+}
+
+type Subscription {
+  analyticMetric(where: AnalyticMetricSubscriptionWhereInput): AnalyticMetricSubscriptionPayload
+  period(where: PeriodSubscriptionWhereInput): PeriodSubscriptionPayload
+  userCredential(where: UserCredentialSubscriptionWhereInput): UserCredentialSubscriptionPayload
+  currency(where: CurrencySubscriptionWhereInput): CurrencySubscriptionPayload
+  transactionCategory(where: TransactionCategorySubscriptionWhereInput): TransactionCategorySubscriptionPayload
+  role(where: RoleSubscriptionWhereInput): RoleSubscriptionPayload
+}
+
+type TransactionCategory implements Node {
+  id: ID!
+  name: String!
+  parentCategory: TransactionCategory
+  isSystem: Boolean!
+  isOutcome: Boolean!
+  childCategories(where: TransactionCategoryWhereInput, orderBy: TransactionCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TransactionCategory!]
+}
+
+"""A connection to a list of items."""
+type TransactionCategoryConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [TransactionCategoryEdge]!
+  aggregate: AggregateTransactionCategory!
+}
+
+input TransactionCategoryCreateInput {
+  id: ID
+  name: String!
+  isSystem: Boolean
+  isOutcome: Boolean
+  parentCategory: TransactionCategoryCreateOneWithoutChildCategoriesInput
+  childCategories: TransactionCategoryCreateManyWithoutParentCategoryInput
+}
+
+input TransactionCategoryCreateManyWithoutParentCategoryInput {
+  create: [TransactionCategoryCreateWithoutParentCategoryInput!]
+  connect: [TransactionCategoryWhereUniqueInput!]
+}
+
+input TransactionCategoryCreateOneWithoutChildCategoriesInput {
+  create: TransactionCategoryCreateWithoutChildCategoriesInput
+  connect: TransactionCategoryWhereUniqueInput
+}
+
+input TransactionCategoryCreateWithoutChildCategoriesInput {
+  id: ID
+  name: String!
+  isSystem: Boolean
+  isOutcome: Boolean
+  parentCategory: TransactionCategoryCreateOneWithoutChildCategoriesInput
+}
+
+input TransactionCategoryCreateWithoutParentCategoryInput {
+  id: ID
+  name: String!
+  isSystem: Boolean
+  isOutcome: Boolean
+  childCategories: TransactionCategoryCreateManyWithoutParentCategoryInput
+}
+
+"""An edge in a connection."""
+type TransactionCategoryEdge {
+  """The item at the end of the edge."""
+  node: TransactionCategory!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum TransactionCategoryOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  isSystem_ASC
+  isSystem_DESC
+  isOutcome_ASC
+  isOutcome_DESC
+}
+
+type TransactionCategoryPreviousValues {
+  id: ID!
+  name: String!
+  isSystem: Boolean!
+  isOutcome: Boolean!
+}
+
+input TransactionCategoryScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TransactionCategoryScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TransactionCategoryScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TransactionCategoryScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  isSystem: Boolean
+
+  """All values that are not equal to given value."""
+  isSystem_not: Boolean
+  isOutcome: Boolean
+
+  """All values that are not equal to given value."""
+  isOutcome_not: Boolean
+}
+
+type TransactionCategorySubscriptionPayload {
+  mutation: MutationType!
+  node: TransactionCategory
+  updatedFields: [String!]
+  previousValues: TransactionCategoryPreviousValues
+}
+
+input TransactionCategorySubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TransactionCategorySubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TransactionCategorySubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TransactionCategorySubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: TransactionCategoryWhereInput
+}
+
+input TransactionCategoryUpdateInput {
+  name: String
+  isSystem: Boolean
+  isOutcome: Boolean
+  parentCategory: TransactionCategoryUpdateOneWithoutChildCategoriesInput
+  childCategories: TransactionCategoryUpdateManyWithoutParentCategoryInput
+}
+
+input TransactionCategoryUpdateManyDataInput {
+  name: String
+  isSystem: Boolean
+  isOutcome: Boolean
+}
+
+input TransactionCategoryUpdateManyMutationInput {
+  name: String
+  isSystem: Boolean
+  isOutcome: Boolean
+}
+
+input TransactionCategoryUpdateManyWithoutParentCategoryInput {
+  create: [TransactionCategoryCreateWithoutParentCategoryInput!]
+  connect: [TransactionCategoryWhereUniqueInput!]
+  set: [TransactionCategoryWhereUniqueInput!]
+  disconnect: [TransactionCategoryWhereUniqueInput!]
+  delete: [TransactionCategoryWhereUniqueInput!]
+  update: [TransactionCategoryUpdateWithWhereUniqueWithoutParentCategoryInput!]
+  updateMany: [TransactionCategoryUpdateManyWithWhereNestedInput!]
+  deleteMany: [TransactionCategoryScalarWhereInput!]
+  upsert: [TransactionCategoryUpsertWithWhereUniqueWithoutParentCategoryInput!]
+}
+
+input TransactionCategoryUpdateManyWithWhereNestedInput {
+  where: TransactionCategoryScalarWhereInput!
+  data: TransactionCategoryUpdateManyDataInput!
+}
+
+input TransactionCategoryUpdateOneWithoutChildCategoriesInput {
+  create: TransactionCategoryCreateWithoutChildCategoriesInput
+  connect: TransactionCategoryWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: TransactionCategoryUpdateWithoutChildCategoriesDataInput
+  upsert: TransactionCategoryUpsertWithoutChildCategoriesInput
+}
+
+input TransactionCategoryUpdateWithoutChildCategoriesDataInput {
+  name: String
+  isSystem: Boolean
+  isOutcome: Boolean
+  parentCategory: TransactionCategoryUpdateOneWithoutChildCategoriesInput
+}
+
+input TransactionCategoryUpdateWithoutParentCategoryDataInput {
+  name: String
+  isSystem: Boolean
+  isOutcome: Boolean
+  childCategories: TransactionCategoryUpdateManyWithoutParentCategoryInput
+}
+
+input TransactionCategoryUpdateWithWhereUniqueWithoutParentCategoryInput {
+  where: TransactionCategoryWhereUniqueInput!
+  data: TransactionCategoryUpdateWithoutParentCategoryDataInput!
+}
+
+input TransactionCategoryUpsertWithoutChildCategoriesInput {
+  update: TransactionCategoryUpdateWithoutChildCategoriesDataInput!
+  create: TransactionCategoryCreateWithoutChildCategoriesInput!
+}
+
+input TransactionCategoryUpsertWithWhereUniqueWithoutParentCategoryInput {
+  where: TransactionCategoryWhereUniqueInput!
+  update: TransactionCategoryUpdateWithoutParentCategoryDataInput!
+  create: TransactionCategoryCreateWithoutParentCategoryInput!
+}
+
+input TransactionCategoryWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TransactionCategoryWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TransactionCategoryWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TransactionCategoryWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  isSystem: Boolean
+
+  """All values that are not equal to given value."""
+  isSystem_not: Boolean
+  isOutcome: Boolean
+
+  """All values that are not equal to given value."""
+  isOutcome_not: Boolean
+  parentCategory: TransactionCategoryWhereInput
+  childCategories_every: TransactionCategoryWhereInput
+  childCategories_some: TransactionCategoryWhereInput
+  childCategories_none: TransactionCategoryWhereInput
+}
+
+input TransactionCategoryWhereUniqueInput {
+  id: ID
+}
+
+type UserCredential implements Node {
+  id: ID!
+  email: String!
+  profileImageUrl: String
+  roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role!]
+  isActive: Boolean!
+}
+
+"""A connection to a list of items."""
+type UserCredentialConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [UserCredentialEdge]!
+  aggregate: AggregateUserCredential!
+}
+
+input UserCredentialCreateInput {
+  id: ID
+  email: String!
+  profileImageUrl: String
+  isActive: Boolean
+  roles: RoleCreateManyInput
+}
+
+"""An edge in a connection."""
+type UserCredentialEdge {
+  """The item at the end of the edge."""
+  node: UserCredential!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum UserCredentialOrderByInput {
+  id_ASC
+  id_DESC
+  email_ASC
+  email_DESC
+  profileImageUrl_ASC
+  profileImageUrl_DESC
+  isActive_ASC
+  isActive_DESC
+}
+
+type UserCredentialPreviousValues {
+  id: ID!
+  email: String!
+  profileImageUrl: String
+  isActive: Boolean!
+}
+
+type UserCredentialSubscriptionPayload {
+  mutation: MutationType!
+  node: UserCredential
+  updatedFields: [String!]
+  previousValues: UserCredentialPreviousValues
+}
+
+input UserCredentialSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserCredentialSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserCredentialSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserCredentialSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UserCredentialWhereInput
+}
+
+input UserCredentialUpdateInput {
+  email: String
+  profileImageUrl: String
+  isActive: Boolean
+  roles: RoleUpdateManyInput
+}
+
+input UserCredentialUpdateManyMutationInput {
+  email: String
+  profileImageUrl: String
+  isActive: Boolean
+}
+
+input UserCredentialWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserCredentialWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserCredentialWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserCredentialWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  profileImageUrl: String
+
+  """All values that are not equal to given value."""
+  profileImageUrl_not: String
+
+  """All values that are contained in given list."""
+  profileImageUrl_in: [String!]
+
+  """All values that are not contained in given list."""
+  profileImageUrl_not_in: [String!]
+
+  """All values less than the given value."""
+  profileImageUrl_lt: String
+
+  """All values less than or equal the given value."""
+  profileImageUrl_lte: String
+
+  """All values greater than the given value."""
+  profileImageUrl_gt: String
+
+  """All values greater than or equal the given value."""
+  profileImageUrl_gte: String
+
+  """All values containing the given string."""
+  profileImageUrl_contains: String
+
+  """All values not containing the given string."""
+  profileImageUrl_not_contains: String
+
+  """All values starting with the given string."""
+  profileImageUrl_starts_with: String
+
+  """All values not starting with the given string."""
+  profileImageUrl_not_starts_with: String
+
+  """All values ending with the given string."""
+  profileImageUrl_ends_with: String
+
+  """All values not ending with the given string."""
+  profileImageUrl_not_ends_with: String
+  isActive: Boolean
+
+  """All values that are not equal to given value."""
+  isActive_not: Boolean
+  roles_every: RoleWhereInput
+  roles_some: RoleWhereInput
+  roles_none: RoleWhereInput
+}
+
+input UserCredentialWhereUniqueInput {
+  id: ID
+  email: String
+}
