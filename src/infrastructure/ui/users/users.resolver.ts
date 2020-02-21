@@ -7,7 +7,7 @@ import {
   Mutation,
 } from '@nestjs/graphql';
 import { PrismaService } from '../../persistance/prisma/prisma.service';
-import { UpdateUserCredentialInput } from 'infrastructure/persistance/graphql.schema.generated';
+import { UpdateUserCredentialInput } from '../../graphql.schema.generated';
 
 // TODO: authorization (via admin)
 // TODO: repo, factory and interactor

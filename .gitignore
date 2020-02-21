@@ -5,4 +5,4 @@ coverage/
 generated/
 .env
 .graphqlconfig.yml
-src/infrastructure/persistance/graphql.schema.generated.ts
+src/infrastructure/graphql.schema.generated.ts
