@@ -1,129 +1,659 @@
-import { GraphQLResolveInfo, GraphQLSchema } from 'graphql'
-import { IResolvers } from 'graphql-tools/dist/Interfaces'
-import { Options } from 'graphql-binding'
-import { makePrismaBindingClass, BasePrismaOptions } from 'prisma-binding'
+import { GraphQLResolveInfo, GraphQLSchema } from 'graphql';
+import { IResolvers } from 'graphql-tools/dist/Interfaces';
+import { Options } from 'graphql-binding';
+import { makePrismaBindingClass, BasePrismaOptions } from 'prisma-binding';
 
 export interface Query {
-    userCredentials: <T = Array<UserCredential | null>>(args: { where?: UserCredentialWhereInput | null, orderBy?: UserCredentialOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    currencies: <T = Array<Currency | null>>(args: { where?: CurrencyWhereInput | null, orderBy?: CurrencyOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    transactionCategories: <T = Array<TransactionCategory | null>>(args: { where?: TransactionCategoryWhereInput | null, orderBy?: TransactionCategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    transactions: <T = Array<Transaction | null>>(args: { where?: TransactionWhereInput | null, orderBy?: TransactionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    distributingMetricItems: <T = Array<DistributingMetricItem | null>>(args: { where?: DistributingMetricItemWhereInput | null, orderBy?: DistributingMetricItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    roles: <T = Array<Role | null>>(args: { where?: RoleWhereInput | null, orderBy?: RoleOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    analyticMetrics: <T = Array<AnalyticMetric | null>>(args: { where?: AnalyticMetricWhereInput | null, orderBy?: AnalyticMetricOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    periods: <T = Array<Period | null>>(args: { where?: PeriodWhereInput | null, orderBy?: PeriodOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    userCredential: <T = UserCredential | null>(args: { where: UserCredentialWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    currency: <T = Currency | null>(args: { where: CurrencyWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    transactionCategory: <T = TransactionCategory | null>(args: { where: TransactionCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    transaction: <T = Transaction | null>(args: { where: TransactionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    distributingMetricItem: <T = DistributingMetricItem | null>(args: { where: DistributingMetricItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    role: <T = Role | null>(args: { where: RoleWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    analyticMetric: <T = AnalyticMetric | null>(args: { where: AnalyticMetricWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    period: <T = Period | null>(args: { where: PeriodWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    userCredentialsConnection: <T = UserCredentialConnection>(args: { where?: UserCredentialWhereInput | null, orderBy?: UserCredentialOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    currenciesConnection: <T = CurrencyConnection>(args: { where?: CurrencyWhereInput | null, orderBy?: CurrencyOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    transactionCategoriesConnection: <T = TransactionCategoryConnection>(args: { where?: TransactionCategoryWhereInput | null, orderBy?: TransactionCategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    transactionsConnection: <T = TransactionConnection>(args: { where?: TransactionWhereInput | null, orderBy?: TransactionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    distributingMetricItemsConnection: <T = DistributingMetricItemConnection>(args: { where?: DistributingMetricItemWhereInput | null, orderBy?: DistributingMetricItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    rolesConnection: <T = RoleConnection>(args: { where?: RoleWhereInput | null, orderBy?: RoleOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    analyticMetricsConnection: <T = AnalyticMetricConnection>(args: { where?: AnalyticMetricWhereInput | null, orderBy?: AnalyticMetricOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    periodsConnection: <T = PeriodConnection>(args: { where?: PeriodWhereInput | null, orderBy?: PeriodOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    node: <T = Node | null>(args: { id: ID_Output }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> 
-  }
+  userCredentials: <T = Array<UserCredential | null>>(
+    args: {
+      where?: UserCredentialWhereInput | null;
+      orderBy?: UserCredentialOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  currencies: <T = Array<Currency | null>>(
+    args: {
+      where?: CurrencyWhereInput | null;
+      orderBy?: CurrencyOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  transactionCategories: <T = Array<TransactionCategory | null>>(
+    args: {
+      where?: TransactionCategoryWhereInput | null;
+      orderBy?: TransactionCategoryOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  transactions: <T = Array<Transaction | null>>(
+    args: {
+      where?: TransactionWhereInput | null;
+      orderBy?: TransactionOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  distributingMetricItems: <T = Array<DistributingMetricItem | null>>(
+    args: {
+      where?: DistributingMetricItemWhereInput | null;
+      orderBy?: DistributingMetricItemOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  roles: <T = Array<Role | null>>(
+    args: {
+      where?: RoleWhereInput | null;
+      orderBy?: RoleOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  analyticMetrics: <T = Array<AnalyticMetric | null>>(
+    args: {
+      where?: AnalyticMetricWhereInput | null;
+      orderBy?: AnalyticMetricOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  periods: <T = Array<Period | null>>(
+    args: {
+      where?: PeriodWhereInput | null;
+      orderBy?: PeriodOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  userCredential: <T = UserCredential | null>(
+    args: { where: UserCredentialWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  currency: <T = Currency | null>(
+    args: { where: CurrencyWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  transactionCategory: <T = TransactionCategory | null>(
+    args: { where: TransactionCategoryWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  transaction: <T = Transaction | null>(
+    args: { where: TransactionWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  distributingMetricItem: <T = DistributingMetricItem | null>(
+    args: { where: DistributingMetricItemWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  role: <T = Role | null>(
+    args: { where: RoleWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  analyticMetric: <T = AnalyticMetric | null>(
+    args: { where: AnalyticMetricWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  period: <T = Period | null>(
+    args: { where: PeriodWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  userCredentialsConnection: <T = UserCredentialConnection>(
+    args: {
+      where?: UserCredentialWhereInput | null;
+      orderBy?: UserCredentialOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  currenciesConnection: <T = CurrencyConnection>(
+    args: {
+      where?: CurrencyWhereInput | null;
+      orderBy?: CurrencyOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  transactionCategoriesConnection: <T = TransactionCategoryConnection>(
+    args: {
+      where?: TransactionCategoryWhereInput | null;
+      orderBy?: TransactionCategoryOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  transactionsConnection: <T = TransactionConnection>(
+    args: {
+      where?: TransactionWhereInput | null;
+      orderBy?: TransactionOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  distributingMetricItemsConnection: <T = DistributingMetricItemConnection>(
+    args: {
+      where?: DistributingMetricItemWhereInput | null;
+      orderBy?: DistributingMetricItemOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  rolesConnection: <T = RoleConnection>(
+    args: {
+      where?: RoleWhereInput | null;
+      orderBy?: RoleOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  analyticMetricsConnection: <T = AnalyticMetricConnection>(
+    args: {
+      where?: AnalyticMetricWhereInput | null;
+      orderBy?: AnalyticMetricOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  periodsConnection: <T = PeriodConnection>(
+    args: {
+      where?: PeriodWhereInput | null;
+      orderBy?: PeriodOrderByInput | null;
+      skip?: Int | null;
+      after?: String | null;
+      before?: String | null;
+      first?: Int | null;
+      last?: Int | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  node: <T = Node | null>(
+    args: { id: ID_Output },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+}
 
 export interface Mutation {
-    createUserCredential: <T = UserCredential>(args: { data: UserCredentialCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createCurrency: <T = Currency>(args: { data: CurrencyCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createTransactionCategory: <T = TransactionCategory>(args: { data: TransactionCategoryCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createTransaction: <T = Transaction>(args: { data: TransactionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createDistributingMetricItem: <T = DistributingMetricItem>(args: { data: DistributingMetricItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createRole: <T = Role>(args: { data: RoleCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createAnalyticMetric: <T = AnalyticMetric>(args: { data: AnalyticMetricCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createPeriod: <T = Period>(args: { data: PeriodCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateUserCredential: <T = UserCredential | null>(args: { data: UserCredentialUpdateInput, where: UserCredentialWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateCurrency: <T = Currency | null>(args: { data: CurrencyUpdateInput, where: CurrencyWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateTransactionCategory: <T = TransactionCategory | null>(args: { data: TransactionCategoryUpdateInput, where: TransactionCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateTransaction: <T = Transaction | null>(args: { data: TransactionUpdateInput, where: TransactionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateDistributingMetricItem: <T = DistributingMetricItem | null>(args: { data: DistributingMetricItemUpdateInput, where: DistributingMetricItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateRole: <T = Role | null>(args: { data: RoleUpdateInput, where: RoleWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateAnalyticMetric: <T = AnalyticMetric | null>(args: { data: AnalyticMetricUpdateInput, where: AnalyticMetricWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updatePeriod: <T = Period | null>(args: { data: PeriodUpdateInput, where: PeriodWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteUserCredential: <T = UserCredential | null>(args: { where: UserCredentialWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteCurrency: <T = Currency | null>(args: { where: CurrencyWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteTransactionCategory: <T = TransactionCategory | null>(args: { where: TransactionCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteTransaction: <T = Transaction | null>(args: { where: TransactionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteDistributingMetricItem: <T = DistributingMetricItem | null>(args: { where: DistributingMetricItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteRole: <T = Role | null>(args: { where: RoleWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteAnalyticMetric: <T = AnalyticMetric | null>(args: { where: AnalyticMetricWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deletePeriod: <T = Period | null>(args: { where: PeriodWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    upsertUserCredential: <T = UserCredential>(args: { where: UserCredentialWhereUniqueInput, create: UserCredentialCreateInput, update: UserCredentialUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertCurrency: <T = Currency>(args: { where: CurrencyWhereUniqueInput, create: CurrencyCreateInput, update: CurrencyUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertTransactionCategory: <T = TransactionCategory>(args: { where: TransactionCategoryWhereUniqueInput, create: TransactionCategoryCreateInput, update: TransactionCategoryUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertTransaction: <T = Transaction>(args: { where: TransactionWhereUniqueInput, create: TransactionCreateInput, update: TransactionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertDistributingMetricItem: <T = DistributingMetricItem>(args: { where: DistributingMetricItemWhereUniqueInput, create: DistributingMetricItemCreateInput, update: DistributingMetricItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertRole: <T = Role>(args: { where: RoleWhereUniqueInput, create: RoleCreateInput, update: RoleUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertAnalyticMetric: <T = AnalyticMetric>(args: { where: AnalyticMetricWhereUniqueInput, create: AnalyticMetricCreateInput, update: AnalyticMetricUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertPeriod: <T = Period>(args: { where: PeriodWhereUniqueInput, create: PeriodCreateInput, update: PeriodUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyUserCredentials: <T = BatchPayload>(args: { data: UserCredentialUpdateManyMutationInput, where?: UserCredentialWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyCurrencies: <T = BatchPayload>(args: { data: CurrencyUpdateManyMutationInput, where?: CurrencyWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyTransactionCategories: <T = BatchPayload>(args: { data: TransactionCategoryUpdateManyMutationInput, where?: TransactionCategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyTransactions: <T = BatchPayload>(args: { data: TransactionUpdateManyMutationInput, where?: TransactionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyRoles: <T = BatchPayload>(args: { data: RoleUpdateManyMutationInput, where?: RoleWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyAnalyticMetrics: <T = BatchPayload>(args: { data: AnalyticMetricUpdateManyMutationInput, where?: AnalyticMetricWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyPeriods: <T = BatchPayload>(args: { data: PeriodUpdateManyMutationInput, where?: PeriodWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyUserCredentials: <T = BatchPayload>(args: { where?: UserCredentialWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyCurrencies: <T = BatchPayload>(args: { where?: CurrencyWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyTransactionCategories: <T = BatchPayload>(args: { where?: TransactionCategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyTransactions: <T = BatchPayload>(args: { where?: TransactionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyDistributingMetricItems: <T = BatchPayload>(args: { where?: DistributingMetricItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyRoles: <T = BatchPayload>(args: { where?: RoleWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyAnalyticMetrics: <T = BatchPayload>(args: { where?: AnalyticMetricWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyPeriods: <T = BatchPayload>(args: { where?: PeriodWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> 
-  }
+  createUserCredential: <T = UserCredential>(
+    args: { data: UserCredentialCreateInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  createCurrency: <T = Currency>(
+    args: { data: CurrencyCreateInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  createTransactionCategory: <T = TransactionCategory>(
+    args: { data: TransactionCategoryCreateInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  createTransaction: <T = Transaction>(
+    args: { data: TransactionCreateInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  createDistributingMetricItem: <T = DistributingMetricItem>(
+    args: { data: DistributingMetricItemCreateInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  createRole: <T = Role>(
+    args: { data: RoleCreateInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  createAnalyticMetric: <T = AnalyticMetric>(
+    args: { data: AnalyticMetricCreateInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  createPeriod: <T = Period>(
+    args: { data: PeriodCreateInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  updateUserCredential: <T = UserCredential | null>(
+    args: {
+      data: UserCredentialUpdateInput;
+      where: UserCredentialWhereUniqueInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  updateCurrency: <T = Currency | null>(
+    args: { data: CurrencyUpdateInput; where: CurrencyWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  updateTransactionCategory: <T = TransactionCategory | null>(
+    args: {
+      data: TransactionCategoryUpdateInput;
+      where: TransactionCategoryWhereUniqueInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  updateTransaction: <T = Transaction | null>(
+    args: { data: TransactionUpdateInput; where: TransactionWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  updateDistributingMetricItem: <T = DistributingMetricItem | null>(
+    args: {
+      data: DistributingMetricItemUpdateInput;
+      where: DistributingMetricItemWhereUniqueInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  updateRole: <T = Role | null>(
+    args: { data: RoleUpdateInput; where: RoleWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  updateAnalyticMetric: <T = AnalyticMetric | null>(
+    args: {
+      data: AnalyticMetricUpdateInput;
+      where: AnalyticMetricWhereUniqueInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  updatePeriod: <T = Period | null>(
+    args: { data: PeriodUpdateInput; where: PeriodWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  deleteUserCredential: <T = UserCredential | null>(
+    args: { where: UserCredentialWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  deleteCurrency: <T = Currency | null>(
+    args: { where: CurrencyWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  deleteTransactionCategory: <T = TransactionCategory | null>(
+    args: { where: TransactionCategoryWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  deleteTransaction: <T = Transaction | null>(
+    args: { where: TransactionWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  deleteDistributingMetricItem: <T = DistributingMetricItem | null>(
+    args: { where: DistributingMetricItemWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  deleteRole: <T = Role | null>(
+    args: { where: RoleWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  deleteAnalyticMetric: <T = AnalyticMetric | null>(
+    args: { where: AnalyticMetricWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  deletePeriod: <T = Period | null>(
+    args: { where: PeriodWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T | null>;
+  upsertUserCredential: <T = UserCredential>(
+    args: {
+      where: UserCredentialWhereUniqueInput;
+      create: UserCredentialCreateInput;
+      update: UserCredentialUpdateInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  upsertCurrency: <T = Currency>(
+    args: {
+      where: CurrencyWhereUniqueInput;
+      create: CurrencyCreateInput;
+      update: CurrencyUpdateInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  upsertTransactionCategory: <T = TransactionCategory>(
+    args: {
+      where: TransactionCategoryWhereUniqueInput;
+      create: TransactionCategoryCreateInput;
+      update: TransactionCategoryUpdateInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  upsertTransaction: <T = Transaction>(
+    args: {
+      where: TransactionWhereUniqueInput;
+      create: TransactionCreateInput;
+      update: TransactionUpdateInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  upsertDistributingMetricItem: <T = DistributingMetricItem>(
+    args: {
+      where: DistributingMetricItemWhereUniqueInput;
+      create: DistributingMetricItemCreateInput;
+      update: DistributingMetricItemUpdateInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  upsertRole: <T = Role>(
+    args: {
+      where: RoleWhereUniqueInput;
+      create: RoleCreateInput;
+      update: RoleUpdateInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  upsertAnalyticMetric: <T = AnalyticMetric>(
+    args: {
+      where: AnalyticMetricWhereUniqueInput;
+      create: AnalyticMetricCreateInput;
+      update: AnalyticMetricUpdateInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  upsertPeriod: <T = Period>(
+    args: {
+      where: PeriodWhereUniqueInput;
+      create: PeriodCreateInput;
+      update: PeriodUpdateInput;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  updateManyUserCredentials: <T = BatchPayload>(
+    args: {
+      data: UserCredentialUpdateManyMutationInput;
+      where?: UserCredentialWhereInput | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  updateManyCurrencies: <T = BatchPayload>(
+    args: {
+      data: CurrencyUpdateManyMutationInput;
+      where?: CurrencyWhereInput | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  updateManyTransactionCategories: <T = BatchPayload>(
+    args: {
+      data: TransactionCategoryUpdateManyMutationInput;
+      where?: TransactionCategoryWhereInput | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  updateManyTransactions: <T = BatchPayload>(
+    args: {
+      data: TransactionUpdateManyMutationInput;
+      where?: TransactionWhereInput | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  updateManyRoles: <T = BatchPayload>(
+    args: { data: RoleUpdateManyMutationInput; where?: RoleWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  updateManyAnalyticMetrics: <T = BatchPayload>(
+    args: {
+      data: AnalyticMetricUpdateManyMutationInput;
+      where?: AnalyticMetricWhereInput | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  updateManyPeriods: <T = BatchPayload>(
+    args: {
+      data: PeriodUpdateManyMutationInput;
+      where?: PeriodWhereInput | null;
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  deleteManyUserCredentials: <T = BatchPayload>(
+    args: { where?: UserCredentialWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  deleteManyCurrencies: <T = BatchPayload>(
+    args: { where?: CurrencyWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  deleteManyTransactionCategories: <T = BatchPayload>(
+    args: { where?: TransactionCategoryWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  deleteManyTransactions: <T = BatchPayload>(
+    args: { where?: TransactionWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  deleteManyDistributingMetricItems: <T = BatchPayload>(
+    args: { where?: DistributingMetricItemWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  deleteManyRoles: <T = BatchPayload>(
+    args: { where?: RoleWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  deleteManyAnalyticMetrics: <T = BatchPayload>(
+    args: { where?: AnalyticMetricWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+  deleteManyPeriods: <T = BatchPayload>(
+    args: { where?: PeriodWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<T>;
+}
 
 export interface Subscription {
-    userCredential: <T = UserCredentialSubscriptionPayload | null>(args: { where?: UserCredentialSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    currency: <T = CurrencySubscriptionPayload | null>(args: { where?: CurrencySubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    transactionCategory: <T = TransactionCategorySubscriptionPayload | null>(args: { where?: TransactionCategorySubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    transaction: <T = TransactionSubscriptionPayload | null>(args: { where?: TransactionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    distributingMetricItem: <T = DistributingMetricItemSubscriptionPayload | null>(args: { where?: DistributingMetricItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    role: <T = RoleSubscriptionPayload | null>(args: { where?: RoleSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    analyticMetric: <T = AnalyticMetricSubscriptionPayload | null>(args: { where?: AnalyticMetricSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    period: <T = PeriodSubscriptionPayload | null>(args: { where?: PeriodSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> 
-  }
+  userCredential: <T = UserCredentialSubscriptionPayload | null>(
+    args: { where?: UserCredentialSubscriptionWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<AsyncIterator<T | null>>;
+  currency: <T = CurrencySubscriptionPayload | null>(
+    args: { where?: CurrencySubscriptionWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<AsyncIterator<T | null>>;
+  transactionCategory: <T = TransactionCategorySubscriptionPayload | null>(
+    args: { where?: TransactionCategorySubscriptionWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<AsyncIterator<T | null>>;
+  transaction: <T = TransactionSubscriptionPayload | null>(
+    args: { where?: TransactionSubscriptionWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<AsyncIterator<T | null>>;
+  distributingMetricItem: <
+    T = DistributingMetricItemSubscriptionPayload | null
+  >(
+    args: { where?: DistributingMetricItemSubscriptionWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<AsyncIterator<T | null>>;
+  role: <T = RoleSubscriptionPayload | null>(
+    args: { where?: RoleSubscriptionWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<AsyncIterator<T | null>>;
+  analyticMetric: <T = AnalyticMetricSubscriptionPayload | null>(
+    args: { where?: AnalyticMetricSubscriptionWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<AsyncIterator<T | null>>;
+  period: <T = PeriodSubscriptionPayload | null>(
+    args: { where?: PeriodSubscriptionWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options,
+  ) => Promise<AsyncIterator<T | null>>;
+}
 
 export interface Exists {
-  UserCredential: (where?: UserCredentialWhereInput) => Promise<boolean>
-  Currency: (where?: CurrencyWhereInput) => Promise<boolean>
-  TransactionCategory: (where?: TransactionCategoryWhereInput) => Promise<boolean>
-  Transaction: (where?: TransactionWhereInput) => Promise<boolean>
-  DistributingMetricItem: (where?: DistributingMetricItemWhereInput) => Promise<boolean>
-  Role: (where?: RoleWhereInput) => Promise<boolean>
-  AnalyticMetric: (where?: AnalyticMetricWhereInput) => Promise<boolean>
-  Period: (where?: PeriodWhereInput) => Promise<boolean>
+  UserCredential: (where?: UserCredentialWhereInput) => Promise<boolean>;
+  Currency: (where?: CurrencyWhereInput) => Promise<boolean>;
+  TransactionCategory: (
+    where?: TransactionCategoryWhereInput,
+  ) => Promise<boolean>;
+  Transaction: (where?: TransactionWhereInput) => Promise<boolean>;
+  DistributingMetricItem: (
+    where?: DistributingMetricItemWhereInput,
+  ) => Promise<boolean>;
+  Role: (where?: RoleWhereInput) => Promise<boolean>;
+  AnalyticMetric: (where?: AnalyticMetricWhereInput) => Promise<boolean>;
+  Period: (where?: PeriodWhereInput) => Promise<boolean>;
 }
 
 export interface Prisma {
-  query: Query
-  mutation: Mutation
-  subscription: Subscription
-  exists: Exists
-  request: <T = any>(query: string, variables?: {[key: string]: any}) => Promise<T>
-  delegate(operation: 'query' | 'mutation', fieldName: string, args: {
-    [key: string]: any;
-}, infoOrQuery?: GraphQLResolveInfo | string, options?: Options): Promise<any>;
-delegateSubscription(fieldName: string, args?: {
-    [key: string]: any;
-}, infoOrQuery?: GraphQLResolveInfo | string, options?: Options): Promise<AsyncIterator<any>>;
-getAbstractResolvers(filterSchema?: GraphQLSchema | string): IResolvers;
+  query: Query;
+  mutation: Mutation;
+  subscription: Subscription;
+  exists: Exists;
+  request: <T = any>(
+    query: string,
+    variables?: { [key: string]: any },
+  ) => Promise<T>;
+  delegate(
+    operation: 'query' | 'mutation',
+    fieldName: string,
+    args: {
+      [key: string]: any;
+    },
+    infoOrQuery?: GraphQLResolveInfo | string,
+    options?: Options,
+  ): Promise<any>;
+  delegateSubscription(
+    fieldName: string,
+    args?: {
+      [key: string]: any;
+    },
+    infoOrQuery?: GraphQLResolveInfo | string,
+    options?: Options,
+  ): Promise<AsyncIterator<any>>;
+  getAbstractResolvers(filterSchema?: GraphQLSchema | string): IResolvers;
 }
 
 export interface BindingConstructor<T> {
-  new(options: BasePrismaOptions): T
+  new (options: BasePrismaOptions): T;
 }
 /**
  * Type Defs
-*/
+ */
 
 const typeDefs = `type AggregateAnalyticMetric {
   count: Int!
@@ -3101,1590 +3631,1898 @@ input UserCredentialWhereUniqueInput {
   id: ID
   email: String
 }
-`
+`;
 
-export const Prisma = makePrismaBindingClass<BindingConstructor<Prisma>>({typeDefs})
+export const Prisma = makePrismaBindingClass<BindingConstructor<Prisma>>({
+  typeDefs,
+});
 
 /**
  * Types
-*/
+ */
 
-export type AnalyticMetricOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'name_ASC' |
-  'name_DESC'
+export type AnalyticMetricOrderByInput =
+  | 'id_ASC'
+  | 'id_DESC'
+  | 'name_ASC'
+  | 'name_DESC';
 
-export type CurrencyOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'name_ASC' |
-  'name_DESC' |
-  'code_ASC' |
-  'code_DESC'
+export type CurrencyOrderByInput =
+  | 'id_ASC'
+  | 'id_DESC'
+  | 'name_ASC'
+  | 'name_DESC'
+  | 'code_ASC'
+  | 'code_DESC';
 
-export type DistributingMetricItemOrderByInput =   'id_ASC' |
-  'id_DESC'
+export type DistributingMetricItemOrderByInput = 'id_ASC' | 'id_DESC';
 
-export type MutationType =   'CREATED' |
-  'UPDATED' |
-  'DELETED'
+export type MutationType = 'CREATED' | 'UPDATED' | 'DELETED';
 
-export type PeriodOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'name_ASC' |
-  'name_DESC'
+export type PeriodOrderByInput =
+  | 'id_ASC'
+  | 'id_DESC'
+  | 'name_ASC'
+  | 'name_DESC';
 
-export type RoleOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'name_ASC' |
-  'name_DESC'
+export type RoleOrderByInput = 'id_ASC' | 'id_DESC' | 'name_ASC' | 'name_DESC';
 
-export type TransactionCategoryOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'name_ASC' |
-  'name_DESC' |
-  'isSystem_ASC' |
-  'isSystem_DESC' |
-  'isOutcome_ASC' |
-  'isOutcome_DESC'
+export type TransactionCategoryOrderByInput =
+  | 'id_ASC'
+  | 'id_DESC'
+  | 'name_ASC'
+  | 'name_DESC'
+  | 'isSystem_ASC'
+  | 'isSystem_DESC'
+  | 'isOutcome_ASC'
+  | 'isOutcome_DESC';
 
-export type TransactionOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'datetime_ASC' |
-  'datetime_DESC' |
-  'description_ASC' |
-  'description_DESC' |
-  'amount_ASC' |
-  'amount_DESC'
+export type TransactionOrderByInput =
+  | 'id_ASC'
+  | 'id_DESC'
+  | 'datetime_ASC'
+  | 'datetime_DESC'
+  | 'description_ASC'
+  | 'description_DESC'
+  | 'amount_ASC'
+  | 'amount_DESC';
 
-export type UserCredentialOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'email_ASC' |
-  'email_DESC' |
-  'profileImageUrl_ASC' |
-  'profileImageUrl_DESC' |
-  'isActive_ASC' |
-  'isActive_DESC'
+export type UserCredentialOrderByInput =
+  | 'id_ASC'
+  | 'id_DESC'
+  | 'email_ASC'
+  | 'email_DESC'
+  | 'profileImageUrl_ASC'
+  | 'profileImageUrl_DESC'
+  | 'isActive_ASC'
+  | 'isActive_DESC';
 
 export interface AnalyticMetricCreateInput {
-  id?: ID_Input | null
-  name: String
+  id?: ID_Input | null;
+  name: String;
 }
 
 export interface AnalyticMetricCreateOneInput {
-  create?: AnalyticMetricCreateInput | null
-  connect?: AnalyticMetricWhereUniqueInput | null
+  create?: AnalyticMetricCreateInput | null;
+  connect?: AnalyticMetricWhereUniqueInput | null;
 }
 
 export interface AnalyticMetricSubscriptionWhereInput {
-  AND?: AnalyticMetricSubscriptionWhereInput[] | AnalyticMetricSubscriptionWhereInput | null
-  OR?: AnalyticMetricSubscriptionWhereInput[] | AnalyticMetricSubscriptionWhereInput | null
-  NOT?: AnalyticMetricSubscriptionWhereInput[] | AnalyticMetricSubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: AnalyticMetricWhereInput | null
+  AND?:
+    | AnalyticMetricSubscriptionWhereInput[]
+    | AnalyticMetricSubscriptionWhereInput
+    | null;
+  OR?:
+    | AnalyticMetricSubscriptionWhereInput[]
+    | AnalyticMetricSubscriptionWhereInput
+    | null;
+  NOT?:
+    | AnalyticMetricSubscriptionWhereInput[]
+    | AnalyticMetricSubscriptionWhereInput
+    | null;
+  mutation_in?: MutationType[] | MutationType | null;
+  updatedFields_contains?: String | null;
+  updatedFields_contains_every?: String[] | String | null;
+  updatedFields_contains_some?: String[] | String | null;
+  node?: AnalyticMetricWhereInput | null;
 }
 
 export interface AnalyticMetricUpdateDataInput {
-  name?: String | null
+  name?: String | null;
 }
 
 export interface AnalyticMetricUpdateInput {
-  name?: String | null
+  name?: String | null;
 }
 
 export interface AnalyticMetricUpdateManyMutationInput {
-  name?: String | null
+  name?: String | null;
 }
 
 export interface AnalyticMetricUpdateOneRequiredInput {
-  create?: AnalyticMetricCreateInput | null
-  connect?: AnalyticMetricWhereUniqueInput | null
-  update?: AnalyticMetricUpdateDataInput | null
-  upsert?: AnalyticMetricUpsertNestedInput | null
+  create?: AnalyticMetricCreateInput | null;
+  connect?: AnalyticMetricWhereUniqueInput | null;
+  update?: AnalyticMetricUpdateDataInput | null;
+  upsert?: AnalyticMetricUpsertNestedInput | null;
 }
 
 export interface AnalyticMetricUpsertNestedInput {
-  update: AnalyticMetricUpdateDataInput
-  create: AnalyticMetricCreateInput
+  update: AnalyticMetricUpdateDataInput;
+  create: AnalyticMetricCreateInput;
 }
 
 export interface AnalyticMetricWhereInput {
-  AND?: AnalyticMetricWhereInput[] | AnalyticMetricWhereInput | null
-  OR?: AnalyticMetricWhereInput[] | AnalyticMetricWhereInput | null
-  NOT?: AnalyticMetricWhereInput[] | AnalyticMetricWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  name?: String | null
-  name_not?: String | null
-  name_in?: String[] | String | null
-  name_not_in?: String[] | String | null
-  name_lt?: String | null
-  name_lte?: String | null
-  name_gt?: String | null
-  name_gte?: String | null
-  name_contains?: String | null
-  name_not_contains?: String | null
-  name_starts_with?: String | null
-  name_not_starts_with?: String | null
-  name_ends_with?: String | null
-  name_not_ends_with?: String | null
+  AND?: AnalyticMetricWhereInput[] | AnalyticMetricWhereInput | null;
+  OR?: AnalyticMetricWhereInput[] | AnalyticMetricWhereInput | null;
+  NOT?: AnalyticMetricWhereInput[] | AnalyticMetricWhereInput | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
+  name?: String | null;
+  name_not?: String | null;
+  name_in?: String[] | String | null;
+  name_not_in?: String[] | String | null;
+  name_lt?: String | null;
+  name_lte?: String | null;
+  name_gt?: String | null;
+  name_gte?: String | null;
+  name_contains?: String | null;
+  name_not_contains?: String | null;
+  name_starts_with?: String | null;
+  name_not_starts_with?: String | null;
+  name_ends_with?: String | null;
+  name_not_ends_with?: String | null;
 }
 
 export interface AnalyticMetricWhereUniqueInput {
-  id?: ID_Input | null
-  name?: String | null
+  id?: ID_Input | null;
+  name?: String | null;
 }
 
 export interface CurrencyCreateInput {
-  id?: ID_Input | null
-  name: String
-  code: String
-  distributingMetricItems?: DistributingMetricItemCreateManyWithoutBaseCurrencyInput | null
-  transactions?: TransactionCreateManyWithoutCurrencyInput | null
+  id?: ID_Input | null;
+  name: String;
+  code: String;
+  distributingMetricItems?: DistributingMetricItemCreateManyWithoutBaseCurrencyInput | null;
+  transactions?: TransactionCreateManyWithoutCurrencyInput | null;
 }
 
 export interface CurrencyCreateOneWithoutDistributingMetricItemsInput {
-  create?: CurrencyCreateWithoutDistributingMetricItemsInput | null
-  connect?: CurrencyWhereUniqueInput | null
+  create?: CurrencyCreateWithoutDistributingMetricItemsInput | null;
+  connect?: CurrencyWhereUniqueInput | null;
 }
 
 export interface CurrencyCreateOneWithoutTransactionsInput {
-  create?: CurrencyCreateWithoutTransactionsInput | null
-  connect?: CurrencyWhereUniqueInput | null
+  create?: CurrencyCreateWithoutTransactionsInput | null;
+  connect?: CurrencyWhereUniqueInput | null;
 }
 
 export interface CurrencyCreateWithoutDistributingMetricItemsInput {
-  id?: ID_Input | null
-  name: String
-  code: String
-  transactions?: TransactionCreateManyWithoutCurrencyInput | null
+  id?: ID_Input | null;
+  name: String;
+  code: String;
+  transactions?: TransactionCreateManyWithoutCurrencyInput | null;
 }
 
 export interface CurrencyCreateWithoutTransactionsInput {
-  id?: ID_Input | null
-  name: String
-  code: String
-  distributingMetricItems?: DistributingMetricItemCreateManyWithoutBaseCurrencyInput | null
+  id?: ID_Input | null;
+  name: String;
+  code: String;
+  distributingMetricItems?: DistributingMetricItemCreateManyWithoutBaseCurrencyInput | null;
 }
 
 export interface CurrencySubscriptionWhereInput {
-  AND?: CurrencySubscriptionWhereInput[] | CurrencySubscriptionWhereInput | null
-  OR?: CurrencySubscriptionWhereInput[] | CurrencySubscriptionWhereInput | null
-  NOT?: CurrencySubscriptionWhereInput[] | CurrencySubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: CurrencyWhereInput | null
+  AND?:
+    | CurrencySubscriptionWhereInput[]
+    | CurrencySubscriptionWhereInput
+    | null;
+  OR?: CurrencySubscriptionWhereInput[] | CurrencySubscriptionWhereInput | null;
+  NOT?:
+    | CurrencySubscriptionWhereInput[]
+    | CurrencySubscriptionWhereInput
+    | null;
+  mutation_in?: MutationType[] | MutationType | null;
+  updatedFields_contains?: String | null;
+  updatedFields_contains_every?: String[] | String | null;
+  updatedFields_contains_some?: String[] | String | null;
+  node?: CurrencyWhereInput | null;
 }
 
 export interface CurrencyUpdateInput {
-  name?: String | null
-  code?: String | null
-  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutBaseCurrencyInput | null
-  transactions?: TransactionUpdateManyWithoutCurrencyInput | null
+  name?: String | null;
+  code?: String | null;
+  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutBaseCurrencyInput | null;
+  transactions?: TransactionUpdateManyWithoutCurrencyInput | null;
 }
 
 export interface CurrencyUpdateManyMutationInput {
-  name?: String | null
-  code?: String | null
+  name?: String | null;
+  code?: String | null;
 }
 
 export interface CurrencyUpdateOneRequiredWithoutTransactionsInput {
-  create?: CurrencyCreateWithoutTransactionsInput | null
-  connect?: CurrencyWhereUniqueInput | null
-  update?: CurrencyUpdateWithoutTransactionsDataInput | null
-  upsert?: CurrencyUpsertWithoutTransactionsInput | null
+  create?: CurrencyCreateWithoutTransactionsInput | null;
+  connect?: CurrencyWhereUniqueInput | null;
+  update?: CurrencyUpdateWithoutTransactionsDataInput | null;
+  upsert?: CurrencyUpsertWithoutTransactionsInput | null;
 }
 
 export interface CurrencyUpdateOneWithoutDistributingMetricItemsInput {
-  create?: CurrencyCreateWithoutDistributingMetricItemsInput | null
-  connect?: CurrencyWhereUniqueInput | null
-  disconnect?: Boolean | null
-  delete?: Boolean | null
-  update?: CurrencyUpdateWithoutDistributingMetricItemsDataInput | null
-  upsert?: CurrencyUpsertWithoutDistributingMetricItemsInput | null
+  create?: CurrencyCreateWithoutDistributingMetricItemsInput | null;
+  connect?: CurrencyWhereUniqueInput | null;
+  disconnect?: Boolean | null;
+  delete?: Boolean | null;
+  update?: CurrencyUpdateWithoutDistributingMetricItemsDataInput | null;
+  upsert?: CurrencyUpsertWithoutDistributingMetricItemsInput | null;
 }
 
 export interface CurrencyUpdateWithoutDistributingMetricItemsDataInput {
-  name?: String | null
-  code?: String | null
-  transactions?: TransactionUpdateManyWithoutCurrencyInput | null
+  name?: String | null;
+  code?: String | null;
+  transactions?: TransactionUpdateManyWithoutCurrencyInput | null;
 }
 
 export interface CurrencyUpdateWithoutTransactionsDataInput {
-  name?: String | null
-  code?: String | null
-  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutBaseCurrencyInput | null
+  name?: String | null;
+  code?: String | null;
+  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutBaseCurrencyInput | null;
 }
 
 export interface CurrencyUpsertWithoutDistributingMetricItemsInput {
-  update: CurrencyUpdateWithoutDistributingMetricItemsDataInput
-  create: CurrencyCreateWithoutDistributingMetricItemsInput
+  update: CurrencyUpdateWithoutDistributingMetricItemsDataInput;
+  create: CurrencyCreateWithoutDistributingMetricItemsInput;
 }
 
 export interface CurrencyUpsertWithoutTransactionsInput {
-  update: CurrencyUpdateWithoutTransactionsDataInput
-  create: CurrencyCreateWithoutTransactionsInput
+  update: CurrencyUpdateWithoutTransactionsDataInput;
+  create: CurrencyCreateWithoutTransactionsInput;
 }
 
 export interface CurrencyWhereInput {
-  AND?: CurrencyWhereInput[] | CurrencyWhereInput | null
-  OR?: CurrencyWhereInput[] | CurrencyWhereInput | null
-  NOT?: CurrencyWhereInput[] | CurrencyWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  name?: String | null
-  name_not?: String | null
-  name_in?: String[] | String | null
-  name_not_in?: String[] | String | null
-  name_lt?: String | null
-  name_lte?: String | null
-  name_gt?: String | null
-  name_gte?: String | null
-  name_contains?: String | null
-  name_not_contains?: String | null
-  name_starts_with?: String | null
-  name_not_starts_with?: String | null
-  name_ends_with?: String | null
-  name_not_ends_with?: String | null
-  code?: String | null
-  code_not?: String | null
-  code_in?: String[] | String | null
-  code_not_in?: String[] | String | null
-  code_lt?: String | null
-  code_lte?: String | null
-  code_gt?: String | null
-  code_gte?: String | null
-  code_contains?: String | null
-  code_not_contains?: String | null
-  code_starts_with?: String | null
-  code_not_starts_with?: String | null
-  code_ends_with?: String | null
-  code_not_ends_with?: String | null
-  distributingMetricItems_every?: DistributingMetricItemWhereInput | null
-  distributingMetricItems_some?: DistributingMetricItemWhereInput | null
-  distributingMetricItems_none?: DistributingMetricItemWhereInput | null
-  transactions_every?: TransactionWhereInput | null
-  transactions_some?: TransactionWhereInput | null
-  transactions_none?: TransactionWhereInput | null
+  AND?: CurrencyWhereInput[] | CurrencyWhereInput | null;
+  OR?: CurrencyWhereInput[] | CurrencyWhereInput | null;
+  NOT?: CurrencyWhereInput[] | CurrencyWhereInput | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
+  name?: String | null;
+  name_not?: String | null;
+  name_in?: String[] | String | null;
+  name_not_in?: String[] | String | null;
+  name_lt?: String | null;
+  name_lte?: String | null;
+  name_gt?: String | null;
+  name_gte?: String | null;
+  name_contains?: String | null;
+  name_not_contains?: String | null;
+  name_starts_with?: String | null;
+  name_not_starts_with?: String | null;
+  name_ends_with?: String | null;
+  name_not_ends_with?: String | null;
+  code?: String | null;
+  code_not?: String | null;
+  code_in?: String[] | String | null;
+  code_not_in?: String[] | String | null;
+  code_lt?: String | null;
+  code_lte?: String | null;
+  code_gt?: String | null;
+  code_gte?: String | null;
+  code_contains?: String | null;
+  code_not_contains?: String | null;
+  code_starts_with?: String | null;
+  code_not_starts_with?: String | null;
+  code_ends_with?: String | null;
+  code_not_ends_with?: String | null;
+  distributingMetricItems_every?: DistributingMetricItemWhereInput | null;
+  distributingMetricItems_some?: DistributingMetricItemWhereInput | null;
+  distributingMetricItems_none?: DistributingMetricItemWhereInput | null;
+  transactions_every?: TransactionWhereInput | null;
+  transactions_some?: TransactionWhereInput | null;
+  transactions_none?: TransactionWhereInput | null;
 }
 
 export interface CurrencyWhereUniqueInput {
-  id?: ID_Input | null
+  id?: ID_Input | null;
 }
 
 export interface DistributingMetricItemCreateInput {
-  id?: ID_Input | null
-  user: UserCredentialCreateOneWithoutDistributingMetricItemsInput
-  period: PeriodCreateOneInput
-  metric: AnalyticMetricCreateOneInput
-  category?: TransactionCategoryCreateOneWithoutDistributingMetricItemsInput | null
-  baseCurrency?: CurrencyCreateOneWithoutDistributingMetricItemsInput | null
+  id?: ID_Input | null;
+  user: UserCredentialCreateOneWithoutDistributingMetricItemsInput;
+  period: PeriodCreateOneInput;
+  metric: AnalyticMetricCreateOneInput;
+  category?: TransactionCategoryCreateOneWithoutDistributingMetricItemsInput | null;
+  baseCurrency?: CurrencyCreateOneWithoutDistributingMetricItemsInput | null;
 }
 
 export interface DistributingMetricItemCreateManyWithoutBaseCurrencyInput {
-  create?: DistributingMetricItemCreateWithoutBaseCurrencyInput[] | DistributingMetricItemCreateWithoutBaseCurrencyInput | null
-  connect?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
+  create?:
+    | DistributingMetricItemCreateWithoutBaseCurrencyInput[]
+    | DistributingMetricItemCreateWithoutBaseCurrencyInput
+    | null;
+  connect?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
 }
 
 export interface DistributingMetricItemCreateManyWithoutCategoryInput {
-  create?: DistributingMetricItemCreateWithoutCategoryInput[] | DistributingMetricItemCreateWithoutCategoryInput | null
-  connect?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
+  create?:
+    | DistributingMetricItemCreateWithoutCategoryInput[]
+    | DistributingMetricItemCreateWithoutCategoryInput
+    | null;
+  connect?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
 }
 
 export interface DistributingMetricItemCreateManyWithoutUserInput {
-  create?: DistributingMetricItemCreateWithoutUserInput[] | DistributingMetricItemCreateWithoutUserInput | null
-  connect?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
+  create?:
+    | DistributingMetricItemCreateWithoutUserInput[]
+    | DistributingMetricItemCreateWithoutUserInput
+    | null;
+  connect?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
 }
 
 export interface DistributingMetricItemCreateWithoutBaseCurrencyInput {
-  id?: ID_Input | null
-  user: UserCredentialCreateOneWithoutDistributingMetricItemsInput
-  period: PeriodCreateOneInput
-  metric: AnalyticMetricCreateOneInput
-  category?: TransactionCategoryCreateOneWithoutDistributingMetricItemsInput | null
+  id?: ID_Input | null;
+  user: UserCredentialCreateOneWithoutDistributingMetricItemsInput;
+  period: PeriodCreateOneInput;
+  metric: AnalyticMetricCreateOneInput;
+  category?: TransactionCategoryCreateOneWithoutDistributingMetricItemsInput | null;
 }
 
 export interface DistributingMetricItemCreateWithoutCategoryInput {
-  id?: ID_Input | null
-  user: UserCredentialCreateOneWithoutDistributingMetricItemsInput
-  period: PeriodCreateOneInput
-  metric: AnalyticMetricCreateOneInput
-  baseCurrency?: CurrencyCreateOneWithoutDistributingMetricItemsInput | null
+  id?: ID_Input | null;
+  user: UserCredentialCreateOneWithoutDistributingMetricItemsInput;
+  period: PeriodCreateOneInput;
+  metric: AnalyticMetricCreateOneInput;
+  baseCurrency?: CurrencyCreateOneWithoutDistributingMetricItemsInput | null;
 }
 
 export interface DistributingMetricItemCreateWithoutUserInput {
-  id?: ID_Input | null
-  period: PeriodCreateOneInput
-  metric: AnalyticMetricCreateOneInput
-  category?: TransactionCategoryCreateOneWithoutDistributingMetricItemsInput | null
-  baseCurrency?: CurrencyCreateOneWithoutDistributingMetricItemsInput | null
+  id?: ID_Input | null;
+  period: PeriodCreateOneInput;
+  metric: AnalyticMetricCreateOneInput;
+  category?: TransactionCategoryCreateOneWithoutDistributingMetricItemsInput | null;
+  baseCurrency?: CurrencyCreateOneWithoutDistributingMetricItemsInput | null;
 }
 
 export interface DistributingMetricItemScalarWhereInput {
-  AND?: DistributingMetricItemScalarWhereInput[] | DistributingMetricItemScalarWhereInput | null
-  OR?: DistributingMetricItemScalarWhereInput[] | DistributingMetricItemScalarWhereInput | null
-  NOT?: DistributingMetricItemScalarWhereInput[] | DistributingMetricItemScalarWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
+  AND?:
+    | DistributingMetricItemScalarWhereInput[]
+    | DistributingMetricItemScalarWhereInput
+    | null;
+  OR?:
+    | DistributingMetricItemScalarWhereInput[]
+    | DistributingMetricItemScalarWhereInput
+    | null;
+  NOT?:
+    | DistributingMetricItemScalarWhereInput[]
+    | DistributingMetricItemScalarWhereInput
+    | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
 }
 
 export interface DistributingMetricItemSubscriptionWhereInput {
-  AND?: DistributingMetricItemSubscriptionWhereInput[] | DistributingMetricItemSubscriptionWhereInput | null
-  OR?: DistributingMetricItemSubscriptionWhereInput[] | DistributingMetricItemSubscriptionWhereInput | null
-  NOT?: DistributingMetricItemSubscriptionWhereInput[] | DistributingMetricItemSubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: DistributingMetricItemWhereInput | null
+  AND?:
+    | DistributingMetricItemSubscriptionWhereInput[]
+    | DistributingMetricItemSubscriptionWhereInput
+    | null;
+  OR?:
+    | DistributingMetricItemSubscriptionWhereInput[]
+    | DistributingMetricItemSubscriptionWhereInput
+    | null;
+  NOT?:
+    | DistributingMetricItemSubscriptionWhereInput[]
+    | DistributingMetricItemSubscriptionWhereInput
+    | null;
+  mutation_in?: MutationType[] | MutationType | null;
+  updatedFields_contains?: String | null;
+  updatedFields_contains_every?: String[] | String | null;
+  updatedFields_contains_some?: String[] | String | null;
+  node?: DistributingMetricItemWhereInput | null;
 }
 
 export interface DistributingMetricItemUpdateInput {
-  user?: UserCredentialUpdateOneRequiredWithoutDistributingMetricItemsInput | null
-  period?: PeriodUpdateOneRequiredInput | null
-  metric?: AnalyticMetricUpdateOneRequiredInput | null
-  category?: TransactionCategoryUpdateOneWithoutDistributingMetricItemsInput | null
-  baseCurrency?: CurrencyUpdateOneWithoutDistributingMetricItemsInput | null
+  user?: UserCredentialUpdateOneRequiredWithoutDistributingMetricItemsInput | null;
+  period?: PeriodUpdateOneRequiredInput | null;
+  metric?: AnalyticMetricUpdateOneRequiredInput | null;
+  category?: TransactionCategoryUpdateOneWithoutDistributingMetricItemsInput | null;
+  baseCurrency?: CurrencyUpdateOneWithoutDistributingMetricItemsInput | null;
 }
 
 export interface DistributingMetricItemUpdateManyWithoutBaseCurrencyInput {
-  create?: DistributingMetricItemCreateWithoutBaseCurrencyInput[] | DistributingMetricItemCreateWithoutBaseCurrencyInput | null
-  connect?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  set?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  disconnect?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  delete?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  update?: DistributingMetricItemUpdateWithWhereUniqueWithoutBaseCurrencyInput[] | DistributingMetricItemUpdateWithWhereUniqueWithoutBaseCurrencyInput | null
-  deleteMany?: DistributingMetricItemScalarWhereInput[] | DistributingMetricItemScalarWhereInput | null
-  upsert?: DistributingMetricItemUpsertWithWhereUniqueWithoutBaseCurrencyInput[] | DistributingMetricItemUpsertWithWhereUniqueWithoutBaseCurrencyInput | null
+  create?:
+    | DistributingMetricItemCreateWithoutBaseCurrencyInput[]
+    | DistributingMetricItemCreateWithoutBaseCurrencyInput
+    | null;
+  connect?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  set?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  disconnect?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  delete?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  update?:
+    | DistributingMetricItemUpdateWithWhereUniqueWithoutBaseCurrencyInput[]
+    | DistributingMetricItemUpdateWithWhereUniqueWithoutBaseCurrencyInput
+    | null;
+  deleteMany?:
+    | DistributingMetricItemScalarWhereInput[]
+    | DistributingMetricItemScalarWhereInput
+    | null;
+  upsert?:
+    | DistributingMetricItemUpsertWithWhereUniqueWithoutBaseCurrencyInput[]
+    | DistributingMetricItemUpsertWithWhereUniqueWithoutBaseCurrencyInput
+    | null;
 }
 
 export interface DistributingMetricItemUpdateManyWithoutCategoryInput {
-  create?: DistributingMetricItemCreateWithoutCategoryInput[] | DistributingMetricItemCreateWithoutCategoryInput | null
-  connect?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  set?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  disconnect?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  delete?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  update?: DistributingMetricItemUpdateWithWhereUniqueWithoutCategoryInput[] | DistributingMetricItemUpdateWithWhereUniqueWithoutCategoryInput | null
-  deleteMany?: DistributingMetricItemScalarWhereInput[] | DistributingMetricItemScalarWhereInput | null
-  upsert?: DistributingMetricItemUpsertWithWhereUniqueWithoutCategoryInput[] | DistributingMetricItemUpsertWithWhereUniqueWithoutCategoryInput | null
+  create?:
+    | DistributingMetricItemCreateWithoutCategoryInput[]
+    | DistributingMetricItemCreateWithoutCategoryInput
+    | null;
+  connect?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  set?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  disconnect?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  delete?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  update?:
+    | DistributingMetricItemUpdateWithWhereUniqueWithoutCategoryInput[]
+    | DistributingMetricItemUpdateWithWhereUniqueWithoutCategoryInput
+    | null;
+  deleteMany?:
+    | DistributingMetricItemScalarWhereInput[]
+    | DistributingMetricItemScalarWhereInput
+    | null;
+  upsert?:
+    | DistributingMetricItemUpsertWithWhereUniqueWithoutCategoryInput[]
+    | DistributingMetricItemUpsertWithWhereUniqueWithoutCategoryInput
+    | null;
 }
 
 export interface DistributingMetricItemUpdateManyWithoutUserInput {
-  create?: DistributingMetricItemCreateWithoutUserInput[] | DistributingMetricItemCreateWithoutUserInput | null
-  connect?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  set?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  disconnect?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  delete?: DistributingMetricItemWhereUniqueInput[] | DistributingMetricItemWhereUniqueInput | null
-  update?: DistributingMetricItemUpdateWithWhereUniqueWithoutUserInput[] | DistributingMetricItemUpdateWithWhereUniqueWithoutUserInput | null
-  deleteMany?: DistributingMetricItemScalarWhereInput[] | DistributingMetricItemScalarWhereInput | null
-  upsert?: DistributingMetricItemUpsertWithWhereUniqueWithoutUserInput[] | DistributingMetricItemUpsertWithWhereUniqueWithoutUserInput | null
+  create?:
+    | DistributingMetricItemCreateWithoutUserInput[]
+    | DistributingMetricItemCreateWithoutUserInput
+    | null;
+  connect?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  set?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  disconnect?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  delete?:
+    | DistributingMetricItemWhereUniqueInput[]
+    | DistributingMetricItemWhereUniqueInput
+    | null;
+  update?:
+    | DistributingMetricItemUpdateWithWhereUniqueWithoutUserInput[]
+    | DistributingMetricItemUpdateWithWhereUniqueWithoutUserInput
+    | null;
+  deleteMany?:
+    | DistributingMetricItemScalarWhereInput[]
+    | DistributingMetricItemScalarWhereInput
+    | null;
+  upsert?:
+    | DistributingMetricItemUpsertWithWhereUniqueWithoutUserInput[]
+    | DistributingMetricItemUpsertWithWhereUniqueWithoutUserInput
+    | null;
 }
 
 export interface DistributingMetricItemUpdateWithoutBaseCurrencyDataInput {
-  user?: UserCredentialUpdateOneRequiredWithoutDistributingMetricItemsInput | null
-  period?: PeriodUpdateOneRequiredInput | null
-  metric?: AnalyticMetricUpdateOneRequiredInput | null
-  category?: TransactionCategoryUpdateOneWithoutDistributingMetricItemsInput | null
+  user?: UserCredentialUpdateOneRequiredWithoutDistributingMetricItemsInput | null;
+  period?: PeriodUpdateOneRequiredInput | null;
+  metric?: AnalyticMetricUpdateOneRequiredInput | null;
+  category?: TransactionCategoryUpdateOneWithoutDistributingMetricItemsInput | null;
 }
 
 export interface DistributingMetricItemUpdateWithoutCategoryDataInput {
-  user?: UserCredentialUpdateOneRequiredWithoutDistributingMetricItemsInput | null
-  period?: PeriodUpdateOneRequiredInput | null
-  metric?: AnalyticMetricUpdateOneRequiredInput | null
-  baseCurrency?: CurrencyUpdateOneWithoutDistributingMetricItemsInput | null
+  user?: UserCredentialUpdateOneRequiredWithoutDistributingMetricItemsInput | null;
+  period?: PeriodUpdateOneRequiredInput | null;
+  metric?: AnalyticMetricUpdateOneRequiredInput | null;
+  baseCurrency?: CurrencyUpdateOneWithoutDistributingMetricItemsInput | null;
 }
 
 export interface DistributingMetricItemUpdateWithoutUserDataInput {
-  period?: PeriodUpdateOneRequiredInput | null
-  metric?: AnalyticMetricUpdateOneRequiredInput | null
-  category?: TransactionCategoryUpdateOneWithoutDistributingMetricItemsInput | null
-  baseCurrency?: CurrencyUpdateOneWithoutDistributingMetricItemsInput | null
+  period?: PeriodUpdateOneRequiredInput | null;
+  metric?: AnalyticMetricUpdateOneRequiredInput | null;
+  category?: TransactionCategoryUpdateOneWithoutDistributingMetricItemsInput | null;
+  baseCurrency?: CurrencyUpdateOneWithoutDistributingMetricItemsInput | null;
 }
 
 export interface DistributingMetricItemUpdateWithWhereUniqueWithoutBaseCurrencyInput {
-  where: DistributingMetricItemWhereUniqueInput
-  data: DistributingMetricItemUpdateWithoutBaseCurrencyDataInput
+  where: DistributingMetricItemWhereUniqueInput;
+  data: DistributingMetricItemUpdateWithoutBaseCurrencyDataInput;
 }
 
 export interface DistributingMetricItemUpdateWithWhereUniqueWithoutCategoryInput {
-  where: DistributingMetricItemWhereUniqueInput
-  data: DistributingMetricItemUpdateWithoutCategoryDataInput
+  where: DistributingMetricItemWhereUniqueInput;
+  data: DistributingMetricItemUpdateWithoutCategoryDataInput;
 }
 
 export interface DistributingMetricItemUpdateWithWhereUniqueWithoutUserInput {
-  where: DistributingMetricItemWhereUniqueInput
-  data: DistributingMetricItemUpdateWithoutUserDataInput
+  where: DistributingMetricItemWhereUniqueInput;
+  data: DistributingMetricItemUpdateWithoutUserDataInput;
 }
 
 export interface DistributingMetricItemUpsertWithWhereUniqueWithoutBaseCurrencyInput {
-  where: DistributingMetricItemWhereUniqueInput
-  update: DistributingMetricItemUpdateWithoutBaseCurrencyDataInput
-  create: DistributingMetricItemCreateWithoutBaseCurrencyInput
+  where: DistributingMetricItemWhereUniqueInput;
+  update: DistributingMetricItemUpdateWithoutBaseCurrencyDataInput;
+  create: DistributingMetricItemCreateWithoutBaseCurrencyInput;
 }
 
 export interface DistributingMetricItemUpsertWithWhereUniqueWithoutCategoryInput {
-  where: DistributingMetricItemWhereUniqueInput
-  update: DistributingMetricItemUpdateWithoutCategoryDataInput
-  create: DistributingMetricItemCreateWithoutCategoryInput
+  where: DistributingMetricItemWhereUniqueInput;
+  update: DistributingMetricItemUpdateWithoutCategoryDataInput;
+  create: DistributingMetricItemCreateWithoutCategoryInput;
 }
 
 export interface DistributingMetricItemUpsertWithWhereUniqueWithoutUserInput {
-  where: DistributingMetricItemWhereUniqueInput
-  update: DistributingMetricItemUpdateWithoutUserDataInput
-  create: DistributingMetricItemCreateWithoutUserInput
+  where: DistributingMetricItemWhereUniqueInput;
+  update: DistributingMetricItemUpdateWithoutUserDataInput;
+  create: DistributingMetricItemCreateWithoutUserInput;
 }
 
 export interface DistributingMetricItemWhereInput {
-  AND?: DistributingMetricItemWhereInput[] | DistributingMetricItemWhereInput | null
-  OR?: DistributingMetricItemWhereInput[] | DistributingMetricItemWhereInput | null
-  NOT?: DistributingMetricItemWhereInput[] | DistributingMetricItemWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  user?: UserCredentialWhereInput | null
-  period?: PeriodWhereInput | null
-  metric?: AnalyticMetricWhereInput | null
-  category?: TransactionCategoryWhereInput | null
-  baseCurrency?: CurrencyWhereInput | null
+  AND?:
+    | DistributingMetricItemWhereInput[]
+    | DistributingMetricItemWhereInput
+    | null;
+  OR?:
+    | DistributingMetricItemWhereInput[]
+    | DistributingMetricItemWhereInput
+    | null;
+  NOT?:
+    | DistributingMetricItemWhereInput[]
+    | DistributingMetricItemWhereInput
+    | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
+  user?: UserCredentialWhereInput | null;
+  period?: PeriodWhereInput | null;
+  metric?: AnalyticMetricWhereInput | null;
+  category?: TransactionCategoryWhereInput | null;
+  baseCurrency?: CurrencyWhereInput | null;
 }
 
 export interface DistributingMetricItemWhereUniqueInput {
-  id?: ID_Input | null
+  id?: ID_Input | null;
 }
 
 export interface PeriodCreateInput {
-  id?: ID_Input | null
-  name: String
+  id?: ID_Input | null;
+  name: String;
 }
 
 export interface PeriodCreateOneInput {
-  create?: PeriodCreateInput | null
-  connect?: PeriodWhereUniqueInput | null
+  create?: PeriodCreateInput | null;
+  connect?: PeriodWhereUniqueInput | null;
 }
 
 export interface PeriodSubscriptionWhereInput {
-  AND?: PeriodSubscriptionWhereInput[] | PeriodSubscriptionWhereInput | null
-  OR?: PeriodSubscriptionWhereInput[] | PeriodSubscriptionWhereInput | null
-  NOT?: PeriodSubscriptionWhereInput[] | PeriodSubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: PeriodWhereInput | null
+  AND?: PeriodSubscriptionWhereInput[] | PeriodSubscriptionWhereInput | null;
+  OR?: PeriodSubscriptionWhereInput[] | PeriodSubscriptionWhereInput | null;
+  NOT?: PeriodSubscriptionWhereInput[] | PeriodSubscriptionWhereInput | null;
+  mutation_in?: MutationType[] | MutationType | null;
+  updatedFields_contains?: String | null;
+  updatedFields_contains_every?: String[] | String | null;
+  updatedFields_contains_some?: String[] | String | null;
+  node?: PeriodWhereInput | null;
 }
 
 export interface PeriodUpdateDataInput {
-  name?: String | null
+  name?: String | null;
 }
 
 export interface PeriodUpdateInput {
-  name?: String | null
+  name?: String | null;
 }
 
 export interface PeriodUpdateManyMutationInput {
-  name?: String | null
+  name?: String | null;
 }
 
 export interface PeriodUpdateOneRequiredInput {
-  create?: PeriodCreateInput | null
-  connect?: PeriodWhereUniqueInput | null
-  update?: PeriodUpdateDataInput | null
-  upsert?: PeriodUpsertNestedInput | null
+  create?: PeriodCreateInput | null;
+  connect?: PeriodWhereUniqueInput | null;
+  update?: PeriodUpdateDataInput | null;
+  upsert?: PeriodUpsertNestedInput | null;
 }
 
 export interface PeriodUpsertNestedInput {
-  update: PeriodUpdateDataInput
-  create: PeriodCreateInput
+  update: PeriodUpdateDataInput;
+  create: PeriodCreateInput;
 }
 
 export interface PeriodWhereInput {
-  AND?: PeriodWhereInput[] | PeriodWhereInput | null
-  OR?: PeriodWhereInput[] | PeriodWhereInput | null
-  NOT?: PeriodWhereInput[] | PeriodWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  name?: String | null
-  name_not?: String | null
-  name_in?: String[] | String | null
-  name_not_in?: String[] | String | null
-  name_lt?: String | null
-  name_lte?: String | null
-  name_gt?: String | null
-  name_gte?: String | null
-  name_contains?: String | null
-  name_not_contains?: String | null
-  name_starts_with?: String | null
-  name_not_starts_with?: String | null
-  name_ends_with?: String | null
-  name_not_ends_with?: String | null
+  AND?: PeriodWhereInput[] | PeriodWhereInput | null;
+  OR?: PeriodWhereInput[] | PeriodWhereInput | null;
+  NOT?: PeriodWhereInput[] | PeriodWhereInput | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
+  name?: String | null;
+  name_not?: String | null;
+  name_in?: String[] | String | null;
+  name_not_in?: String[] | String | null;
+  name_lt?: String | null;
+  name_lte?: String | null;
+  name_gt?: String | null;
+  name_gte?: String | null;
+  name_contains?: String | null;
+  name_not_contains?: String | null;
+  name_starts_with?: String | null;
+  name_not_starts_with?: String | null;
+  name_ends_with?: String | null;
+  name_not_ends_with?: String | null;
 }
 
 export interface PeriodWhereUniqueInput {
-  id?: ID_Input | null
-  name?: String | null
+  id?: ID_Input | null;
+  name?: String | null;
 }
 
 export interface RoleCreateInput {
-  id?: ID_Input | null
-  name: String
+  id?: ID_Input | null;
+  name: String;
 }
 
 export interface RoleCreateManyInput {
-  create?: RoleCreateInput[] | RoleCreateInput | null
-  connect?: RoleWhereUniqueInput[] | RoleWhereUniqueInput | null
+  create?: RoleCreateInput[] | RoleCreateInput | null;
+  connect?: RoleWhereUniqueInput[] | RoleWhereUniqueInput | null;
 }
 
 export interface RoleScalarWhereInput {
-  AND?: RoleScalarWhereInput[] | RoleScalarWhereInput | null
-  OR?: RoleScalarWhereInput[] | RoleScalarWhereInput | null
-  NOT?: RoleScalarWhereInput[] | RoleScalarWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  name?: String | null
-  name_not?: String | null
-  name_in?: String[] | String | null
-  name_not_in?: String[] | String | null
-  name_lt?: String | null
-  name_lte?: String | null
-  name_gt?: String | null
-  name_gte?: String | null
-  name_contains?: String | null
-  name_not_contains?: String | null
-  name_starts_with?: String | null
-  name_not_starts_with?: String | null
-  name_ends_with?: String | null
-  name_not_ends_with?: String | null
+  AND?: RoleScalarWhereInput[] | RoleScalarWhereInput | null;
+  OR?: RoleScalarWhereInput[] | RoleScalarWhereInput | null;
+  NOT?: RoleScalarWhereInput[] | RoleScalarWhereInput | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
+  name?: String | null;
+  name_not?: String | null;
+  name_in?: String[] | String | null;
+  name_not_in?: String[] | String | null;
+  name_lt?: String | null;
+  name_lte?: String | null;
+  name_gt?: String | null;
+  name_gte?: String | null;
+  name_contains?: String | null;
+  name_not_contains?: String | null;
+  name_starts_with?: String | null;
+  name_not_starts_with?: String | null;
+  name_ends_with?: String | null;
+  name_not_ends_with?: String | null;
 }
 
 export interface RoleSubscriptionWhereInput {
-  AND?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput | null
-  OR?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput | null
-  NOT?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: RoleWhereInput | null
+  AND?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput | null;
+  OR?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput | null;
+  NOT?: RoleSubscriptionWhereInput[] | RoleSubscriptionWhereInput | null;
+  mutation_in?: MutationType[] | MutationType | null;
+  updatedFields_contains?: String | null;
+  updatedFields_contains_every?: String[] | String | null;
+  updatedFields_contains_some?: String[] | String | null;
+  node?: RoleWhereInput | null;
 }
 
 export interface RoleUpdateDataInput {
-  name?: String | null
+  name?: String | null;
 }
 
 export interface RoleUpdateInput {
-  name?: String | null
+  name?: String | null;
 }
 
 export interface RoleUpdateManyDataInput {
-  name?: String | null
+  name?: String | null;
 }
 
 export interface RoleUpdateManyInput {
-  create?: RoleCreateInput[] | RoleCreateInput | null
-  connect?: RoleWhereUniqueInput[] | RoleWhereUniqueInput | null
-  set?: RoleWhereUniqueInput[] | RoleWhereUniqueInput | null
-  disconnect?: RoleWhereUniqueInput[] | RoleWhereUniqueInput | null
-  delete?: RoleWhereUniqueInput[] | RoleWhereUniqueInput | null
-  update?: RoleUpdateWithWhereUniqueNestedInput[] | RoleUpdateWithWhereUniqueNestedInput | null
-  updateMany?: RoleUpdateManyWithWhereNestedInput[] | RoleUpdateManyWithWhereNestedInput | null
-  deleteMany?: RoleScalarWhereInput[] | RoleScalarWhereInput | null
-  upsert?: RoleUpsertWithWhereUniqueNestedInput[] | RoleUpsertWithWhereUniqueNestedInput | null
+  create?: RoleCreateInput[] | RoleCreateInput | null;
+  connect?: RoleWhereUniqueInput[] | RoleWhereUniqueInput | null;
+  set?: RoleWhereUniqueInput[] | RoleWhereUniqueInput | null;
+  disconnect?: RoleWhereUniqueInput[] | RoleWhereUniqueInput | null;
+  delete?: RoleWhereUniqueInput[] | RoleWhereUniqueInput | null;
+  update?:
+    | RoleUpdateWithWhereUniqueNestedInput[]
+    | RoleUpdateWithWhereUniqueNestedInput
+    | null;
+  updateMany?:
+    | RoleUpdateManyWithWhereNestedInput[]
+    | RoleUpdateManyWithWhereNestedInput
+    | null;
+  deleteMany?: RoleScalarWhereInput[] | RoleScalarWhereInput | null;
+  upsert?:
+    | RoleUpsertWithWhereUniqueNestedInput[]
+    | RoleUpsertWithWhereUniqueNestedInput
+    | null;
 }
 
 export interface RoleUpdateManyMutationInput {
-  name?: String | null
+  name?: String | null;
 }
 
 export interface RoleUpdateManyWithWhereNestedInput {
-  where: RoleScalarWhereInput
-  data: RoleUpdateManyDataInput
+  where: RoleScalarWhereInput;
+  data: RoleUpdateManyDataInput;
 }
 
 export interface RoleUpdateWithWhereUniqueNestedInput {
-  where: RoleWhereUniqueInput
-  data: RoleUpdateDataInput
+  where: RoleWhereUniqueInput;
+  data: RoleUpdateDataInput;
 }
 
 export interface RoleUpsertWithWhereUniqueNestedInput {
-  where: RoleWhereUniqueInput
-  update: RoleUpdateDataInput
-  create: RoleCreateInput
+  where: RoleWhereUniqueInput;
+  update: RoleUpdateDataInput;
+  create: RoleCreateInput;
 }
 
 export interface RoleWhereInput {
-  AND?: RoleWhereInput[] | RoleWhereInput | null
-  OR?: RoleWhereInput[] | RoleWhereInput | null
-  NOT?: RoleWhereInput[] | RoleWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  name?: String | null
-  name_not?: String | null
-  name_in?: String[] | String | null
-  name_not_in?: String[] | String | null
-  name_lt?: String | null
-  name_lte?: String | null
-  name_gt?: String | null
-  name_gte?: String | null
-  name_contains?: String | null
-  name_not_contains?: String | null
-  name_starts_with?: String | null
-  name_not_starts_with?: String | null
-  name_ends_with?: String | null
-  name_not_ends_with?: String | null
+  AND?: RoleWhereInput[] | RoleWhereInput | null;
+  OR?: RoleWhereInput[] | RoleWhereInput | null;
+  NOT?: RoleWhereInput[] | RoleWhereInput | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
+  name?: String | null;
+  name_not?: String | null;
+  name_in?: String[] | String | null;
+  name_not_in?: String[] | String | null;
+  name_lt?: String | null;
+  name_lte?: String | null;
+  name_gt?: String | null;
+  name_gte?: String | null;
+  name_contains?: String | null;
+  name_not_contains?: String | null;
+  name_starts_with?: String | null;
+  name_not_starts_with?: String | null;
+  name_ends_with?: String | null;
+  name_not_ends_with?: String | null;
 }
 
 export interface RoleWhereUniqueInput {
-  id?: ID_Input | null
-  name?: String | null
+  id?: ID_Input | null;
+  name?: String | null;
 }
 
 export interface TransactionCategoryCreateInput {
-  id?: ID_Input | null
-  name: String
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  parentCategory?: TransactionCategoryCreateOneWithoutChildCategoriesInput | null
-  owner?: UserCredentialCreateOneWithoutTransactionCategoriesInput | null
-  childCategories?: TransactionCategoryCreateManyWithoutParentCategoryInput | null
-  transactions?: TransactionCreateManyWithoutTransactionCategoryInput | null
-  distributingMetricItems?: DistributingMetricItemCreateManyWithoutCategoryInput | null
+  id?: ID_Input | null;
+  name: String;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  parentCategory?: TransactionCategoryCreateOneWithoutChildCategoriesInput | null;
+  owner?: UserCredentialCreateOneWithoutTransactionCategoriesInput | null;
+  childCategories?: TransactionCategoryCreateManyWithoutParentCategoryInput | null;
+  transactions?: TransactionCreateManyWithoutTransactionCategoryInput | null;
+  distributingMetricItems?: DistributingMetricItemCreateManyWithoutCategoryInput | null;
 }
 
 export interface TransactionCategoryCreateManyWithoutOwnerInput {
-  create?: TransactionCategoryCreateWithoutOwnerInput[] | TransactionCategoryCreateWithoutOwnerInput | null
-  connect?: TransactionCategoryWhereUniqueInput[] | TransactionCategoryWhereUniqueInput | null
+  create?:
+    | TransactionCategoryCreateWithoutOwnerInput[]
+    | TransactionCategoryCreateWithoutOwnerInput
+    | null;
+  connect?:
+    | TransactionCategoryWhereUniqueInput[]
+    | TransactionCategoryWhereUniqueInput
+    | null;
 }
 
 export interface TransactionCategoryCreateManyWithoutParentCategoryInput {
-  create?: TransactionCategoryCreateWithoutParentCategoryInput[] | TransactionCategoryCreateWithoutParentCategoryInput | null
-  connect?: TransactionCategoryWhereUniqueInput[] | TransactionCategoryWhereUniqueInput | null
+  create?:
+    | TransactionCategoryCreateWithoutParentCategoryInput[]
+    | TransactionCategoryCreateWithoutParentCategoryInput
+    | null;
+  connect?:
+    | TransactionCategoryWhereUniqueInput[]
+    | TransactionCategoryWhereUniqueInput
+    | null;
 }
 
 export interface TransactionCategoryCreateOneWithoutChildCategoriesInput {
-  create?: TransactionCategoryCreateWithoutChildCategoriesInput | null
-  connect?: TransactionCategoryWhereUniqueInput | null
+  create?: TransactionCategoryCreateWithoutChildCategoriesInput | null;
+  connect?: TransactionCategoryWhereUniqueInput | null;
 }
 
 export interface TransactionCategoryCreateOneWithoutDistributingMetricItemsInput {
-  create?: TransactionCategoryCreateWithoutDistributingMetricItemsInput | null
-  connect?: TransactionCategoryWhereUniqueInput | null
+  create?: TransactionCategoryCreateWithoutDistributingMetricItemsInput | null;
+  connect?: TransactionCategoryWhereUniqueInput | null;
 }
 
 export interface TransactionCategoryCreateOneWithoutTransactionsInput {
-  create?: TransactionCategoryCreateWithoutTransactionsInput | null
-  connect?: TransactionCategoryWhereUniqueInput | null
+  create?: TransactionCategoryCreateWithoutTransactionsInput | null;
+  connect?: TransactionCategoryWhereUniqueInput | null;
 }
 
 export interface TransactionCategoryCreateWithoutChildCategoriesInput {
-  id?: ID_Input | null
-  name: String
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  parentCategory?: TransactionCategoryCreateOneWithoutChildCategoriesInput | null
-  owner?: UserCredentialCreateOneWithoutTransactionCategoriesInput | null
-  transactions?: TransactionCreateManyWithoutTransactionCategoryInput | null
-  distributingMetricItems?: DistributingMetricItemCreateManyWithoutCategoryInput | null
+  id?: ID_Input | null;
+  name: String;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  parentCategory?: TransactionCategoryCreateOneWithoutChildCategoriesInput | null;
+  owner?: UserCredentialCreateOneWithoutTransactionCategoriesInput | null;
+  transactions?: TransactionCreateManyWithoutTransactionCategoryInput | null;
+  distributingMetricItems?: DistributingMetricItemCreateManyWithoutCategoryInput | null;
 }
 
 export interface TransactionCategoryCreateWithoutDistributingMetricItemsInput {
-  id?: ID_Input | null
-  name: String
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  parentCategory?: TransactionCategoryCreateOneWithoutChildCategoriesInput | null
-  owner?: UserCredentialCreateOneWithoutTransactionCategoriesInput | null
-  childCategories?: TransactionCategoryCreateManyWithoutParentCategoryInput | null
-  transactions?: TransactionCreateManyWithoutTransactionCategoryInput | null
+  id?: ID_Input | null;
+  name: String;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  parentCategory?: TransactionCategoryCreateOneWithoutChildCategoriesInput | null;
+  owner?: UserCredentialCreateOneWithoutTransactionCategoriesInput | null;
+  childCategories?: TransactionCategoryCreateManyWithoutParentCategoryInput | null;
+  transactions?: TransactionCreateManyWithoutTransactionCategoryInput | null;
 }
 
 export interface TransactionCategoryCreateWithoutOwnerInput {
-  id?: ID_Input | null
-  name: String
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  parentCategory?: TransactionCategoryCreateOneWithoutChildCategoriesInput | null
-  childCategories?: TransactionCategoryCreateManyWithoutParentCategoryInput | null
-  transactions?: TransactionCreateManyWithoutTransactionCategoryInput | null
-  distributingMetricItems?: DistributingMetricItemCreateManyWithoutCategoryInput | null
+  id?: ID_Input | null;
+  name: String;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  parentCategory?: TransactionCategoryCreateOneWithoutChildCategoriesInput | null;
+  childCategories?: TransactionCategoryCreateManyWithoutParentCategoryInput | null;
+  transactions?: TransactionCreateManyWithoutTransactionCategoryInput | null;
+  distributingMetricItems?: DistributingMetricItemCreateManyWithoutCategoryInput | null;
 }
 
 export interface TransactionCategoryCreateWithoutParentCategoryInput {
-  id?: ID_Input | null
-  name: String
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  owner?: UserCredentialCreateOneWithoutTransactionCategoriesInput | null
-  childCategories?: TransactionCategoryCreateManyWithoutParentCategoryInput | null
-  transactions?: TransactionCreateManyWithoutTransactionCategoryInput | null
-  distributingMetricItems?: DistributingMetricItemCreateManyWithoutCategoryInput | null
+  id?: ID_Input | null;
+  name: String;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  owner?: UserCredentialCreateOneWithoutTransactionCategoriesInput | null;
+  childCategories?: TransactionCategoryCreateManyWithoutParentCategoryInput | null;
+  transactions?: TransactionCreateManyWithoutTransactionCategoryInput | null;
+  distributingMetricItems?: DistributingMetricItemCreateManyWithoutCategoryInput | null;
 }
 
 export interface TransactionCategoryCreateWithoutTransactionsInput {
-  id?: ID_Input | null
-  name: String
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  parentCategory?: TransactionCategoryCreateOneWithoutChildCategoriesInput | null
-  owner?: UserCredentialCreateOneWithoutTransactionCategoriesInput | null
-  childCategories?: TransactionCategoryCreateManyWithoutParentCategoryInput | null
-  distributingMetricItems?: DistributingMetricItemCreateManyWithoutCategoryInput | null
+  id?: ID_Input | null;
+  name: String;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  parentCategory?: TransactionCategoryCreateOneWithoutChildCategoriesInput | null;
+  owner?: UserCredentialCreateOneWithoutTransactionCategoriesInput | null;
+  childCategories?: TransactionCategoryCreateManyWithoutParentCategoryInput | null;
+  distributingMetricItems?: DistributingMetricItemCreateManyWithoutCategoryInput | null;
 }
 
 export interface TransactionCategoryScalarWhereInput {
-  AND?: TransactionCategoryScalarWhereInput[] | TransactionCategoryScalarWhereInput | null
-  OR?: TransactionCategoryScalarWhereInput[] | TransactionCategoryScalarWhereInput | null
-  NOT?: TransactionCategoryScalarWhereInput[] | TransactionCategoryScalarWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  name?: String | null
-  name_not?: String | null
-  name_in?: String[] | String | null
-  name_not_in?: String[] | String | null
-  name_lt?: String | null
-  name_lte?: String | null
-  name_gt?: String | null
-  name_gte?: String | null
-  name_contains?: String | null
-  name_not_contains?: String | null
-  name_starts_with?: String | null
-  name_not_starts_with?: String | null
-  name_ends_with?: String | null
-  name_not_ends_with?: String | null
-  isSystem?: Boolean | null
-  isSystem_not?: Boolean | null
-  isOutcome?: Boolean | null
-  isOutcome_not?: Boolean | null
+  AND?:
+    | TransactionCategoryScalarWhereInput[]
+    | TransactionCategoryScalarWhereInput
+    | null;
+  OR?:
+    | TransactionCategoryScalarWhereInput[]
+    | TransactionCategoryScalarWhereInput
+    | null;
+  NOT?:
+    | TransactionCategoryScalarWhereInput[]
+    | TransactionCategoryScalarWhereInput
+    | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
+  name?: String | null;
+  name_not?: String | null;
+  name_in?: String[] | String | null;
+  name_not_in?: String[] | String | null;
+  name_lt?: String | null;
+  name_lte?: String | null;
+  name_gt?: String | null;
+  name_gte?: String | null;
+  name_contains?: String | null;
+  name_not_contains?: String | null;
+  name_starts_with?: String | null;
+  name_not_starts_with?: String | null;
+  name_ends_with?: String | null;
+  name_not_ends_with?: String | null;
+  isSystem?: Boolean | null;
+  isSystem_not?: Boolean | null;
+  isOutcome?: Boolean | null;
+  isOutcome_not?: Boolean | null;
 }
 
 export interface TransactionCategorySubscriptionWhereInput {
-  AND?: TransactionCategorySubscriptionWhereInput[] | TransactionCategorySubscriptionWhereInput | null
-  OR?: TransactionCategorySubscriptionWhereInput[] | TransactionCategorySubscriptionWhereInput | null
-  NOT?: TransactionCategorySubscriptionWhereInput[] | TransactionCategorySubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: TransactionCategoryWhereInput | null
+  AND?:
+    | TransactionCategorySubscriptionWhereInput[]
+    | TransactionCategorySubscriptionWhereInput
+    | null;
+  OR?:
+    | TransactionCategorySubscriptionWhereInput[]
+    | TransactionCategorySubscriptionWhereInput
+    | null;
+  NOT?:
+    | TransactionCategorySubscriptionWhereInput[]
+    | TransactionCategorySubscriptionWhereInput
+    | null;
+  mutation_in?: MutationType[] | MutationType | null;
+  updatedFields_contains?: String | null;
+  updatedFields_contains_every?: String[] | String | null;
+  updatedFields_contains_some?: String[] | String | null;
+  node?: TransactionCategoryWhereInput | null;
 }
 
 export interface TransactionCategoryUpdateInput {
-  name?: String | null
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  parentCategory?: TransactionCategoryUpdateOneWithoutChildCategoriesInput | null
-  owner?: UserCredentialUpdateOneWithoutTransactionCategoriesInput | null
-  childCategories?: TransactionCategoryUpdateManyWithoutParentCategoryInput | null
-  transactions?: TransactionUpdateManyWithoutTransactionCategoryInput | null
-  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutCategoryInput | null
+  name?: String | null;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  parentCategory?: TransactionCategoryUpdateOneWithoutChildCategoriesInput | null;
+  owner?: UserCredentialUpdateOneWithoutTransactionCategoriesInput | null;
+  childCategories?: TransactionCategoryUpdateManyWithoutParentCategoryInput | null;
+  transactions?: TransactionUpdateManyWithoutTransactionCategoryInput | null;
+  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutCategoryInput | null;
 }
 
 export interface TransactionCategoryUpdateManyDataInput {
-  name?: String | null
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
+  name?: String | null;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
 }
 
 export interface TransactionCategoryUpdateManyMutationInput {
-  name?: String | null
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
+  name?: String | null;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
 }
 
 export interface TransactionCategoryUpdateManyWithoutOwnerInput {
-  create?: TransactionCategoryCreateWithoutOwnerInput[] | TransactionCategoryCreateWithoutOwnerInput | null
-  connect?: TransactionCategoryWhereUniqueInput[] | TransactionCategoryWhereUniqueInput | null
-  set?: TransactionCategoryWhereUniqueInput[] | TransactionCategoryWhereUniqueInput | null
-  disconnect?: TransactionCategoryWhereUniqueInput[] | TransactionCategoryWhereUniqueInput | null
-  delete?: TransactionCategoryWhereUniqueInput[] | TransactionCategoryWhereUniqueInput | null
-  update?: TransactionCategoryUpdateWithWhereUniqueWithoutOwnerInput[] | TransactionCategoryUpdateWithWhereUniqueWithoutOwnerInput | null
-  updateMany?: TransactionCategoryUpdateManyWithWhereNestedInput[] | TransactionCategoryUpdateManyWithWhereNestedInput | null
-  deleteMany?: TransactionCategoryScalarWhereInput[] | TransactionCategoryScalarWhereInput | null
-  upsert?: TransactionCategoryUpsertWithWhereUniqueWithoutOwnerInput[] | TransactionCategoryUpsertWithWhereUniqueWithoutOwnerInput | null
+  create?:
+    | TransactionCategoryCreateWithoutOwnerInput[]
+    | TransactionCategoryCreateWithoutOwnerInput
+    | null;
+  connect?:
+    | TransactionCategoryWhereUniqueInput[]
+    | TransactionCategoryWhereUniqueInput
+    | null;
+  set?:
+    | TransactionCategoryWhereUniqueInput[]
+    | TransactionCategoryWhereUniqueInput
+    | null;
+  disconnect?:
+    | TransactionCategoryWhereUniqueInput[]
+    | TransactionCategoryWhereUniqueInput
+    | null;
+  delete?:
+    | TransactionCategoryWhereUniqueInput[]
+    | TransactionCategoryWhereUniqueInput
+    | null;
+  update?:
+    | TransactionCategoryUpdateWithWhereUniqueWithoutOwnerInput[]
+    | TransactionCategoryUpdateWithWhereUniqueWithoutOwnerInput
+    | null;
+  updateMany?:
+    | TransactionCategoryUpdateManyWithWhereNestedInput[]
+    | TransactionCategoryUpdateManyWithWhereNestedInput
+    | null;
+  deleteMany?:
+    | TransactionCategoryScalarWhereInput[]
+    | TransactionCategoryScalarWhereInput
+    | null;
+  upsert?:
+    | TransactionCategoryUpsertWithWhereUniqueWithoutOwnerInput[]
+    | TransactionCategoryUpsertWithWhereUniqueWithoutOwnerInput
+    | null;
 }
 
 export interface TransactionCategoryUpdateManyWithoutParentCategoryInput {
-  create?: TransactionCategoryCreateWithoutParentCategoryInput[] | TransactionCategoryCreateWithoutParentCategoryInput | null
-  connect?: TransactionCategoryWhereUniqueInput[] | TransactionCategoryWhereUniqueInput | null
-  set?: TransactionCategoryWhereUniqueInput[] | TransactionCategoryWhereUniqueInput | null
-  disconnect?: TransactionCategoryWhereUniqueInput[] | TransactionCategoryWhereUniqueInput | null
-  delete?: TransactionCategoryWhereUniqueInput[] | TransactionCategoryWhereUniqueInput | null
-  update?: TransactionCategoryUpdateWithWhereUniqueWithoutParentCategoryInput[] | TransactionCategoryUpdateWithWhereUniqueWithoutParentCategoryInput | null
-  updateMany?: TransactionCategoryUpdateManyWithWhereNestedInput[] | TransactionCategoryUpdateManyWithWhereNestedInput | null
-  deleteMany?: TransactionCategoryScalarWhereInput[] | TransactionCategoryScalarWhereInput | null
-  upsert?: TransactionCategoryUpsertWithWhereUniqueWithoutParentCategoryInput[] | TransactionCategoryUpsertWithWhereUniqueWithoutParentCategoryInput | null
+  create?:
+    | TransactionCategoryCreateWithoutParentCategoryInput[]
+    | TransactionCategoryCreateWithoutParentCategoryInput
+    | null;
+  connect?:
+    | TransactionCategoryWhereUniqueInput[]
+    | TransactionCategoryWhereUniqueInput
+    | null;
+  set?:
+    | TransactionCategoryWhereUniqueInput[]
+    | TransactionCategoryWhereUniqueInput
+    | null;
+  disconnect?:
+    | TransactionCategoryWhereUniqueInput[]
+    | TransactionCategoryWhereUniqueInput
+    | null;
+  delete?:
+    | TransactionCategoryWhereUniqueInput[]
+    | TransactionCategoryWhereUniqueInput
+    | null;
+  update?:
+    | TransactionCategoryUpdateWithWhereUniqueWithoutParentCategoryInput[]
+    | TransactionCategoryUpdateWithWhereUniqueWithoutParentCategoryInput
+    | null;
+  updateMany?:
+    | TransactionCategoryUpdateManyWithWhereNestedInput[]
+    | TransactionCategoryUpdateManyWithWhereNestedInput
+    | null;
+  deleteMany?:
+    | TransactionCategoryScalarWhereInput[]
+    | TransactionCategoryScalarWhereInput
+    | null;
+  upsert?:
+    | TransactionCategoryUpsertWithWhereUniqueWithoutParentCategoryInput[]
+    | TransactionCategoryUpsertWithWhereUniqueWithoutParentCategoryInput
+    | null;
 }
 
 export interface TransactionCategoryUpdateManyWithWhereNestedInput {
-  where: TransactionCategoryScalarWhereInput
-  data: TransactionCategoryUpdateManyDataInput
+  where: TransactionCategoryScalarWhereInput;
+  data: TransactionCategoryUpdateManyDataInput;
 }
 
 export interface TransactionCategoryUpdateOneRequiredWithoutTransactionsInput {
-  create?: TransactionCategoryCreateWithoutTransactionsInput | null
-  connect?: TransactionCategoryWhereUniqueInput | null
-  update?: TransactionCategoryUpdateWithoutTransactionsDataInput | null
-  upsert?: TransactionCategoryUpsertWithoutTransactionsInput | null
+  create?: TransactionCategoryCreateWithoutTransactionsInput | null;
+  connect?: TransactionCategoryWhereUniqueInput | null;
+  update?: TransactionCategoryUpdateWithoutTransactionsDataInput | null;
+  upsert?: TransactionCategoryUpsertWithoutTransactionsInput | null;
 }
 
 export interface TransactionCategoryUpdateOneWithoutChildCategoriesInput {
-  create?: TransactionCategoryCreateWithoutChildCategoriesInput | null
-  connect?: TransactionCategoryWhereUniqueInput | null
-  disconnect?: Boolean | null
-  delete?: Boolean | null
-  update?: TransactionCategoryUpdateWithoutChildCategoriesDataInput | null
-  upsert?: TransactionCategoryUpsertWithoutChildCategoriesInput | null
+  create?: TransactionCategoryCreateWithoutChildCategoriesInput | null;
+  connect?: TransactionCategoryWhereUniqueInput | null;
+  disconnect?: Boolean | null;
+  delete?: Boolean | null;
+  update?: TransactionCategoryUpdateWithoutChildCategoriesDataInput | null;
+  upsert?: TransactionCategoryUpsertWithoutChildCategoriesInput | null;
 }
 
 export interface TransactionCategoryUpdateOneWithoutDistributingMetricItemsInput {
-  create?: TransactionCategoryCreateWithoutDistributingMetricItemsInput | null
-  connect?: TransactionCategoryWhereUniqueInput | null
-  disconnect?: Boolean | null
-  delete?: Boolean | null
-  update?: TransactionCategoryUpdateWithoutDistributingMetricItemsDataInput | null
-  upsert?: TransactionCategoryUpsertWithoutDistributingMetricItemsInput | null
+  create?: TransactionCategoryCreateWithoutDistributingMetricItemsInput | null;
+  connect?: TransactionCategoryWhereUniqueInput | null;
+  disconnect?: Boolean | null;
+  delete?: Boolean | null;
+  update?: TransactionCategoryUpdateWithoutDistributingMetricItemsDataInput | null;
+  upsert?: TransactionCategoryUpsertWithoutDistributingMetricItemsInput | null;
 }
 
 export interface TransactionCategoryUpdateWithoutChildCategoriesDataInput {
-  name?: String | null
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  parentCategory?: TransactionCategoryUpdateOneWithoutChildCategoriesInput | null
-  owner?: UserCredentialUpdateOneWithoutTransactionCategoriesInput | null
-  transactions?: TransactionUpdateManyWithoutTransactionCategoryInput | null
-  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutCategoryInput | null
+  name?: String | null;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  parentCategory?: TransactionCategoryUpdateOneWithoutChildCategoriesInput | null;
+  owner?: UserCredentialUpdateOneWithoutTransactionCategoriesInput | null;
+  transactions?: TransactionUpdateManyWithoutTransactionCategoryInput | null;
+  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutCategoryInput | null;
 }
 
 export interface TransactionCategoryUpdateWithoutDistributingMetricItemsDataInput {
-  name?: String | null
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  parentCategory?: TransactionCategoryUpdateOneWithoutChildCategoriesInput | null
-  owner?: UserCredentialUpdateOneWithoutTransactionCategoriesInput | null
-  childCategories?: TransactionCategoryUpdateManyWithoutParentCategoryInput | null
-  transactions?: TransactionUpdateManyWithoutTransactionCategoryInput | null
+  name?: String | null;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  parentCategory?: TransactionCategoryUpdateOneWithoutChildCategoriesInput | null;
+  owner?: UserCredentialUpdateOneWithoutTransactionCategoriesInput | null;
+  childCategories?: TransactionCategoryUpdateManyWithoutParentCategoryInput | null;
+  transactions?: TransactionUpdateManyWithoutTransactionCategoryInput | null;
 }
 
 export interface TransactionCategoryUpdateWithoutOwnerDataInput {
-  name?: String | null
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  parentCategory?: TransactionCategoryUpdateOneWithoutChildCategoriesInput | null
-  childCategories?: TransactionCategoryUpdateManyWithoutParentCategoryInput | null
-  transactions?: TransactionUpdateManyWithoutTransactionCategoryInput | null
-  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutCategoryInput | null
+  name?: String | null;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  parentCategory?: TransactionCategoryUpdateOneWithoutChildCategoriesInput | null;
+  childCategories?: TransactionCategoryUpdateManyWithoutParentCategoryInput | null;
+  transactions?: TransactionUpdateManyWithoutTransactionCategoryInput | null;
+  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutCategoryInput | null;
 }
 
 export interface TransactionCategoryUpdateWithoutParentCategoryDataInput {
-  name?: String | null
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  owner?: UserCredentialUpdateOneWithoutTransactionCategoriesInput | null
-  childCategories?: TransactionCategoryUpdateManyWithoutParentCategoryInput | null
-  transactions?: TransactionUpdateManyWithoutTransactionCategoryInput | null
-  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutCategoryInput | null
+  name?: String | null;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  owner?: UserCredentialUpdateOneWithoutTransactionCategoriesInput | null;
+  childCategories?: TransactionCategoryUpdateManyWithoutParentCategoryInput | null;
+  transactions?: TransactionUpdateManyWithoutTransactionCategoryInput | null;
+  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutCategoryInput | null;
 }
 
 export interface TransactionCategoryUpdateWithoutTransactionsDataInput {
-  name?: String | null
-  isSystem?: Boolean | null
-  isOutcome?: Boolean | null
-  parentCategory?: TransactionCategoryUpdateOneWithoutChildCategoriesInput | null
-  owner?: UserCredentialUpdateOneWithoutTransactionCategoriesInput | null
-  childCategories?: TransactionCategoryUpdateManyWithoutParentCategoryInput | null
-  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutCategoryInput | null
+  name?: String | null;
+  isSystem?: Boolean | null;
+  isOutcome?: Boolean | null;
+  parentCategory?: TransactionCategoryUpdateOneWithoutChildCategoriesInput | null;
+  owner?: UserCredentialUpdateOneWithoutTransactionCategoriesInput | null;
+  childCategories?: TransactionCategoryUpdateManyWithoutParentCategoryInput | null;
+  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutCategoryInput | null;
 }
 
 export interface TransactionCategoryUpdateWithWhereUniqueWithoutOwnerInput {
-  where: TransactionCategoryWhereUniqueInput
-  data: TransactionCategoryUpdateWithoutOwnerDataInput
+  where: TransactionCategoryWhereUniqueInput;
+  data: TransactionCategoryUpdateWithoutOwnerDataInput;
 }
 
 export interface TransactionCategoryUpdateWithWhereUniqueWithoutParentCategoryInput {
-  where: TransactionCategoryWhereUniqueInput
-  data: TransactionCategoryUpdateWithoutParentCategoryDataInput
+  where: TransactionCategoryWhereUniqueInput;
+  data: TransactionCategoryUpdateWithoutParentCategoryDataInput;
 }
 
 export interface TransactionCategoryUpsertWithoutChildCategoriesInput {
-  update: TransactionCategoryUpdateWithoutChildCategoriesDataInput
-  create: TransactionCategoryCreateWithoutChildCategoriesInput
+  update: TransactionCategoryUpdateWithoutChildCategoriesDataInput;
+  create: TransactionCategoryCreateWithoutChildCategoriesInput;
 }
 
 export interface TransactionCategoryUpsertWithoutDistributingMetricItemsInput {
-  update: TransactionCategoryUpdateWithoutDistributingMetricItemsDataInput
-  create: TransactionCategoryCreateWithoutDistributingMetricItemsInput
+  update: TransactionCategoryUpdateWithoutDistributingMetricItemsDataInput;
+  create: TransactionCategoryCreateWithoutDistributingMetricItemsInput;
 }
 
 export interface TransactionCategoryUpsertWithoutTransactionsInput {
-  update: TransactionCategoryUpdateWithoutTransactionsDataInput
-  create: TransactionCategoryCreateWithoutTransactionsInput
+  update: TransactionCategoryUpdateWithoutTransactionsDataInput;
+  create: TransactionCategoryCreateWithoutTransactionsInput;
 }
 
 export interface TransactionCategoryUpsertWithWhereUniqueWithoutOwnerInput {
-  where: TransactionCategoryWhereUniqueInput
-  update: TransactionCategoryUpdateWithoutOwnerDataInput
-  create: TransactionCategoryCreateWithoutOwnerInput
+  where: TransactionCategoryWhereUniqueInput;
+  update: TransactionCategoryUpdateWithoutOwnerDataInput;
+  create: TransactionCategoryCreateWithoutOwnerInput;
 }
 
 export interface TransactionCategoryUpsertWithWhereUniqueWithoutParentCategoryInput {
-  where: TransactionCategoryWhereUniqueInput
-  update: TransactionCategoryUpdateWithoutParentCategoryDataInput
-  create: TransactionCategoryCreateWithoutParentCategoryInput
+  where: TransactionCategoryWhereUniqueInput;
+  update: TransactionCategoryUpdateWithoutParentCategoryDataInput;
+  create: TransactionCategoryCreateWithoutParentCategoryInput;
 }
 
 export interface TransactionCategoryWhereInput {
-  AND?: TransactionCategoryWhereInput[] | TransactionCategoryWhereInput | null
-  OR?: TransactionCategoryWhereInput[] | TransactionCategoryWhereInput | null
-  NOT?: TransactionCategoryWhereInput[] | TransactionCategoryWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  name?: String | null
-  name_not?: String | null
-  name_in?: String[] | String | null
-  name_not_in?: String[] | String | null
-  name_lt?: String | null
-  name_lte?: String | null
-  name_gt?: String | null
-  name_gte?: String | null
-  name_contains?: String | null
-  name_not_contains?: String | null
-  name_starts_with?: String | null
-  name_not_starts_with?: String | null
-  name_ends_with?: String | null
-  name_not_ends_with?: String | null
-  isSystem?: Boolean | null
-  isSystem_not?: Boolean | null
-  isOutcome?: Boolean | null
-  isOutcome_not?: Boolean | null
-  parentCategory?: TransactionCategoryWhereInput | null
-  owner?: UserCredentialWhereInput | null
-  childCategories_every?: TransactionCategoryWhereInput | null
-  childCategories_some?: TransactionCategoryWhereInput | null
-  childCategories_none?: TransactionCategoryWhereInput | null
-  transactions_every?: TransactionWhereInput | null
-  transactions_some?: TransactionWhereInput | null
-  transactions_none?: TransactionWhereInput | null
-  distributingMetricItems_every?: DistributingMetricItemWhereInput | null
-  distributingMetricItems_some?: DistributingMetricItemWhereInput | null
-  distributingMetricItems_none?: DistributingMetricItemWhereInput | null
+  AND?: TransactionCategoryWhereInput[] | TransactionCategoryWhereInput | null;
+  OR?: TransactionCategoryWhereInput[] | TransactionCategoryWhereInput | null;
+  NOT?: TransactionCategoryWhereInput[] | TransactionCategoryWhereInput | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
+  name?: String | null;
+  name_not?: String | null;
+  name_in?: String[] | String | null;
+  name_not_in?: String[] | String | null;
+  name_lt?: String | null;
+  name_lte?: String | null;
+  name_gt?: String | null;
+  name_gte?: String | null;
+  name_contains?: String | null;
+  name_not_contains?: String | null;
+  name_starts_with?: String | null;
+  name_not_starts_with?: String | null;
+  name_ends_with?: String | null;
+  name_not_ends_with?: String | null;
+  isSystem?: Boolean | null;
+  isSystem_not?: Boolean | null;
+  isOutcome?: Boolean | null;
+  isOutcome_not?: Boolean | null;
+  parentCategory?: TransactionCategoryWhereInput | null;
+  owner?: UserCredentialWhereInput | null;
+  childCategories_every?: TransactionCategoryWhereInput | null;
+  childCategories_some?: TransactionCategoryWhereInput | null;
+  childCategories_none?: TransactionCategoryWhereInput | null;
+  transactions_every?: TransactionWhereInput | null;
+  transactions_some?: TransactionWhereInput | null;
+  transactions_none?: TransactionWhereInput | null;
+  distributingMetricItems_every?: DistributingMetricItemWhereInput | null;
+  distributingMetricItems_some?: DistributingMetricItemWhereInput | null;
+  distributingMetricItems_none?: DistributingMetricItemWhereInput | null;
 }
 
 export interface TransactionCategoryWhereUniqueInput {
-  id?: ID_Input | null
+  id?: ID_Input | null;
 }
 
 export interface TransactionCreateInput {
-  id?: ID_Input | null
-  datetime: DateTime
-  description?: String | null
-  amount: Int
-  owner: UserCredentialCreateOneWithoutTransactionsInput
-  transactionCategory: TransactionCategoryCreateOneWithoutTransactionsInput
-  currency: CurrencyCreateOneWithoutTransactionsInput
+  id?: ID_Input | null;
+  datetime: DateTime;
+  description?: String | null;
+  amount: Int;
+  owner: UserCredentialCreateOneWithoutTransactionsInput;
+  transactionCategory: TransactionCategoryCreateOneWithoutTransactionsInput;
+  currency: CurrencyCreateOneWithoutTransactionsInput;
 }
 
 export interface TransactionCreateManyWithoutCurrencyInput {
-  create?: TransactionCreateWithoutCurrencyInput[] | TransactionCreateWithoutCurrencyInput | null
-  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
+  create?:
+    | TransactionCreateWithoutCurrencyInput[]
+    | TransactionCreateWithoutCurrencyInput
+    | null;
+  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
 }
 
 export interface TransactionCreateManyWithoutOwnerInput {
-  create?: TransactionCreateWithoutOwnerInput[] | TransactionCreateWithoutOwnerInput | null
-  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
+  create?:
+    | TransactionCreateWithoutOwnerInput[]
+    | TransactionCreateWithoutOwnerInput
+    | null;
+  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
 }
 
 export interface TransactionCreateManyWithoutTransactionCategoryInput {
-  create?: TransactionCreateWithoutTransactionCategoryInput[] | TransactionCreateWithoutTransactionCategoryInput | null
-  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
+  create?:
+    | TransactionCreateWithoutTransactionCategoryInput[]
+    | TransactionCreateWithoutTransactionCategoryInput
+    | null;
+  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
 }
 
 export interface TransactionCreateWithoutCurrencyInput {
-  id?: ID_Input | null
-  datetime: DateTime
-  description?: String | null
-  amount: Int
-  owner: UserCredentialCreateOneWithoutTransactionsInput
-  transactionCategory: TransactionCategoryCreateOneWithoutTransactionsInput
+  id?: ID_Input | null;
+  datetime: DateTime;
+  description?: String | null;
+  amount: Int;
+  owner: UserCredentialCreateOneWithoutTransactionsInput;
+  transactionCategory: TransactionCategoryCreateOneWithoutTransactionsInput;
 }
 
 export interface TransactionCreateWithoutOwnerInput {
-  id?: ID_Input | null
-  datetime: DateTime
-  description?: String | null
-  amount: Int
-  transactionCategory: TransactionCategoryCreateOneWithoutTransactionsInput
-  currency: CurrencyCreateOneWithoutTransactionsInput
+  id?: ID_Input | null;
+  datetime: DateTime;
+  description?: String | null;
+  amount: Int;
+  transactionCategory: TransactionCategoryCreateOneWithoutTransactionsInput;
+  currency: CurrencyCreateOneWithoutTransactionsInput;
 }
 
 export interface TransactionCreateWithoutTransactionCategoryInput {
-  id?: ID_Input | null
-  datetime: DateTime
-  description?: String | null
-  amount: Int
-  owner: UserCredentialCreateOneWithoutTransactionsInput
-  currency: CurrencyCreateOneWithoutTransactionsInput
+  id?: ID_Input | null;
+  datetime: DateTime;
+  description?: String | null;
+  amount: Int;
+  owner: UserCredentialCreateOneWithoutTransactionsInput;
+  currency: CurrencyCreateOneWithoutTransactionsInput;
 }
 
 export interface TransactionScalarWhereInput {
-  AND?: TransactionScalarWhereInput[] | TransactionScalarWhereInput | null
-  OR?: TransactionScalarWhereInput[] | TransactionScalarWhereInput | null
-  NOT?: TransactionScalarWhereInput[] | TransactionScalarWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  datetime?: DateTime | null
-  datetime_not?: DateTime | null
-  datetime_in?: DateTime[] | DateTime | null
-  datetime_not_in?: DateTime[] | DateTime | null
-  datetime_lt?: DateTime | null
-  datetime_lte?: DateTime | null
-  datetime_gt?: DateTime | null
-  datetime_gte?: DateTime | null
-  description?: String | null
-  description_not?: String | null
-  description_in?: String[] | String | null
-  description_not_in?: String[] | String | null
-  description_lt?: String | null
-  description_lte?: String | null
-  description_gt?: String | null
-  description_gte?: String | null
-  description_contains?: String | null
-  description_not_contains?: String | null
-  description_starts_with?: String | null
-  description_not_starts_with?: String | null
-  description_ends_with?: String | null
-  description_not_ends_with?: String | null
-  amount?: Int | null
-  amount_not?: Int | null
-  amount_in?: Int[] | Int | null
-  amount_not_in?: Int[] | Int | null
-  amount_lt?: Int | null
-  amount_lte?: Int | null
-  amount_gt?: Int | null
-  amount_gte?: Int | null
+  AND?: TransactionScalarWhereInput[] | TransactionScalarWhereInput | null;
+  OR?: TransactionScalarWhereInput[] | TransactionScalarWhereInput | null;
+  NOT?: TransactionScalarWhereInput[] | TransactionScalarWhereInput | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
+  datetime?: DateTime | null;
+  datetime_not?: DateTime | null;
+  datetime_in?: DateTime[] | DateTime | null;
+  datetime_not_in?: DateTime[] | DateTime | null;
+  datetime_lt?: DateTime | null;
+  datetime_lte?: DateTime | null;
+  datetime_gt?: DateTime | null;
+  datetime_gte?: DateTime | null;
+  description?: String | null;
+  description_not?: String | null;
+  description_in?: String[] | String | null;
+  description_not_in?: String[] | String | null;
+  description_lt?: String | null;
+  description_lte?: String | null;
+  description_gt?: String | null;
+  description_gte?: String | null;
+  description_contains?: String | null;
+  description_not_contains?: String | null;
+  description_starts_with?: String | null;
+  description_not_starts_with?: String | null;
+  description_ends_with?: String | null;
+  description_not_ends_with?: String | null;
+  amount?: Int | null;
+  amount_not?: Int | null;
+  amount_in?: Int[] | Int | null;
+  amount_not_in?: Int[] | Int | null;
+  amount_lt?: Int | null;
+  amount_lte?: Int | null;
+  amount_gt?: Int | null;
+  amount_gte?: Int | null;
 }
 
 export interface TransactionSubscriptionWhereInput {
-  AND?: TransactionSubscriptionWhereInput[] | TransactionSubscriptionWhereInput | null
-  OR?: TransactionSubscriptionWhereInput[] | TransactionSubscriptionWhereInput | null
-  NOT?: TransactionSubscriptionWhereInput[] | TransactionSubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: TransactionWhereInput | null
+  AND?:
+    | TransactionSubscriptionWhereInput[]
+    | TransactionSubscriptionWhereInput
+    | null;
+  OR?:
+    | TransactionSubscriptionWhereInput[]
+    | TransactionSubscriptionWhereInput
+    | null;
+  NOT?:
+    | TransactionSubscriptionWhereInput[]
+    | TransactionSubscriptionWhereInput
+    | null;
+  mutation_in?: MutationType[] | MutationType | null;
+  updatedFields_contains?: String | null;
+  updatedFields_contains_every?: String[] | String | null;
+  updatedFields_contains_some?: String[] | String | null;
+  node?: TransactionWhereInput | null;
 }
 
 export interface TransactionUpdateInput {
-  datetime?: DateTime | null
-  description?: String | null
-  amount?: Int | null
-  owner?: UserCredentialUpdateOneRequiredWithoutTransactionsInput | null
-  transactionCategory?: TransactionCategoryUpdateOneRequiredWithoutTransactionsInput | null
-  currency?: CurrencyUpdateOneRequiredWithoutTransactionsInput | null
+  datetime?: DateTime | null;
+  description?: String | null;
+  amount?: Int | null;
+  owner?: UserCredentialUpdateOneRequiredWithoutTransactionsInput | null;
+  transactionCategory?: TransactionCategoryUpdateOneRequiredWithoutTransactionsInput | null;
+  currency?: CurrencyUpdateOneRequiredWithoutTransactionsInput | null;
 }
 
 export interface TransactionUpdateManyDataInput {
-  datetime?: DateTime | null
-  description?: String | null
-  amount?: Int | null
+  datetime?: DateTime | null;
+  description?: String | null;
+  amount?: Int | null;
 }
 
 export interface TransactionUpdateManyMutationInput {
-  datetime?: DateTime | null
-  description?: String | null
-  amount?: Int | null
+  datetime?: DateTime | null;
+  description?: String | null;
+  amount?: Int | null;
 }
 
 export interface TransactionUpdateManyWithoutCurrencyInput {
-  create?: TransactionCreateWithoutCurrencyInput[] | TransactionCreateWithoutCurrencyInput | null
-  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  set?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  disconnect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  delete?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  update?: TransactionUpdateWithWhereUniqueWithoutCurrencyInput[] | TransactionUpdateWithWhereUniqueWithoutCurrencyInput | null
-  updateMany?: TransactionUpdateManyWithWhereNestedInput[] | TransactionUpdateManyWithWhereNestedInput | null
-  deleteMany?: TransactionScalarWhereInput[] | TransactionScalarWhereInput | null
-  upsert?: TransactionUpsertWithWhereUniqueWithoutCurrencyInput[] | TransactionUpsertWithWhereUniqueWithoutCurrencyInput | null
+  create?:
+    | TransactionCreateWithoutCurrencyInput[]
+    | TransactionCreateWithoutCurrencyInput
+    | null;
+  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
+  set?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
+  disconnect?:
+    | TransactionWhereUniqueInput[]
+    | TransactionWhereUniqueInput
+    | null;
+  delete?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
+  update?:
+    | TransactionUpdateWithWhereUniqueWithoutCurrencyInput[]
+    | TransactionUpdateWithWhereUniqueWithoutCurrencyInput
+    | null;
+  updateMany?:
+    | TransactionUpdateManyWithWhereNestedInput[]
+    | TransactionUpdateManyWithWhereNestedInput
+    | null;
+  deleteMany?:
+    | TransactionScalarWhereInput[]
+    | TransactionScalarWhereInput
+    | null;
+  upsert?:
+    | TransactionUpsertWithWhereUniqueWithoutCurrencyInput[]
+    | TransactionUpsertWithWhereUniqueWithoutCurrencyInput
+    | null;
 }
 
 export interface TransactionUpdateManyWithoutOwnerInput {
-  create?: TransactionCreateWithoutOwnerInput[] | TransactionCreateWithoutOwnerInput | null
-  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  set?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  disconnect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  delete?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  update?: TransactionUpdateWithWhereUniqueWithoutOwnerInput[] | TransactionUpdateWithWhereUniqueWithoutOwnerInput | null
-  updateMany?: TransactionUpdateManyWithWhereNestedInput[] | TransactionUpdateManyWithWhereNestedInput | null
-  deleteMany?: TransactionScalarWhereInput[] | TransactionScalarWhereInput | null
-  upsert?: TransactionUpsertWithWhereUniqueWithoutOwnerInput[] | TransactionUpsertWithWhereUniqueWithoutOwnerInput | null
+  create?:
+    | TransactionCreateWithoutOwnerInput[]
+    | TransactionCreateWithoutOwnerInput
+    | null;
+  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
+  set?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
+  disconnect?:
+    | TransactionWhereUniqueInput[]
+    | TransactionWhereUniqueInput
+    | null;
+  delete?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
+  update?:
+    | TransactionUpdateWithWhereUniqueWithoutOwnerInput[]
+    | TransactionUpdateWithWhereUniqueWithoutOwnerInput
+    | null;
+  updateMany?:
+    | TransactionUpdateManyWithWhereNestedInput[]
+    | TransactionUpdateManyWithWhereNestedInput
+    | null;
+  deleteMany?:
+    | TransactionScalarWhereInput[]
+    | TransactionScalarWhereInput
+    | null;
+  upsert?:
+    | TransactionUpsertWithWhereUniqueWithoutOwnerInput[]
+    | TransactionUpsertWithWhereUniqueWithoutOwnerInput
+    | null;
 }
 
 export interface TransactionUpdateManyWithoutTransactionCategoryInput {
-  create?: TransactionCreateWithoutTransactionCategoryInput[] | TransactionCreateWithoutTransactionCategoryInput | null
-  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  set?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  disconnect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  delete?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null
-  update?: TransactionUpdateWithWhereUniqueWithoutTransactionCategoryInput[] | TransactionUpdateWithWhereUniqueWithoutTransactionCategoryInput | null
-  updateMany?: TransactionUpdateManyWithWhereNestedInput[] | TransactionUpdateManyWithWhereNestedInput | null
-  deleteMany?: TransactionScalarWhereInput[] | TransactionScalarWhereInput | null
-  upsert?: TransactionUpsertWithWhereUniqueWithoutTransactionCategoryInput[] | TransactionUpsertWithWhereUniqueWithoutTransactionCategoryInput | null
+  create?:
+    | TransactionCreateWithoutTransactionCategoryInput[]
+    | TransactionCreateWithoutTransactionCategoryInput
+    | null;
+  connect?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
+  set?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
+  disconnect?:
+    | TransactionWhereUniqueInput[]
+    | TransactionWhereUniqueInput
+    | null;
+  delete?: TransactionWhereUniqueInput[] | TransactionWhereUniqueInput | null;
+  update?:
+    | TransactionUpdateWithWhereUniqueWithoutTransactionCategoryInput[]
+    | TransactionUpdateWithWhereUniqueWithoutTransactionCategoryInput
+    | null;
+  updateMany?:
+    | TransactionUpdateManyWithWhereNestedInput[]
+    | TransactionUpdateManyWithWhereNestedInput
+    | null;
+  deleteMany?:
+    | TransactionScalarWhereInput[]
+    | TransactionScalarWhereInput
+    | null;
+  upsert?:
+    | TransactionUpsertWithWhereUniqueWithoutTransactionCategoryInput[]
+    | TransactionUpsertWithWhereUniqueWithoutTransactionCategoryInput
+    | null;
 }
 
 export interface TransactionUpdateManyWithWhereNestedInput {
-  where: TransactionScalarWhereInput
-  data: TransactionUpdateManyDataInput
+  where: TransactionScalarWhereInput;
+  data: TransactionUpdateManyDataInput;
 }
 
 export interface TransactionUpdateWithoutCurrencyDataInput {
-  datetime?: DateTime | null
-  description?: String | null
-  amount?: Int | null
-  owner?: UserCredentialUpdateOneRequiredWithoutTransactionsInput | null
-  transactionCategory?: TransactionCategoryUpdateOneRequiredWithoutTransactionsInput | null
+  datetime?: DateTime | null;
+  description?: String | null;
+  amount?: Int | null;
+  owner?: UserCredentialUpdateOneRequiredWithoutTransactionsInput | null;
+  transactionCategory?: TransactionCategoryUpdateOneRequiredWithoutTransactionsInput | null;
 }
 
 export interface TransactionUpdateWithoutOwnerDataInput {
-  datetime?: DateTime | null
-  description?: String | null
-  amount?: Int | null
-  transactionCategory?: TransactionCategoryUpdateOneRequiredWithoutTransactionsInput | null
-  currency?: CurrencyUpdateOneRequiredWithoutTransactionsInput | null
+  datetime?: DateTime | null;
+  description?: String | null;
+  amount?: Int | null;
+  transactionCategory?: TransactionCategoryUpdateOneRequiredWithoutTransactionsInput | null;
+  currency?: CurrencyUpdateOneRequiredWithoutTransactionsInput | null;
 }
 
 export interface TransactionUpdateWithoutTransactionCategoryDataInput {
-  datetime?: DateTime | null
-  description?: String | null
-  amount?: Int | null
-  owner?: UserCredentialUpdateOneRequiredWithoutTransactionsInput | null
-  currency?: CurrencyUpdateOneRequiredWithoutTransactionsInput | null
+  datetime?: DateTime | null;
+  description?: String | null;
+  amount?: Int | null;
+  owner?: UserCredentialUpdateOneRequiredWithoutTransactionsInput | null;
+  currency?: CurrencyUpdateOneRequiredWithoutTransactionsInput | null;
 }
 
 export interface TransactionUpdateWithWhereUniqueWithoutCurrencyInput {
-  where: TransactionWhereUniqueInput
-  data: TransactionUpdateWithoutCurrencyDataInput
+  where: TransactionWhereUniqueInput;
+  data: TransactionUpdateWithoutCurrencyDataInput;
 }
 
 export interface TransactionUpdateWithWhereUniqueWithoutOwnerInput {
-  where: TransactionWhereUniqueInput
-  data: TransactionUpdateWithoutOwnerDataInput
+  where: TransactionWhereUniqueInput;
+  data: TransactionUpdateWithoutOwnerDataInput;
 }
 
 export interface TransactionUpdateWithWhereUniqueWithoutTransactionCategoryInput {
-  where: TransactionWhereUniqueInput
-  data: TransactionUpdateWithoutTransactionCategoryDataInput
+  where: TransactionWhereUniqueInput;
+  data: TransactionUpdateWithoutTransactionCategoryDataInput;
 }
 
 export interface TransactionUpsertWithWhereUniqueWithoutCurrencyInput {
-  where: TransactionWhereUniqueInput
-  update: TransactionUpdateWithoutCurrencyDataInput
-  create: TransactionCreateWithoutCurrencyInput
+  where: TransactionWhereUniqueInput;
+  update: TransactionUpdateWithoutCurrencyDataInput;
+  create: TransactionCreateWithoutCurrencyInput;
 }
 
 export interface TransactionUpsertWithWhereUniqueWithoutOwnerInput {
-  where: TransactionWhereUniqueInput
-  update: TransactionUpdateWithoutOwnerDataInput
-  create: TransactionCreateWithoutOwnerInput
+  where: TransactionWhereUniqueInput;
+  update: TransactionUpdateWithoutOwnerDataInput;
+  create: TransactionCreateWithoutOwnerInput;
 }
 
 export interface TransactionUpsertWithWhereUniqueWithoutTransactionCategoryInput {
-  where: TransactionWhereUniqueInput
-  update: TransactionUpdateWithoutTransactionCategoryDataInput
-  create: TransactionCreateWithoutTransactionCategoryInput
+  where: TransactionWhereUniqueInput;
+  update: TransactionUpdateWithoutTransactionCategoryDataInput;
+  create: TransactionCreateWithoutTransactionCategoryInput;
 }
 
 export interface TransactionWhereInput {
-  AND?: TransactionWhereInput[] | TransactionWhereInput | null
-  OR?: TransactionWhereInput[] | TransactionWhereInput | null
-  NOT?: TransactionWhereInput[] | TransactionWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  datetime?: DateTime | null
-  datetime_not?: DateTime | null
-  datetime_in?: DateTime[] | DateTime | null
-  datetime_not_in?: DateTime[] | DateTime | null
-  datetime_lt?: DateTime | null
-  datetime_lte?: DateTime | null
-  datetime_gt?: DateTime | null
-  datetime_gte?: DateTime | null
-  description?: String | null
-  description_not?: String | null
-  description_in?: String[] | String | null
-  description_not_in?: String[] | String | null
-  description_lt?: String | null
-  description_lte?: String | null
-  description_gt?: String | null
-  description_gte?: String | null
-  description_contains?: String | null
-  description_not_contains?: String | null
-  description_starts_with?: String | null
-  description_not_starts_with?: String | null
-  description_ends_with?: String | null
-  description_not_ends_with?: String | null
-  amount?: Int | null
-  amount_not?: Int | null
-  amount_in?: Int[] | Int | null
-  amount_not_in?: Int[] | Int | null
-  amount_lt?: Int | null
-  amount_lte?: Int | null
-  amount_gt?: Int | null
-  amount_gte?: Int | null
-  owner?: UserCredentialWhereInput | null
-  transactionCategory?: TransactionCategoryWhereInput | null
-  currency?: CurrencyWhereInput | null
+  AND?: TransactionWhereInput[] | TransactionWhereInput | null;
+  OR?: TransactionWhereInput[] | TransactionWhereInput | null;
+  NOT?: TransactionWhereInput[] | TransactionWhereInput | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
+  datetime?: DateTime | null;
+  datetime_not?: DateTime | null;
+  datetime_in?: DateTime[] | DateTime | null;
+  datetime_not_in?: DateTime[] | DateTime | null;
+  datetime_lt?: DateTime | null;
+  datetime_lte?: DateTime | null;
+  datetime_gt?: DateTime | null;
+  datetime_gte?: DateTime | null;
+  description?: String | null;
+  description_not?: String | null;
+  description_in?: String[] | String | null;
+  description_not_in?: String[] | String | null;
+  description_lt?: String | null;
+  description_lte?: String | null;
+  description_gt?: String | null;
+  description_gte?: String | null;
+  description_contains?: String | null;
+  description_not_contains?: String | null;
+  description_starts_with?: String | null;
+  description_not_starts_with?: String | null;
+  description_ends_with?: String | null;
+  description_not_ends_with?: String | null;
+  amount?: Int | null;
+  amount_not?: Int | null;
+  amount_in?: Int[] | Int | null;
+  amount_not_in?: Int[] | Int | null;
+  amount_lt?: Int | null;
+  amount_lte?: Int | null;
+  amount_gt?: Int | null;
+  amount_gte?: Int | null;
+  owner?: UserCredentialWhereInput | null;
+  transactionCategory?: TransactionCategoryWhereInput | null;
+  currency?: CurrencyWhereInput | null;
 }
 
 export interface TransactionWhereUniqueInput {
-  id?: ID_Input | null
+  id?: ID_Input | null;
 }
 
 export interface UserCredentialCreateInput {
-  id?: ID_Input | null
-  email: String
-  profileImageUrl?: String | null
-  isActive?: Boolean | null
-  roles?: RoleCreateManyInput | null
-  transactionCategories?: TransactionCategoryCreateManyWithoutOwnerInput | null
-  transactions?: TransactionCreateManyWithoutOwnerInput | null
-  distributingMetricItems?: DistributingMetricItemCreateManyWithoutUserInput | null
+  id?: ID_Input | null;
+  email: String;
+  profileImageUrl?: String | null;
+  isActive?: Boolean | null;
+  roles?: RoleCreateManyInput | null;
+  transactionCategories?: TransactionCategoryCreateManyWithoutOwnerInput | null;
+  transactions?: TransactionCreateManyWithoutOwnerInput | null;
+  distributingMetricItems?: DistributingMetricItemCreateManyWithoutUserInput | null;
 }
 
 export interface UserCredentialCreateOneWithoutDistributingMetricItemsInput {
-  create?: UserCredentialCreateWithoutDistributingMetricItemsInput | null
-  connect?: UserCredentialWhereUniqueInput | null
+  create?: UserCredentialCreateWithoutDistributingMetricItemsInput | null;
+  connect?: UserCredentialWhereUniqueInput | null;
 }
 
 export interface UserCredentialCreateOneWithoutTransactionCategoriesInput {
-  create?: UserCredentialCreateWithoutTransactionCategoriesInput | null
-  connect?: UserCredentialWhereUniqueInput | null
+  create?: UserCredentialCreateWithoutTransactionCategoriesInput | null;
+  connect?: UserCredentialWhereUniqueInput | null;
 }
 
 export interface UserCredentialCreateOneWithoutTransactionsInput {
-  create?: UserCredentialCreateWithoutTransactionsInput | null
-  connect?: UserCredentialWhereUniqueInput | null
+  create?: UserCredentialCreateWithoutTransactionsInput | null;
+  connect?: UserCredentialWhereUniqueInput | null;
 }
 
 export interface UserCredentialCreateWithoutDistributingMetricItemsInput {
-  id?: ID_Input | null
-  email: String
-  profileImageUrl?: String | null
-  isActive?: Boolean | null
-  roles?: RoleCreateManyInput | null
-  transactionCategories?: TransactionCategoryCreateManyWithoutOwnerInput | null
-  transactions?: TransactionCreateManyWithoutOwnerInput | null
+  id?: ID_Input | null;
+  email: String;
+  profileImageUrl?: String | null;
+  isActive?: Boolean | null;
+  roles?: RoleCreateManyInput | null;
+  transactionCategories?: TransactionCategoryCreateManyWithoutOwnerInput | null;
+  transactions?: TransactionCreateManyWithoutOwnerInput | null;
 }
 
 export interface UserCredentialCreateWithoutTransactionCategoriesInput {
-  id?: ID_Input | null
-  email: String
-  profileImageUrl?: String | null
-  isActive?: Boolean | null
-  roles?: RoleCreateManyInput | null
-  transactions?: TransactionCreateManyWithoutOwnerInput | null
-  distributingMetricItems?: DistributingMetricItemCreateManyWithoutUserInput | null
+  id?: ID_Input | null;
+  email: String;
+  profileImageUrl?: String | null;
+  isActive?: Boolean | null;
+  roles?: RoleCreateManyInput | null;
+  transactions?: TransactionCreateManyWithoutOwnerInput | null;
+  distributingMetricItems?: DistributingMetricItemCreateManyWithoutUserInput | null;
 }
 
 export interface UserCredentialCreateWithoutTransactionsInput {
-  id?: ID_Input | null
-  email: String
-  profileImageUrl?: String | null
-  isActive?: Boolean | null
-  roles?: RoleCreateManyInput | null
-  transactionCategories?: TransactionCategoryCreateManyWithoutOwnerInput | null
-  distributingMetricItems?: DistributingMetricItemCreateManyWithoutUserInput | null
+  id?: ID_Input | null;
+  email: String;
+  profileImageUrl?: String | null;
+  isActive?: Boolean | null;
+  roles?: RoleCreateManyInput | null;
+  transactionCategories?: TransactionCategoryCreateManyWithoutOwnerInput | null;
+  distributingMetricItems?: DistributingMetricItemCreateManyWithoutUserInput | null;
 }
 
 export interface UserCredentialSubscriptionWhereInput {
-  AND?: UserCredentialSubscriptionWhereInput[] | UserCredentialSubscriptionWhereInput | null
-  OR?: UserCredentialSubscriptionWhereInput[] | UserCredentialSubscriptionWhereInput | null
-  NOT?: UserCredentialSubscriptionWhereInput[] | UserCredentialSubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: UserCredentialWhereInput | null
+  AND?:
+    | UserCredentialSubscriptionWhereInput[]
+    | UserCredentialSubscriptionWhereInput
+    | null;
+  OR?:
+    | UserCredentialSubscriptionWhereInput[]
+    | UserCredentialSubscriptionWhereInput
+    | null;
+  NOT?:
+    | UserCredentialSubscriptionWhereInput[]
+    | UserCredentialSubscriptionWhereInput
+    | null;
+  mutation_in?: MutationType[] | MutationType | null;
+  updatedFields_contains?: String | null;
+  updatedFields_contains_every?: String[] | String | null;
+  updatedFields_contains_some?: String[] | String | null;
+  node?: UserCredentialWhereInput | null;
 }
 
 export interface UserCredentialUpdateInput {
-  email?: String | null
-  profileImageUrl?: String | null
-  isActive?: Boolean | null
-  roles?: RoleUpdateManyInput | null
-  transactionCategories?: TransactionCategoryUpdateManyWithoutOwnerInput | null
-  transactions?: TransactionUpdateManyWithoutOwnerInput | null
-  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutUserInput | null
+  email?: String | null;
+  profileImageUrl?: String | null;
+  isActive?: Boolean | null;
+  roles?: RoleUpdateManyInput | null;
+  transactionCategories?: TransactionCategoryUpdateManyWithoutOwnerInput | null;
+  transactions?: TransactionUpdateManyWithoutOwnerInput | null;
+  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutUserInput | null;
 }
 
 export interface UserCredentialUpdateManyMutationInput {
-  email?: String | null
-  profileImageUrl?: String | null
-  isActive?: Boolean | null
+  email?: String | null;
+  profileImageUrl?: String | null;
+  isActive?: Boolean | null;
 }
 
 export interface UserCredentialUpdateOneRequiredWithoutDistributingMetricItemsInput {
-  create?: UserCredentialCreateWithoutDistributingMetricItemsInput | null
-  connect?: UserCredentialWhereUniqueInput | null
-  update?: UserCredentialUpdateWithoutDistributingMetricItemsDataInput | null
-  upsert?: UserCredentialUpsertWithoutDistributingMetricItemsInput | null
+  create?: UserCredentialCreateWithoutDistributingMetricItemsInput | null;
+  connect?: UserCredentialWhereUniqueInput | null;
+  update?: UserCredentialUpdateWithoutDistributingMetricItemsDataInput | null;
+  upsert?: UserCredentialUpsertWithoutDistributingMetricItemsInput | null;
 }
 
 export interface UserCredentialUpdateOneRequiredWithoutTransactionsInput {
-  create?: UserCredentialCreateWithoutTransactionsInput | null
-  connect?: UserCredentialWhereUniqueInput | null
-  update?: UserCredentialUpdateWithoutTransactionsDataInput | null
-  upsert?: UserCredentialUpsertWithoutTransactionsInput | null
+  create?: UserCredentialCreateWithoutTransactionsInput | null;
+  connect?: UserCredentialWhereUniqueInput | null;
+  update?: UserCredentialUpdateWithoutTransactionsDataInput | null;
+  upsert?: UserCredentialUpsertWithoutTransactionsInput | null;
 }
 
 export interface UserCredentialUpdateOneWithoutTransactionCategoriesInput {
-  create?: UserCredentialCreateWithoutTransactionCategoriesInput | null
-  connect?: UserCredentialWhereUniqueInput | null
-  disconnect?: Boolean | null
-  delete?: Boolean | null
-  update?: UserCredentialUpdateWithoutTransactionCategoriesDataInput | null
-  upsert?: UserCredentialUpsertWithoutTransactionCategoriesInput | null
+  create?: UserCredentialCreateWithoutTransactionCategoriesInput | null;
+  connect?: UserCredentialWhereUniqueInput | null;
+  disconnect?: Boolean | null;
+  delete?: Boolean | null;
+  update?: UserCredentialUpdateWithoutTransactionCategoriesDataInput | null;
+  upsert?: UserCredentialUpsertWithoutTransactionCategoriesInput | null;
 }
 
 export interface UserCredentialUpdateWithoutDistributingMetricItemsDataInput {
-  email?: String | null
-  profileImageUrl?: String | null
-  isActive?: Boolean | null
-  roles?: RoleUpdateManyInput | null
-  transactionCategories?: TransactionCategoryUpdateManyWithoutOwnerInput | null
-  transactions?: TransactionUpdateManyWithoutOwnerInput | null
+  email?: String | null;
+  profileImageUrl?: String | null;
+  isActive?: Boolean | null;
+  roles?: RoleUpdateManyInput | null;
+  transactionCategories?: TransactionCategoryUpdateManyWithoutOwnerInput | null;
+  transactions?: TransactionUpdateManyWithoutOwnerInput | null;
 }
 
 export interface UserCredentialUpdateWithoutTransactionCategoriesDataInput {
-  email?: String | null
-  profileImageUrl?: String | null
-  isActive?: Boolean | null
-  roles?: RoleUpdateManyInput | null
-  transactions?: TransactionUpdateManyWithoutOwnerInput | null
-  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutUserInput | null
+  email?: String | null;
+  profileImageUrl?: String | null;
+  isActive?: Boolean | null;
+  roles?: RoleUpdateManyInput | null;
+  transactions?: TransactionUpdateManyWithoutOwnerInput | null;
+  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutUserInput | null;
 }
 
 export interface UserCredentialUpdateWithoutTransactionsDataInput {
-  email?: String | null
-  profileImageUrl?: String | null
-  isActive?: Boolean | null
-  roles?: RoleUpdateManyInput | null
-  transactionCategories?: TransactionCategoryUpdateManyWithoutOwnerInput | null
-  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutUserInput | null
+  email?: String | null;
+  profileImageUrl?: String | null;
+  isActive?: Boolean | null;
+  roles?: RoleUpdateManyInput | null;
+  transactionCategories?: TransactionCategoryUpdateManyWithoutOwnerInput | null;
+  distributingMetricItems?: DistributingMetricItemUpdateManyWithoutUserInput | null;
 }
 
 export interface UserCredentialUpsertWithoutDistributingMetricItemsInput {
-  update: UserCredentialUpdateWithoutDistributingMetricItemsDataInput
-  create: UserCredentialCreateWithoutDistributingMetricItemsInput
+  update: UserCredentialUpdateWithoutDistributingMetricItemsDataInput;
+  create: UserCredentialCreateWithoutDistributingMetricItemsInput;
 }
 
 export interface UserCredentialUpsertWithoutTransactionCategoriesInput {
-  update: UserCredentialUpdateWithoutTransactionCategoriesDataInput
-  create: UserCredentialCreateWithoutTransactionCategoriesInput
+  update: UserCredentialUpdateWithoutTransactionCategoriesDataInput;
+  create: UserCredentialCreateWithoutTransactionCategoriesInput;
 }
 
 export interface UserCredentialUpsertWithoutTransactionsInput {
-  update: UserCredentialUpdateWithoutTransactionsDataInput
-  create: UserCredentialCreateWithoutTransactionsInput
+  update: UserCredentialUpdateWithoutTransactionsDataInput;
+  create: UserCredentialCreateWithoutTransactionsInput;
 }
 
 export interface UserCredentialWhereInput {
-  AND?: UserCredentialWhereInput[] | UserCredentialWhereInput | null
-  OR?: UserCredentialWhereInput[] | UserCredentialWhereInput | null
-  NOT?: UserCredentialWhereInput[] | UserCredentialWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  email?: String | null
-  email_not?: String | null
-  email_in?: String[] | String | null
-  email_not_in?: String[] | String | null
-  email_lt?: String | null
-  email_lte?: String | null
-  email_gt?: String | null
-  email_gte?: String | null
-  email_contains?: String | null
-  email_not_contains?: String | null
-  email_starts_with?: String | null
-  email_not_starts_with?: String | null
-  email_ends_with?: String | null
-  email_not_ends_with?: String | null
-  profileImageUrl?: String | null
-  profileImageUrl_not?: String | null
-  profileImageUrl_in?: String[] | String | null
-  profileImageUrl_not_in?: String[] | String | null
-  profileImageUrl_lt?: String | null
-  profileImageUrl_lte?: String | null
-  profileImageUrl_gt?: String | null
-  profileImageUrl_gte?: String | null
-  profileImageUrl_contains?: String | null
-  profileImageUrl_not_contains?: String | null
-  profileImageUrl_starts_with?: String | null
-  profileImageUrl_not_starts_with?: String | null
-  profileImageUrl_ends_with?: String | null
-  profileImageUrl_not_ends_with?: String | null
-  isActive?: Boolean | null
-  isActive_not?: Boolean | null
-  roles_every?: RoleWhereInput | null
-  roles_some?: RoleWhereInput | null
-  roles_none?: RoleWhereInput | null
-  transactionCategories_every?: TransactionCategoryWhereInput | null
-  transactionCategories_some?: TransactionCategoryWhereInput | null
-  transactionCategories_none?: TransactionCategoryWhereInput | null
-  transactions_every?: TransactionWhereInput | null
-  transactions_some?: TransactionWhereInput | null
-  transactions_none?: TransactionWhereInput | null
-  distributingMetricItems_every?: DistributingMetricItemWhereInput | null
-  distributingMetricItems_some?: DistributingMetricItemWhereInput | null
-  distributingMetricItems_none?: DistributingMetricItemWhereInput | null
+  AND?: UserCredentialWhereInput[] | UserCredentialWhereInput | null;
+  OR?: UserCredentialWhereInput[] | UserCredentialWhereInput | null;
+  NOT?: UserCredentialWhereInput[] | UserCredentialWhereInput | null;
+  id?: ID_Input | null;
+  id_not?: ID_Input | null;
+  id_in?: ID_Output[] | ID_Output | null;
+  id_not_in?: ID_Output[] | ID_Output | null;
+  id_lt?: ID_Input | null;
+  id_lte?: ID_Input | null;
+  id_gt?: ID_Input | null;
+  id_gte?: ID_Input | null;
+  id_contains?: ID_Input | null;
+  id_not_contains?: ID_Input | null;
+  id_starts_with?: ID_Input | null;
+  id_not_starts_with?: ID_Input | null;
+  id_ends_with?: ID_Input | null;
+  id_not_ends_with?: ID_Input | null;
+  email?: String | null;
+  email_not?: String | null;
+  email_in?: String[] | String | null;
+  email_not_in?: String[] | String | null;
+  email_lt?: String | null;
+  email_lte?: String | null;
+  email_gt?: String | null;
+  email_gte?: String | null;
+  email_contains?: String | null;
+  email_not_contains?: String | null;
+  email_starts_with?: String | null;
+  email_not_starts_with?: String | null;
+  email_ends_with?: String | null;
+  email_not_ends_with?: String | null;
+  profileImageUrl?: String | null;
+  profileImageUrl_not?: String | null;
+  profileImageUrl_in?: String[] | String | null;
+  profileImageUrl_not_in?: String[] | String | null;
+  profileImageUrl_lt?: String | null;
+  profileImageUrl_lte?: String | null;
+  profileImageUrl_gt?: String | null;
+  profileImageUrl_gte?: String | null;
+  profileImageUrl_contains?: String | null;
+  profileImageUrl_not_contains?: String | null;
+  profileImageUrl_starts_with?: String | null;
+  profileImageUrl_not_starts_with?: String | null;
+  profileImageUrl_ends_with?: String | null;
+  profileImageUrl_not_ends_with?: String | null;
+  isActive?: Boolean | null;
+  isActive_not?: Boolean | null;
+  roles_every?: RoleWhereInput | null;
+  roles_some?: RoleWhereInput | null;
+  roles_none?: RoleWhereInput | null;
+  transactionCategories_every?: TransactionCategoryWhereInput | null;
+  transactionCategories_some?: TransactionCategoryWhereInput | null;
+  transactionCategories_none?: TransactionCategoryWhereInput | null;
+  transactions_every?: TransactionWhereInput | null;
+  transactions_some?: TransactionWhereInput | null;
+  transactions_none?: TransactionWhereInput | null;
+  distributingMetricItems_every?: DistributingMetricItemWhereInput | null;
+  distributingMetricItems_some?: DistributingMetricItemWhereInput | null;
+  distributingMetricItems_none?: DistributingMetricItemWhereInput | null;
 }
 
 export interface UserCredentialWhereUniqueInput {
-  id?: ID_Input | null
-  email?: String | null
+  id?: ID_Input | null;
+  email?: String | null;
 }
 
 /*
@@ -4692,44 +5530,44 @@ export interface UserCredentialWhereUniqueInput {
 
  */
 export interface Node {
-  id: ID_Output
+  id: ID_Output;
 }
 
 export interface AggregateAnalyticMetric {
-  count: Int
+  count: Int;
 }
 
 export interface AggregateCurrency {
-  count: Int
+  count: Int;
 }
 
 export interface AggregateDistributingMetricItem {
-  count: Int
+  count: Int;
 }
 
 export interface AggregatePeriod {
-  count: Int
+  count: Int;
 }
 
 export interface AggregateRole {
-  count: Int
+  count: Int;
 }
 
 export interface AggregateTransaction {
-  count: Int
+  count: Int;
 }
 
 export interface AggregateTransactionCategory {
-  count: Int
+  count: Int;
 }
 
 export interface AggregateUserCredential {
-  count: Int
+  count: Int;
 }
 
 export interface AnalyticMetric extends Node {
-  id: ID_Output
-  name: String
+  id: ID_Output;
+  name: String;
 }
 
 /*
@@ -4737,9 +5575,9 @@ export interface AnalyticMetric extends Node {
 
  */
 export interface AnalyticMetricConnection {
-  pageInfo: PageInfo
-  edges: Array<AnalyticMetricEdge | null>
-  aggregate: AggregateAnalyticMetric
+  pageInfo: PageInfo;
+  edges: Array<AnalyticMetricEdge | null>;
+  aggregate: AggregateAnalyticMetric;
 }
 
 /*
@@ -4747,32 +5585,32 @@ export interface AnalyticMetricConnection {
 
  */
 export interface AnalyticMetricEdge {
-  node: AnalyticMetric
-  cursor: String
+  node: AnalyticMetric;
+  cursor: String;
 }
 
 export interface AnalyticMetricPreviousValues {
-  id: ID_Output
-  name: String
+  id: ID_Output;
+  name: String;
 }
 
 export interface AnalyticMetricSubscriptionPayload {
-  mutation: MutationType
-  node?: AnalyticMetric | null
-  updatedFields?: Array<String> | null
-  previousValues?: AnalyticMetricPreviousValues | null
+  mutation: MutationType;
+  node?: AnalyticMetric | null;
+  updatedFields?: Array<String> | null;
+  previousValues?: AnalyticMetricPreviousValues | null;
 }
 
 export interface BatchPayload {
-  count: Long
+  count: Long;
 }
 
 export interface Currency extends Node {
-  id: ID_Output
-  name: String
-  code: String
-  distributingMetricItems?: Array<DistributingMetricItem> | null
-  transactions?: Array<Transaction> | null
+  id: ID_Output;
+  name: String;
+  code: String;
+  distributingMetricItems?: Array<DistributingMetricItem> | null;
+  transactions?: Array<Transaction> | null;
 }
 
 /*
@@ -4780,9 +5618,9 @@ export interface Currency extends Node {
 
  */
 export interface CurrencyConnection {
-  pageInfo: PageInfo
-  edges: Array<CurrencyEdge | null>
-  aggregate: AggregateCurrency
+  pageInfo: PageInfo;
+  edges: Array<CurrencyEdge | null>;
+  aggregate: AggregateCurrency;
 }
 
 /*
@@ -4790,30 +5628,30 @@ export interface CurrencyConnection {
 
  */
 export interface CurrencyEdge {
-  node: Currency
-  cursor: String
+  node: Currency;
+  cursor: String;
 }
 
 export interface CurrencyPreviousValues {
-  id: ID_Output
-  name: String
-  code: String
+  id: ID_Output;
+  name: String;
+  code: String;
 }
 
 export interface CurrencySubscriptionPayload {
-  mutation: MutationType
-  node?: Currency | null
-  updatedFields?: Array<String> | null
-  previousValues?: CurrencyPreviousValues | null
+  mutation: MutationType;
+  node?: Currency | null;
+  updatedFields?: Array<String> | null;
+  previousValues?: CurrencyPreviousValues | null;
 }
 
 export interface DistributingMetricItem extends Node {
-  id: ID_Output
-  user: UserCredential
-  period: Period
-  metric: AnalyticMetric
-  category?: TransactionCategory | null
-  baseCurrency?: Currency | null
+  id: ID_Output;
+  user: UserCredential;
+  period: Period;
+  metric: AnalyticMetric;
+  category?: TransactionCategory | null;
+  baseCurrency?: Currency | null;
 }
 
 /*
@@ -4821,9 +5659,9 @@ export interface DistributingMetricItem extends Node {
 
  */
 export interface DistributingMetricItemConnection {
-  pageInfo: PageInfo
-  edges: Array<DistributingMetricItemEdge | null>
-  aggregate: AggregateDistributingMetricItem
+  pageInfo: PageInfo;
+  edges: Array<DistributingMetricItemEdge | null>;
+  aggregate: AggregateDistributingMetricItem;
 }
 
 /*
@@ -4831,19 +5669,19 @@ export interface DistributingMetricItemConnection {
 
  */
 export interface DistributingMetricItemEdge {
-  node: DistributingMetricItem
-  cursor: String
+  node: DistributingMetricItem;
+  cursor: String;
 }
 
 export interface DistributingMetricItemPreviousValues {
-  id: ID_Output
+  id: ID_Output;
 }
 
 export interface DistributingMetricItemSubscriptionPayload {
-  mutation: MutationType
-  node?: DistributingMetricItem | null
-  updatedFields?: Array<String> | null
-  previousValues?: DistributingMetricItemPreviousValues | null
+  mutation: MutationType;
+  node?: DistributingMetricItem | null;
+  updatedFields?: Array<String> | null;
+  previousValues?: DistributingMetricItemPreviousValues | null;
 }
 
 /*
@@ -4851,15 +5689,15 @@ export interface DistributingMetricItemSubscriptionPayload {
 
  */
 export interface PageInfo {
-  hasNextPage: Boolean
-  hasPreviousPage: Boolean
-  startCursor?: String | null
-  endCursor?: String | null
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String | null;
+  endCursor?: String | null;
 }
 
 export interface Period extends Node {
-  id: ID_Output
-  name: String
+  id: ID_Output;
+  name: String;
 }
 
 /*
@@ -4867,9 +5705,9 @@ export interface Period extends Node {
 
  */
 export interface PeriodConnection {
-  pageInfo: PageInfo
-  edges: Array<PeriodEdge | null>
-  aggregate: AggregatePeriod
+  pageInfo: PageInfo;
+  edges: Array<PeriodEdge | null>;
+  aggregate: AggregatePeriod;
 }
 
 /*
@@ -4877,25 +5715,25 @@ export interface PeriodConnection {
 
  */
 export interface PeriodEdge {
-  node: Period
-  cursor: String
+  node: Period;
+  cursor: String;
 }
 
 export interface PeriodPreviousValues {
-  id: ID_Output
-  name: String
+  id: ID_Output;
+  name: String;
 }
 
 export interface PeriodSubscriptionPayload {
-  mutation: MutationType
-  node?: Period | null
-  updatedFields?: Array<String> | null
-  previousValues?: PeriodPreviousValues | null
+  mutation: MutationType;
+  node?: Period | null;
+  updatedFields?: Array<String> | null;
+  previousValues?: PeriodPreviousValues | null;
 }
 
 export interface Role extends Node {
-  id: ID_Output
-  name: String
+  id: ID_Output;
+  name: String;
 }
 
 /*
@@ -4903,9 +5741,9 @@ export interface Role extends Node {
 
  */
 export interface RoleConnection {
-  pageInfo: PageInfo
-  edges: Array<RoleEdge | null>
-  aggregate: AggregateRole
+  pageInfo: PageInfo;
+  edges: Array<RoleEdge | null>;
+  aggregate: AggregateRole;
 }
 
 /*
@@ -4913,42 +5751,42 @@ export interface RoleConnection {
 
  */
 export interface RoleEdge {
-  node: Role
-  cursor: String
+  node: Role;
+  cursor: String;
 }
 
 export interface RolePreviousValues {
-  id: ID_Output
-  name: String
+  id: ID_Output;
+  name: String;
 }
 
 export interface RoleSubscriptionPayload {
-  mutation: MutationType
-  node?: Role | null
-  updatedFields?: Array<String> | null
-  previousValues?: RolePreviousValues | null
+  mutation: MutationType;
+  node?: Role | null;
+  updatedFields?: Array<String> | null;
+  previousValues?: RolePreviousValues | null;
 }
 
 export interface Transaction extends Node {
-  id: ID_Output
-  datetime: DateTime
-  description?: String | null
-  amount: Int
-  owner: UserCredential
-  transactionCategory: TransactionCategory
-  currency: Currency
+  id: ID_Output;
+  datetime: DateTime;
+  description?: String | null;
+  amount: Int;
+  owner: UserCredential;
+  transactionCategory: TransactionCategory;
+  currency: Currency;
 }
 
 export interface TransactionCategory extends Node {
-  id: ID_Output
-  name: String
-  parentCategory?: TransactionCategory | null
-  owner?: UserCredential | null
-  isSystem: Boolean
-  isOutcome: Boolean
-  childCategories?: Array<TransactionCategory> | null
-  transactions?: Array<Transaction> | null
-  distributingMetricItems?: Array<DistributingMetricItem> | null
+  id: ID_Output;
+  name: String;
+  parentCategory?: TransactionCategory | null;
+  owner?: UserCredential | null;
+  isSystem: Boolean;
+  isOutcome: Boolean;
+  childCategories?: Array<TransactionCategory> | null;
+  transactions?: Array<Transaction> | null;
+  distributingMetricItems?: Array<DistributingMetricItem> | null;
 }
 
 /*
@@ -4956,9 +5794,9 @@ export interface TransactionCategory extends Node {
 
  */
 export interface TransactionCategoryConnection {
-  pageInfo: PageInfo
-  edges: Array<TransactionCategoryEdge | null>
-  aggregate: AggregateTransactionCategory
+  pageInfo: PageInfo;
+  edges: Array<TransactionCategoryEdge | null>;
+  aggregate: AggregateTransactionCategory;
 }
 
 /*
@@ -4966,22 +5804,22 @@ export interface TransactionCategoryConnection {
 
  */
 export interface TransactionCategoryEdge {
-  node: TransactionCategory
-  cursor: String
+  node: TransactionCategory;
+  cursor: String;
 }
 
 export interface TransactionCategoryPreviousValues {
-  id: ID_Output
-  name: String
-  isSystem: Boolean
-  isOutcome: Boolean
+  id: ID_Output;
+  name: String;
+  isSystem: Boolean;
+  isOutcome: Boolean;
 }
 
 export interface TransactionCategorySubscriptionPayload {
-  mutation: MutationType
-  node?: TransactionCategory | null
-  updatedFields?: Array<String> | null
-  previousValues?: TransactionCategoryPreviousValues | null
+  mutation: MutationType;
+  node?: TransactionCategory | null;
+  updatedFields?: Array<String> | null;
+  previousValues?: TransactionCategoryPreviousValues | null;
 }
 
 /*
@@ -4989,9 +5827,9 @@ export interface TransactionCategorySubscriptionPayload {
 
  */
 export interface TransactionConnection {
-  pageInfo: PageInfo
-  edges: Array<TransactionEdge | null>
-  aggregate: AggregateTransaction
+  pageInfo: PageInfo;
+  edges: Array<TransactionEdge | null>;
+  aggregate: AggregateTransaction;
 }
 
 /*
@@ -4999,33 +5837,33 @@ export interface TransactionConnection {
 
  */
 export interface TransactionEdge {
-  node: Transaction
-  cursor: String
+  node: Transaction;
+  cursor: String;
 }
 
 export interface TransactionPreviousValues {
-  id: ID_Output
-  datetime: DateTime
-  description?: String | null
-  amount: Int
+  id: ID_Output;
+  datetime: DateTime;
+  description?: String | null;
+  amount: Int;
 }
 
 export interface TransactionSubscriptionPayload {
-  mutation: MutationType
-  node?: Transaction | null
-  updatedFields?: Array<String> | null
-  previousValues?: TransactionPreviousValues | null
+  mutation: MutationType;
+  node?: Transaction | null;
+  updatedFields?: Array<String> | null;
+  previousValues?: TransactionPreviousValues | null;
 }
 
 export interface UserCredential extends Node {
-  id: ID_Output
-  email: String
-  profileImageUrl?: String | null
-  roles?: Array<Role> | null
-  isActive: Boolean
-  transactionCategories?: Array<TransactionCategory> | null
-  transactions?: Array<Transaction> | null
-  distributingMetricItems?: Array<DistributingMetricItem> | null
+  id: ID_Output;
+  email: String;
+  profileImageUrl?: String | null;
+  roles?: Array<Role> | null;
+  isActive: Boolean;
+  transactionCategories?: Array<TransactionCategory> | null;
+  transactions?: Array<Transaction> | null;
+  distributingMetricItems?: Array<DistributingMetricItem> | null;
 }
 
 /*
@@ -5033,9 +5871,9 @@ export interface UserCredential extends Node {
 
  */
 export interface UserCredentialConnection {
-  pageInfo: PageInfo
-  edges: Array<UserCredentialEdge | null>
-  aggregate: AggregateUserCredential
+  pageInfo: PageInfo;
+  edges: Array<UserCredentialEdge | null>;
+  aggregate: AggregateUserCredential;
 }
 
 /*
@@ -5043,49 +5881,49 @@ export interface UserCredentialConnection {
 
  */
 export interface UserCredentialEdge {
-  node: UserCredential
-  cursor: String
+  node: UserCredential;
+  cursor: String;
 }
 
 export interface UserCredentialPreviousValues {
-  id: ID_Output
-  email: String
-  profileImageUrl?: String | null
-  isActive: Boolean
+  id: ID_Output;
+  email: String;
+  profileImageUrl?: String | null;
+  isActive: Boolean;
 }
 
 export interface UserCredentialSubscriptionPayload {
-  mutation: MutationType
-  node?: UserCredential | null
-  updatedFields?: Array<String> | null
-  previousValues?: UserCredentialPreviousValues | null
+  mutation: MutationType;
+  node?: UserCredential | null;
+  updatedFields?: Array<String> | null;
+  previousValues?: UserCredentialPreviousValues | null;
 }
 
 /*
 The `Boolean` scalar type represents `true` or `false`.
 */
-export type Boolean = boolean
+export type Boolean = boolean;
 
-export type DateTime = Date | string
+export type DateTime = Date | string;
 
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 */
-export type ID_Input = string | number
-export type ID_Output = string
+export type ID_Input = string | number;
+export type ID_Output = string;
 
 /*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
 */
-export type Int = number
+export type Int = number;
 
 /*
 The `Long` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
 */
-export type Long = string
+export type Long = string;
 
 /*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
-export type String = string
+export type String = string;

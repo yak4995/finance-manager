@@ -6,7 +6,7 @@ export class ConfigService {
   private readonly envConfig: ConfigInterface | dotenv.DotenvParseOutput;
 
   constructor(filePath: string) {
-    const configExists = fs.existsSync(filePath);
+    const configExists: boolean = fs.existsSync(filePath);
     this.envConfig = Object.assign(
       {},
       process.env,

@@ -81,11 +81,48 @@ input UpdateUserCredentialInput {
   roles: UpdateRolesInput
 }
 
+input CreateCurrencyInput {
+  name: String!
+  code: String!
+}
+
+input UpdateCurrencyInput {
+  id: String!
+  name: String!
+  code: String!
+}
+
+input CreateTransactionCategoryInput {
+  name: String!
+  isSystem: Boolean!
+  isOutcome: Boolean!
+  parentCategory: UpdateTransactionCategoryInput
+}
+
+input UpdateTransactionCategoryInput {
+  id: String!
+  name: String!
+  isSystem: Boolean!
+  isOutcome: Boolean!
+  parentCategory: UpdateTransactionCategoryInput
+}
+
 type Query {
+  roles: [Role!]!
   userCredentials: [UserCredential!]!
   userCredential(id: String!): UserCredential
+  currencies: [Currency!]!
+  currency(id: String!): Currency
+  transactionCategories: [TransactionCategory!]!
+  transactionCategory(id: String!): TransactionCategory
 }
 
 type Mutation {
   updateUserCredential(data: UpdateUserCredentialInput!): UserCredential
+  createCurrency(data: CreateCurrencyInput!): Currency
+  updateCurrency(data: UpdateCurrencyInput!): Currency
+  deleteCurrency(id: String!): Currency
+  createTransactionCategory(data: CreateTransactionCategoryInput!): TransactionCategory
+  updateTransactionCategory(data: UpdateTransactionCategoryInput!): TransactionCategory
+  deleteTransactionCategory(id: String!): TransactionCategory
 }

@@ -29,4 +29,6 @@ export default interface IRepository<T extends IPersistantEntity> {
   findByOrCriteria(searchCriteria: Criteria<T>): Promise<T[]>;
   update(updateData: Criteria<T>, id: string): Promise<any>;
   delete(deleteCriteria: Criteria<T>): Promise<any>;
+  getRelatedEntity(id: string, fieldName: keyof T): Promise<any>;
+  getRelatedEntities(id: string, fieldName: keyof T): Promise<any[]>;
 }

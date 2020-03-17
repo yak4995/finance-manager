@@ -6,3 +6,4 @@ generated/
 .env
 .graphqlconfig.yml
 src/infrastructure/graphql.schema.generated.ts
+ssl/

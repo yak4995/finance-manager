@@ -163,4 +163,23 @@ export default class FakeRepo<T extends IPersistantEntity>
     }
     return null;
   }
+
+  async getRelatedEntity(id: string, fieldName: keyof T): Promise<any> {
+    const entity: T = await this.findById(id);
+    if (
+      typeof entity[fieldName] !== 'object' ||
+      Array.isArray(entity[fieldName])
+    ) {
+      throw new Error(`${fieldName} of entity doesn't have object type`);
+    }
+    return entity[fieldName];
+  }
+
+  async getRelatedEntities(id: string, fieldName: keyof T): Promise<any[]> {
+    const result = (await this.findById(id))[fieldName];
+    if (!Array.isArray(result)) {
+      throw new Error(`${fieldName} of entity doesn't have array type`);
+    }
+    return result;
+  }
 }

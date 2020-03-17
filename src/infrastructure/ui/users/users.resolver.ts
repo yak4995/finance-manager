@@ -1,3 +1,4 @@
+import { Inject } from '@nestjs/common';
 import {
   Query,
   Resolver,
@@ -7,36 +8,45 @@ import {
   Mutation,
 } from '@nestjs/graphql';
 import { PrismaService } from '../../persistance/prisma/prisma.service';
-import { UpdateUserCredentialInput } from '../../graphql.schema.generated';
+import {
+  UpdateUserCredentialInput,
+  Role,
+} from '../../graphql.schema.generated';
+import IRepository from '../../../core/domain/repository.interface';
+import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
 
 // TODO: authorization (via admin)
-// TODO: repo, factory and interactor
-// TODO: other entities for admin, excluding transactions and distributing metrics
 @Resolver('UserCredential')
 export class UsersResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject('UserCredentialRepo')
+    private readonly userCredentialRepo: IRepository<IUserCredential>,
+  ) {}
 
   @Query()
-  userCredentials() {
-    return this.prisma.client.userCredentials();
+  userCredentials(): Promise<IUserCredential[]> {
+    return this.userCredentialRepo.findByAndCriteria({});
   }
 
   @Query()
-  userCredential(@Args('id') id: string) {
-    return this.prisma.client.userCredential({ id });
+  async userCredential(@Args('id') id: string): Promise<IUserCredential> {
+    return this.userCredentialRepo.findById(id);
   }
 
   @ResolveProperty('roles')
-  getRoles(@Parent() { id }) {
-    return this.prisma.client.userCredential({ id }).roles();
+  getRoles(@Parent() { id }): Promise<Role[]> {
+    return this.userCredentialRepo.getRelatedEntities(id, 'roles');
+  }
+
+  @Query()
+  async roles(): Promise<Role[]> {
+    return this.prisma.client.roles();
   }
 
   @Mutation()
   updateUserCredential(@Args('data') data: UpdateUserCredentialInput) {
     const { id, ...preparedData } = data;
-    return this.prisma.client.updateUserCredential({
-      where: { id },
-      data: preparedData,
-    });
+    return this.userCredentialRepo.update(preparedData, id);
   }
 }
