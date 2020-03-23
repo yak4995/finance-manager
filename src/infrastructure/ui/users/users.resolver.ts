@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import {
   Query,
   Resolver,
@@ -14,9 +14,12 @@ import {
 } from '../../graphql.schema.generated';
 import IRepository from '../../../core/domain/repository.interface';
 import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { OnlyRoles } from '../auth/decorators/roles.decorator';
+import { Roles } from '../../../core/app/users/enums/roles.enum';
 
-// TODO: authorization (via admin)
 @Resolver('UserCredential')
+@OnlyRoles(Roles.ADMINISTRATOR)
 export class UsersResolver {
   constructor(
     private readonly prisma: PrismaService,
@@ -25,11 +28,13 @@ export class UsersResolver {
   ) {}
 
   @Query()
+  @UseGuards(GqlAuthGuard)
   userCredentials(): Promise<IUserCredential[]> {
     return this.userCredentialRepo.findByAndCriteria({});
   }
 
   @Query()
+  @UseGuards(GqlAuthGuard)
   async userCredential(@Args('id') id: string): Promise<IUserCredential> {
     return this.userCredentialRepo.findById(id);
   }
@@ -40,11 +45,13 @@ export class UsersResolver {
   }
 
   @Query()
+  @UseGuards(GqlAuthGuard)
   async roles(): Promise<Role[]> {
     return this.prisma.client.roles();
   }
 
   @Mutation()
+  @UseGuards(GqlAuthGuard)
   updateUserCredential(@Args('data') data: UpdateUserCredentialInput) {
     const { id, ...preparedData } = data;
     return this.userCredentialRepo.update(preparedData, id);

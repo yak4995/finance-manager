@@ -38,7 +38,6 @@ describe('AuthorityInteractor tests', () => {
   const fakeAuthorityOutputPort: AuthorityOutputPort = new FakeAuthorityOutputPort();
   const service: AuthorityInteractor = new AuthorityInteractor(
     fakeAuthorityService,
-    fakeUserCredentialFactory,
     userCredentialRepo,
     fakeRegisteredUserEventDispatchService,
     fakeAuthorityOutputPort,

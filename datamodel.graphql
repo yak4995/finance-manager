@@ -17,6 +17,7 @@ type UserCredential {
   id: ID! @id
   email: String! @unique
   profileImageUrl: String
+  passwordHash: String! @default(value: "")
   roles: [Role]!
   isActive: Boolean! @default(value: false)
   transactionCategories: [TransactionCategory!] @relation(name: "TransactionCategoryOwner", onDelete: CASCADE)

@@ -1,5 +1,4 @@
-import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Module, forwardRef } from '@nestjs/common';
 import { PrismaModule } from '../../persistance/prisma/prisma.module';
 import { UsersResolver } from './users.resolver';
 import { UserCredentialFactory } from '../../persistance/factories/userCredential.factory';
@@ -7,11 +6,11 @@ import UserCredentialAbstractFactory from '../../../core/app/users/factories/use
 import { UserCredentialCreator } from '../../persistance/creators/userCredential.creator';
 import { PrismaService } from '../../persistance/prisma/prisma.service';
 import { UserCredentialRepository } from '../../persistance/repositories/userCredential.repository';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [forwardRef(() => AuthModule), PrismaModule],
   providers: [
-    UsersService,
     UsersResolver,
     {
       provide: 'UserCredentialCreator',
@@ -36,6 +35,5 @@ import { UserCredentialRepository } from '../../persistance/repositories/userCre
       inject: [UserCredentialAbstractFactory],
     },
   ],
-  exports: [UsersService],
 })
 export class UsersModule {}

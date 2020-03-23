@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import IRepository from '../../../core/domain/repository.interface';
-import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
 import { Roles } from '../../../core/app/users/enums/roles.enum';
 import {
   Criteria,
@@ -13,12 +12,16 @@ import {
   UserCredentialWhereInput,
   UserCredentialOrderByInput,
 } from '../../../../generated/prisma-client';
+import ISecuredUserCredential from '../entities/securedUserCredential';
 
 @Injectable()
-export class UserCredentialRepository implements IRepository<IUserCredential> {
+export class UserCredentialRepository
+  implements IRepository<ISecuredUserCredential> {
   constructor(private readonly prisma: PrismaService) {}
 
-  async insert(entity: IUserCredential): Promise<IUserCredential> {
+  async insert(
+    entity: ISecuredUserCredential,
+  ): Promise<ISecuredUserCredential> {
     const allRoles: Role[] = await this.prisma.client.roles();
     const roles: Array<{ id: string }> = [];
     entity.roles.forEach((role: string) => {
@@ -29,8 +32,9 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
         roles.push({ id: neededRoles[0].id });
       }
     });
+    const { id, ...preparedEntity } = entity;
     const result: UserCredential = await this.prisma.client.createUserCredential(
-      Object.assign({}, entity, { roles: { connect: roles } }),
+      Object.assign({}, preparedEntity, { roles: { connect: roles } }),
     );
     return {
       id: result.id,
@@ -38,15 +42,16 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
       isActive: result.isActive,
       profileImageUrl: result.profileImageUrl,
       roles: entity.roles,
+      passwordHash: entity.passwordHash,
     };
   }
 
   async findAll(
     page: number,
     perPage: number,
-    orderBy: OrderCriteria<IUserCredential>,
-    searchCriteria: Criteria<IUserCredential>,
-  ): Promise<IUserCredential[]> {
+    orderBy: OrderCriteria<ISecuredUserCredential>,
+    searchCriteria: Criteria<ISecuredUserCredential>,
+  ): Promise<ISecuredUserCredential[]> {
     const queryData: {
       where?: UserCredentialWhereInput;
       orderBy?: UserCredentialOrderByInput;
@@ -74,11 +79,12 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
     );
     return Promise.all(
       result.map(
-        async (user: UserCredential): Promise<IUserCredential> => ({
+        async (user: UserCredential): Promise<ISecuredUserCredential> => ({
           id: user.id,
           email: user.email,
           isActive: user.isActive,
           profileImageUrl: user.profileImageUrl,
+          passwordHash: user.passwordHash,
           roles: (
             await this.prisma.client.userCredential({ id: user.id }).roles()
           ).map((role: Role): Roles => role.name as Roles),
@@ -87,7 +93,7 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
     );
   }
 
-  async findById(id: string): Promise<IUserCredential> {
+  async findById(id: string): Promise<ISecuredUserCredential> {
     const result: UserCredential = await this.prisma.client.userCredential({
       id,
     });
@@ -96,6 +102,7 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
       email: result.email,
       isActive: result.isActive,
       profileImageUrl: result.profileImageUrl,
+      passwordHash: result.passwordHash,
       roles: (
         await this.prisma.client.userCredential({ id: result.id }).roles()
       ).map((role: Role): Roles => role.name as Roles),
@@ -103,8 +110,8 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
   }
 
   async findOneByAndCriteria(
-    searchCriteria: Criteria<IUserCredential>,
-  ): Promise<IUserCredential> {
+    searchCriteria: Criteria<ISecuredUserCredential>,
+  ): Promise<ISecuredUserCredential> {
     const result: UserCredential[] = await this.findByAndCriteria(
       searchCriteria,
     );
@@ -114,6 +121,7 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
           email: result[0].email,
           isActive: result[0].isActive,
           profileImageUrl: result[0].profileImageUrl,
+          passwordHash: result[0].passwordHash,
           roles: (
             await this.prisma.client
               .userCredential({ id: result[0].id })
@@ -124,11 +132,11 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
   }
 
   async findByAndCriteria(
-    searchCriteria: Criteria<IUserCredential>,
-  ): Promise<IUserCredential[]> {
+    searchCriteria: Criteria<ISecuredUserCredential>,
+  ): Promise<ISecuredUserCredential[]> {
     const queryData: {
-      where?: UserCredentialWhereInput;
-    } = {};
+      where: UserCredentialWhereInput;
+    } = { where: {} };
     Object.keys(searchCriteria).forEach((key: string) => {
       queryData.where[key] = searchCriteria[key];
     });
@@ -137,11 +145,12 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
     );
     return Promise.all(
       result.map(
-        async (user: UserCredential): Promise<IUserCredential> => ({
+        async (user: UserCredential): Promise<ISecuredUserCredential> => ({
           id: user.id,
           email: user.email,
           isActive: user.isActive,
           profileImageUrl: user.profileImageUrl,
+          passwordHash: user.passwordHash,
           roles: (
             await this.prisma.client.userCredential({ id: user.id }).roles()
           ).map((role: Role): Roles => role.name as Roles),
@@ -151,8 +160,8 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
   }
 
   async findByOrCriteria(
-    searchCriteria: Criteria<IUserCredential>,
-  ): Promise<IUserCredential[]> {
+    searchCriteria: Criteria<ISecuredUserCredential>,
+  ): Promise<ISecuredUserCredential[]> {
     const queryData: {
       where?: UserCredentialWhereInput;
     } = {};
@@ -176,11 +185,12 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
     );
     return Promise.all(
       result.map(
-        async (user: UserCredential): Promise<IUserCredential> => ({
+        async (user: UserCredential): Promise<ISecuredUserCredential> => ({
           id: user.id,
           email: user.email,
           isActive: user.isActive,
           profileImageUrl: user.profileImageUrl,
+          passwordHash: user.passwordHash,
           roles: (
             await this.prisma.client.userCredential({ id: user.id }).roles()
           ).map((role: Role): Roles => role.name as Roles),
@@ -189,35 +199,38 @@ export class UserCredentialRepository implements IRepository<IUserCredential> {
     );
   }
 
-  update(updateData: Criteria<IUserCredential>, id: string): Promise<any> {
+  update(
+    updateData: Criteria<ISecuredUserCredential>,
+    id: string,
+  ): Promise<any> {
     return this.prisma.client.updateUserCredential({
       data: updateData,
       where: { id },
     });
   }
 
-  async delete(deleteCriteria: Criteria<IUserCredential>): Promise<any> {
-    const usersForDelete: IUserCredential[] = await this.findByAndCriteria(
+  async delete(deleteCriteria: Criteria<ISecuredUserCredential>): Promise<any> {
+    const usersForDelete: ISecuredUserCredential[] = await this.findByAndCriteria(
       deleteCriteria,
     );
     return Promise.all(
       usersForDelete.map(
-        (user: IUserCredential): Promise<UserCredential> =>
+        (user: ISecuredUserCredential): Promise<UserCredential> =>
           this.prisma.client.deleteUserCredential({ id: user.id }),
       ),
     );
   }
 
   getRelatedEntity(
-    id: string,
-    fieldName: keyof IUserCredential,
+    _id: string,
+    fieldName: keyof ISecuredUserCredential,
   ): Promise<never> {
     throw new Error(`${fieldName} of class doesn't have object type`);
   }
 
   getRelatedEntities(
     id: string,
-    fieldName: keyof IUserCredential,
+    fieldName: keyof ISecuredUserCredential,
   ): Promise<Role[]> {
     if (fieldName !== 'roles') {
       throw new Error(`${fieldName} of class doesn't have array type`);

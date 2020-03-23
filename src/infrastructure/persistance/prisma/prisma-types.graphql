@@ -1,5 +1,5 @@
 # source: https://eu1.prisma.sh/yuriy-kryvokhyzha/finance-manager/dev
-# timestamp: Fri Feb 21 2020 15:33:32 GMT+0200 (GMT+02:00)
+# timestamp: Fri Mar 20 2020 14:56:10 GMT+0200 (GMT+02:00)
 
 type AggregateAnalyticMetric {
   count: Int!
@@ -2608,6 +2608,7 @@ type UserCredential implements Node {
   id: ID!
   email: String!
   profileImageUrl: String
+  passwordHash: String!
   roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role!]
   isActive: Boolean!
   transactionCategories(where: TransactionCategoryWhereInput, orderBy: TransactionCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TransactionCategory!]
@@ -2629,6 +2630,7 @@ input UserCredentialCreateInput {
   id: ID
   email: String!
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleCreateManyInput
   transactionCategories: TransactionCategoryCreateManyWithoutOwnerInput
@@ -2655,6 +2657,7 @@ input UserCredentialCreateWithoutDistributingMetricItemsInput {
   id: ID
   email: String!
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleCreateManyInput
   transactionCategories: TransactionCategoryCreateManyWithoutOwnerInput
@@ -2665,6 +2668,7 @@ input UserCredentialCreateWithoutTransactionCategoriesInput {
   id: ID
   email: String!
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleCreateManyInput
   transactions: TransactionCreateManyWithoutOwnerInput
@@ -2675,6 +2679,7 @@ input UserCredentialCreateWithoutTransactionsInput {
   id: ID
   email: String!
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleCreateManyInput
   transactionCategories: TransactionCategoryCreateManyWithoutOwnerInput
@@ -2697,6 +2702,8 @@ enum UserCredentialOrderByInput {
   email_DESC
   profileImageUrl_ASC
   profileImageUrl_DESC
+  passwordHash_ASC
+  passwordHash_DESC
   isActive_ASC
   isActive_DESC
 }
@@ -2705,6 +2712,7 @@ type UserCredentialPreviousValues {
   id: ID!
   email: String!
   profileImageUrl: String
+  passwordHash: String!
   isActive: Boolean!
 }
 
@@ -2748,6 +2756,7 @@ input UserCredentialSubscriptionWhereInput {
 input UserCredentialUpdateInput {
   email: String
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleUpdateManyInput
   transactionCategories: TransactionCategoryUpdateManyWithoutOwnerInput
@@ -2758,6 +2767,7 @@ input UserCredentialUpdateInput {
 input UserCredentialUpdateManyMutationInput {
   email: String
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
 }
 
@@ -2787,6 +2797,7 @@ input UserCredentialUpdateOneWithoutTransactionCategoriesInput {
 input UserCredentialUpdateWithoutDistributingMetricItemsDataInput {
   email: String
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleUpdateManyInput
   transactionCategories: TransactionCategoryUpdateManyWithoutOwnerInput
@@ -2796,6 +2807,7 @@ input UserCredentialUpdateWithoutDistributingMetricItemsDataInput {
 input UserCredentialUpdateWithoutTransactionCategoriesDataInput {
   email: String
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleUpdateManyInput
   transactions: TransactionUpdateManyWithoutOwnerInput
@@ -2805,6 +2817,7 @@ input UserCredentialUpdateWithoutTransactionCategoriesDataInput {
 input UserCredentialUpdateWithoutTransactionsDataInput {
   email: String
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleUpdateManyInput
   transactionCategories: TransactionCategoryUpdateManyWithoutOwnerInput
@@ -2955,6 +2968,46 @@ input UserCredentialWhereInput {
 
   """All values not ending with the given string."""
   profileImageUrl_not_ends_with: String
+  passwordHash: String
+
+  """All values that are not equal to given value."""
+  passwordHash_not: String
+
+  """All values that are contained in given list."""
+  passwordHash_in: [String!]
+
+  """All values that are not contained in given list."""
+  passwordHash_not_in: [String!]
+
+  """All values less than the given value."""
+  passwordHash_lt: String
+
+  """All values less than or equal the given value."""
+  passwordHash_lte: String
+
+  """All values greater than the given value."""
+  passwordHash_gt: String
+
+  """All values greater than or equal the given value."""
+  passwordHash_gte: String
+
+  """All values containing the given string."""
+  passwordHash_contains: String
+
+  """All values not containing the given string."""
+  passwordHash_not_contains: String
+
+  """All values starting with the given string."""
+  passwordHash_starts_with: String
+
+  """All values not starting with the given string."""
+  passwordHash_not_starts_with: String
+
+  """All values ending with the given string."""
+  passwordHash_ends_with: String
+
+  """All values not ending with the given string."""
+  passwordHash_not_ends_with: String
   isActive: Boolean
 
   """All values that are not equal to given value."""

@@ -7,11 +7,14 @@ import { ConfigModule } from './infrastructure/ui/config/config.module';
 import { GraphqlOptions } from './graphql.options';
 import { CurrenciesModule } from './infrastructure/ui/currencies/currencies.module';
 import { TransactionCategoriesModule } from './infrastructure/ui/transactionCategories/transactionCategories.module';
+import { ConfigService } from './infrastructure/ui/config/config.service';
 
 @Module({
   imports: [
     AuthModule,
     GraphQLModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
       useClass: GraphqlOptions,
     }),
     UsersModule,

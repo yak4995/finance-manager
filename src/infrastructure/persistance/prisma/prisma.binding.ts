@@ -3262,6 +3262,7 @@ type UserCredential implements Node {
   id: ID!
   email: String!
   profileImageUrl: String
+  passwordHash: String!
   roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role!]
   isActive: Boolean!
   transactionCategories(where: TransactionCategoryWhereInput, orderBy: TransactionCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TransactionCategory!]
@@ -3283,6 +3284,7 @@ input UserCredentialCreateInput {
   id: ID
   email: String!
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleCreateManyInput
   transactionCategories: TransactionCategoryCreateManyWithoutOwnerInput
@@ -3309,6 +3311,7 @@ input UserCredentialCreateWithoutDistributingMetricItemsInput {
   id: ID
   email: String!
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleCreateManyInput
   transactionCategories: TransactionCategoryCreateManyWithoutOwnerInput
@@ -3319,6 +3322,7 @@ input UserCredentialCreateWithoutTransactionCategoriesInput {
   id: ID
   email: String!
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleCreateManyInput
   transactions: TransactionCreateManyWithoutOwnerInput
@@ -3329,6 +3333,7 @@ input UserCredentialCreateWithoutTransactionsInput {
   id: ID
   email: String!
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleCreateManyInput
   transactionCategories: TransactionCategoryCreateManyWithoutOwnerInput
@@ -3351,6 +3356,8 @@ enum UserCredentialOrderByInput {
   email_DESC
   profileImageUrl_ASC
   profileImageUrl_DESC
+  passwordHash_ASC
+  passwordHash_DESC
   isActive_ASC
   isActive_DESC
 }
@@ -3359,6 +3366,7 @@ type UserCredentialPreviousValues {
   id: ID!
   email: String!
   profileImageUrl: String
+  passwordHash: String!
   isActive: Boolean!
 }
 
@@ -3402,6 +3410,7 @@ input UserCredentialSubscriptionWhereInput {
 input UserCredentialUpdateInput {
   email: String
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleUpdateManyInput
   transactionCategories: TransactionCategoryUpdateManyWithoutOwnerInput
@@ -3412,6 +3421,7 @@ input UserCredentialUpdateInput {
 input UserCredentialUpdateManyMutationInput {
   email: String
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
 }
 
@@ -3441,6 +3451,7 @@ input UserCredentialUpdateOneWithoutTransactionCategoriesInput {
 input UserCredentialUpdateWithoutDistributingMetricItemsDataInput {
   email: String
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleUpdateManyInput
   transactionCategories: TransactionCategoryUpdateManyWithoutOwnerInput
@@ -3450,6 +3461,7 @@ input UserCredentialUpdateWithoutDistributingMetricItemsDataInput {
 input UserCredentialUpdateWithoutTransactionCategoriesDataInput {
   email: String
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleUpdateManyInput
   transactions: TransactionUpdateManyWithoutOwnerInput
@@ -3459,6 +3471,7 @@ input UserCredentialUpdateWithoutTransactionCategoriesDataInput {
 input UserCredentialUpdateWithoutTransactionsDataInput {
   email: String
   profileImageUrl: String
+  passwordHash: String
   isActive: Boolean
   roles: RoleUpdateManyInput
   transactionCategories: TransactionCategoryUpdateManyWithoutOwnerInput
@@ -3609,6 +3622,46 @@ input UserCredentialWhereInput {
 
   """All values not ending with the given string."""
   profileImageUrl_not_ends_with: String
+  passwordHash: String
+
+  """All values that are not equal to given value."""
+  passwordHash_not: String
+
+  """All values that are contained in given list."""
+  passwordHash_in: [String!]
+
+  """All values that are not contained in given list."""
+  passwordHash_not_in: [String!]
+
+  """All values less than the given value."""
+  passwordHash_lt: String
+
+  """All values less than or equal the given value."""
+  passwordHash_lte: String
+
+  """All values greater than the given value."""
+  passwordHash_gt: String
+
+  """All values greater than or equal the given value."""
+  passwordHash_gte: String
+
+  """All values containing the given string."""
+  passwordHash_contains: String
+
+  """All values not containing the given string."""
+  passwordHash_not_contains: String
+
+  """All values starting with the given string."""
+  passwordHash_starts_with: String
+
+  """All values not starting with the given string."""
+  passwordHash_not_starts_with: String
+
+  """All values ending with the given string."""
+  passwordHash_ends_with: String
+
+  """All values not ending with the given string."""
+  passwordHash_not_ends_with: String
   isActive: Boolean
 
   """All values that are not equal to given value."""
@@ -3694,6 +3747,8 @@ export type UserCredentialOrderByInput =
   | 'email_DESC'
   | 'profileImageUrl_ASC'
   | 'profileImageUrl_DESC'
+  | 'passwordHash_ASC'
+  | 'passwordHash_DESC'
   | 'isActive_ASC'
   | 'isActive_DESC';
 
@@ -5305,6 +5360,7 @@ export interface UserCredentialCreateInput {
   id?: ID_Input | null;
   email: String;
   profileImageUrl?: String | null;
+  passwordHash?: String | null;
   isActive?: Boolean | null;
   roles?: RoleCreateManyInput | null;
   transactionCategories?: TransactionCategoryCreateManyWithoutOwnerInput | null;
@@ -5331,6 +5387,7 @@ export interface UserCredentialCreateWithoutDistributingMetricItemsInput {
   id?: ID_Input | null;
   email: String;
   profileImageUrl?: String | null;
+  passwordHash?: String | null;
   isActive?: Boolean | null;
   roles?: RoleCreateManyInput | null;
   transactionCategories?: TransactionCategoryCreateManyWithoutOwnerInput | null;
@@ -5341,6 +5398,7 @@ export interface UserCredentialCreateWithoutTransactionCategoriesInput {
   id?: ID_Input | null;
   email: String;
   profileImageUrl?: String | null;
+  passwordHash?: String | null;
   isActive?: Boolean | null;
   roles?: RoleCreateManyInput | null;
   transactions?: TransactionCreateManyWithoutOwnerInput | null;
@@ -5351,6 +5409,7 @@ export interface UserCredentialCreateWithoutTransactionsInput {
   id?: ID_Input | null;
   email: String;
   profileImageUrl?: String | null;
+  passwordHash?: String | null;
   isActive?: Boolean | null;
   roles?: RoleCreateManyInput | null;
   transactionCategories?: TransactionCategoryCreateManyWithoutOwnerInput | null;
@@ -5380,6 +5439,7 @@ export interface UserCredentialSubscriptionWhereInput {
 export interface UserCredentialUpdateInput {
   email?: String | null;
   profileImageUrl?: String | null;
+  passwordHash?: String | null;
   isActive?: Boolean | null;
   roles?: RoleUpdateManyInput | null;
   transactionCategories?: TransactionCategoryUpdateManyWithoutOwnerInput | null;
@@ -5390,6 +5450,7 @@ export interface UserCredentialUpdateInput {
 export interface UserCredentialUpdateManyMutationInput {
   email?: String | null;
   profileImageUrl?: String | null;
+  passwordHash?: String | null;
   isActive?: Boolean | null;
 }
 
@@ -5419,6 +5480,7 @@ export interface UserCredentialUpdateOneWithoutTransactionCategoriesInput {
 export interface UserCredentialUpdateWithoutDistributingMetricItemsDataInput {
   email?: String | null;
   profileImageUrl?: String | null;
+  passwordHash?: String | null;
   isActive?: Boolean | null;
   roles?: RoleUpdateManyInput | null;
   transactionCategories?: TransactionCategoryUpdateManyWithoutOwnerInput | null;
@@ -5428,6 +5490,7 @@ export interface UserCredentialUpdateWithoutDistributingMetricItemsDataInput {
 export interface UserCredentialUpdateWithoutTransactionCategoriesDataInput {
   email?: String | null;
   profileImageUrl?: String | null;
+  passwordHash?: String | null;
   isActive?: Boolean | null;
   roles?: RoleUpdateManyInput | null;
   transactions?: TransactionUpdateManyWithoutOwnerInput | null;
@@ -5437,6 +5500,7 @@ export interface UserCredentialUpdateWithoutTransactionCategoriesDataInput {
 export interface UserCredentialUpdateWithoutTransactionsDataInput {
   email?: String | null;
   profileImageUrl?: String | null;
+  passwordHash?: String | null;
   isActive?: Boolean | null;
   roles?: RoleUpdateManyInput | null;
   transactionCategories?: TransactionCategoryUpdateManyWithoutOwnerInput | null;
@@ -5504,6 +5568,20 @@ export interface UserCredentialWhereInput {
   profileImageUrl_not_starts_with?: String | null;
   profileImageUrl_ends_with?: String | null;
   profileImageUrl_not_ends_with?: String | null;
+  passwordHash?: String | null;
+  passwordHash_not?: String | null;
+  passwordHash_in?: String[] | String | null;
+  passwordHash_not_in?: String[] | String | null;
+  passwordHash_lt?: String | null;
+  passwordHash_lte?: String | null;
+  passwordHash_gt?: String | null;
+  passwordHash_gte?: String | null;
+  passwordHash_contains?: String | null;
+  passwordHash_not_contains?: String | null;
+  passwordHash_starts_with?: String | null;
+  passwordHash_not_starts_with?: String | null;
+  passwordHash_ends_with?: String | null;
+  passwordHash_not_ends_with?: String | null;
   isActive?: Boolean | null;
   isActive_not?: Boolean | null;
   roles_every?: RoleWhereInput | null;
@@ -5859,6 +5937,7 @@ export interface UserCredential extends Node {
   id: ID_Output;
   email: String;
   profileImageUrl?: String | null;
+  passwordHash: String;
   roles?: Array<Role> | null;
   isActive: Boolean;
   transactionCategories?: Array<TransactionCategory> | null;
@@ -5889,6 +5968,7 @@ export interface UserCredentialPreviousValues {
   id: ID_Output;
   email: String;
   profileImageUrl?: String | null;
+  passwordHash: String;
   isActive: Boolean;
 }
 

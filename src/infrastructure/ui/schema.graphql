@@ -19,6 +19,7 @@ type UserCredential {
   profileImageUrl: String
   roles: [Role]!
   isActive: Boolean!
+  passwordHash: String!
   transactionCategories: [TransactionCategory!]
   transactions: [Transaction!]
   distributingMetricItems: [DistributingMetricItem!]

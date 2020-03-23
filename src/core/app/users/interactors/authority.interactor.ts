@@ -10,13 +10,11 @@ import IUserCredential from '../entities/userCredential.interface';
 import IAuthorityService from '../interfaces/authorityService.interface';
 import IEventDispatchService from '../../events/eventDispatchService.interface';
 import UserHasBeenCreatedEvent from '../events/userHasBeenCreated.event';
-import UserCredentialAbstractFactory from '../factories/userCredentialFactory';
 
 export default class AuthorityInteractor
   implements SessionsManagementInputPort, UserCredentialsManagementInputPort {
   constructor(
     private readonly authorityService: IAuthorityService,
-    private readonly userCredentialFactory: UserCredentialAbstractFactory,
     private readonly userCredentialRepo: IRepository<IUserCredential>,
     private readonly eventDispatcher: IEventDispatchService<
       UserHasBeenCreatedEvent
@@ -24,30 +22,26 @@ export default class AuthorityInteractor
     private readonly outputPort: AuthorityOutputPort,
   ) {}
 
+  // TODO: queue, mailing, outside auth provider
+
   public async signUp(payload: UserRegisterDto): Promise<any> {
     try {
       await this.userCredentialRepo.findOneByAndCriteria({
         email: payload.email,
       });
     } catch (e) {
-      const createdUser: IUserCredential = this.userCredentialFactory.createUserCredential(
-        {
-          email: payload.email,
-        },
-      );
-      let registrationResult: IUserCredential = null,
-        savedUser: IUserCredential = null,
+      let savedUser: IUserCredential = null,
         mailingResult: boolean = false;
       try {
-        [registrationResult, savedUser] = await Promise.all([
-          this.authorityService.signUp(payload),
-          this.userCredentialRepo.insert(createdUser),
-        ]);
+        const registrationResult: IUserCredential = await this.authorityService.signUp(
+          payload,
+        );
         if (registrationResult) {
           mailingResult = await this.eventDispatcher.emit(
-            new UserHasBeenCreatedEvent(savedUser),
+            new UserHasBeenCreatedEvent(registrationResult),
           );
         }
+        savedUser = await this.userCredentialRepo.insert(registrationResult);
       } catch (e2) {
         return this.outputPort.processRegistration(null, false, e2);
       }
@@ -118,7 +112,10 @@ export default class AuthorityInteractor
         { profileImageUrl: newProfileImagePath },
         user.id,
       );
-      return this.outputPort.processAccountProfileImageChanging(user, null);
+      return this.outputPort.processAccountProfileImageChanging(
+        Object.assign(user, { profileImageUrl: newProfileImagePath }),
+        null,
+      );
     } catch (e) {
       return this.outputPort.processAccountProfileImageChanging(null, e);
     }

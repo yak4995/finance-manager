@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TransactionCategoriesResolver } from './transactionCategories.resolver';
 import TransactionCategoryAbstractFactory from '../../../core/domain/transactions/factories/transactionCategoryFactory';
 import { TransactionCategoryFactory } from '../../persistance/factories/transactionCategory.factory';
@@ -6,9 +6,10 @@ import { TransactionCategoryCreator } from '../../persistance/creators/transacti
 import { PrismaModule } from '../../persistance/prisma/prisma.module';
 import { TransactionCategoryRepository } from '../../persistance/repositories/transactionCategory.repository';
 import { PrismaService } from '../../persistance/prisma/prisma.service';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [forwardRef(() => AuthModule), PrismaModule],
   providers: [
     TransactionCategoriesResolver,
     {

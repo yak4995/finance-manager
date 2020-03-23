@@ -6,7 +6,7 @@ import {
   ResolveProperty,
   Parent,
 } from '@nestjs/graphql';
-import { Inject } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import IRepository from '../../../core/domain/repository.interface';
 import TransactionCategoryAbstractFactory from '../../../core/domain/transactions/factories/transactionCategoryFactory';
 import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
@@ -15,8 +15,12 @@ import {
   UpdateTransactionCategoryInput,
   TransactionCategory,
 } from '../../graphql.schema.generated';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { OnlyRoles } from '../auth/decorators/roles.decorator';
+import { Roles } from '../../../core/app/users/enums/roles.enum';
 
 @Resolver('TransactionCategory')
+@OnlyRoles(Roles.ADMINISTRATOR)
 export class TransactionCategoriesResolver {
   constructor(
     @Inject('TransactionCategoryRepo')
@@ -25,11 +29,13 @@ export class TransactionCategoriesResolver {
   ) {}
 
   @Query()
+  @UseGuards(GqlAuthGuard)
   transactionCategories(): Promise<ITransactionCategory[]> {
     return this.transactionCategoryRepo.findByAndCriteria({ owner: null });
   }
 
   @Query()
+  @UseGuards(GqlAuthGuard)
   async transactionCategory(
     @Args('id') id: string,
   ): Promise<ITransactionCategory> {
@@ -44,6 +50,7 @@ export class TransactionCategoriesResolver {
   }
 
   @Mutation()
+  @UseGuards(GqlAuthGuard)
   createTransactionCategory(
     @Args('data') data: CreateTransactionCategoryInput,
   ): Promise<ITransactionCategory> {
@@ -57,6 +64,7 @@ export class TransactionCategoriesResolver {
   }
 
   @Mutation()
+  @UseGuards(GqlAuthGuard)
   updateTransactionCategory(
     @Args('data') data: UpdateTransactionCategoryInput,
   ) {
@@ -65,6 +73,7 @@ export class TransactionCategoriesResolver {
   }
 
   @Mutation()
+  @UseGuards(GqlAuthGuard)
   deleteTransactionCategory(@Args('id') id: string) {
     return this.transactionCategoryRepo
       .delete({ id })

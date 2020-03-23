@@ -1,9 +1,11 @@
 import { GqlOptionsFactory, GqlModuleOptions } from '@nestjs/graphql';
 import { Injectable } from '@nestjs/common';
 import { join } from 'path';
+import { ConfigService } from './infrastructure/ui/config/config.service';
 
 @Injectable()
 export class GraphqlOptions implements GqlOptionsFactory {
+  constructor(private readonly configService: ConfigService) {}
   createGqlOptions(): Promise<GqlModuleOptions> | GqlModuleOptions {
     return {
       typePaths: ['./src/infrastructure/ui/schema.graphql'],
@@ -19,8 +21,9 @@ export class GraphqlOptions implements GqlOptionsFactory {
         ),
         outputAs: 'class',
       },
-      debug: false,
-      introspection: false,
+      debug: this.configService.get('DEBUG') === 'true',
+      introspection: true,
+      context: ({ req }) => ({ req }),
     };
   }
 }
