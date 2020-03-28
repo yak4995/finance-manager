@@ -3,7 +3,7 @@ import AuthorityOutputPort from '../../../../core/app/users/ports/authorityOutpu
 import IUserCredential from '../../../../core/app/users/entities/userCredential.interface';
 import IUser from '../../../../core/domain/users/entities/user.interface';
 import ISecuredUserCredential from '../../../persistance/entities/securedUserCredential';
-import { AuthService } from '../services/auth.service';
+import AuthService from '../services/auth.service';
 
 @Injectable()
 export default class DefAuthorityOutputPort implements AuthorityOutputPort {
@@ -33,25 +33,17 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
       throw new BadRequestException(e.message);
     }
     if (!mailingResult) {
-      Logger.error(
-        'Mail has not been sent!',
-        e.stack,
-        'DefAuthorityOutputPort',
-      );
+      Logger.error('Mail has not been sent!', null, 'DefAuthorityOutputPort');
     }
     const { passwordHash, ...result } = savedUser;
     return result;
   }
 
-  processLogout(
-    _user: IUser,
-    _logoutResult: boolean,
-    _e: Error,
-  ): Promise<never> {
+  processLogout(_user: IUser, _logoutResult: boolean, _e: Error): never {
     throw new Error('Method not implemented.');
   }
 
-  async processAccountInfoChanging(_user: IUser, _e: Error): Promise<never> {
+  processAccountInfoChanging(_user: IUser, _e: Error): never {
     throw new Error('Method not implemented.');
   }
 

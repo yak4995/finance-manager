@@ -1,4 +1,4 @@
-export default class UserLoginDto {
+export default interface UserLoginDto {
   email: string;
   authorityData?: any;
 }

@@ -4,7 +4,7 @@ import {
   Criteria,
   OrderCriteria,
 } from '../../../core/domain/repository.interface';
-import { PrismaService } from '../prisma/prisma.service';
+import PrismaService from '../prisma/prisma.service';
 import ICurrency from '../../../core/domain/transactions/entities/currency.interface';
 import {
   CurrencyWhereInput,
@@ -12,7 +12,7 @@ import {
 } from '../../../../generated/prisma-client';
 
 @Injectable()
-export class CurrencyRepository implements IRepository<ICurrency> {
+export default class CurrencyRepository implements IRepository<ICurrency> {
   constructor(private readonly prisma: PrismaService) {}
 
   async insert(entity: ICurrency): Promise<ICurrency> {
@@ -65,7 +65,7 @@ export class CurrencyRepository implements IRepository<ICurrency> {
     const queryData: {
       where?: CurrencyWhereInput;
     } = { where: {} };
-    Object.keys(searchCriteria).forEach((key: string) => {
+    Object.keys(searchCriteria).forEach((key: string): void => {
       queryData.where[key] = searchCriteria[key];
     });
     return this.prisma.client.currencies(queryData);
@@ -90,14 +90,14 @@ export class CurrencyRepository implements IRepository<ICurrency> {
     return this.prisma.client.currencies(queryData);
   }
 
-  update(updateData: Criteria<ICurrency>, id: string): Promise<any> {
+  update(updateData: Criteria<ICurrency>, id: string): Promise<ICurrency> {
     return this.prisma.client.updateCurrency({
       data: updateData,
       where: { id },
     });
   }
 
-  async delete(deleteCriteria: Criteria<ICurrency>): Promise<any> {
+  async delete(deleteCriteria: Criteria<ICurrency>): Promise<ICurrency[]> {
     const currenciesForDelete: ICurrency[] = await this.findByAndCriteria(
       deleteCriteria,
     );

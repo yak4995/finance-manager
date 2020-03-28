@@ -5,8 +5,8 @@ import ICurrency from '../../../core/domain/transactions/entities/currency.inter
 import IRepository from '../../../core/domain/repository.interface';
 
 @Injectable()
-export class CurrencyFactory extends CurrencyAbstractFactory {
-  public constructor(
+export default class CurrencyFactory extends CurrencyAbstractFactory {
+  constructor(
     @Inject('CurrencyRepositoryForFactory')
     private readonly currencyRepository: IRepository<ICurrency>,
     @Inject('CurrencyCreator')
@@ -15,7 +15,7 @@ export class CurrencyFactory extends CurrencyAbstractFactory {
     super(currencyCreator);
   }
 
-  public createCurrencyRepo(): IRepository<ICurrency> {
+  createCurrencyRepo(): IRepository<ICurrency> {
     return this.currencyRepository;
   }
 }

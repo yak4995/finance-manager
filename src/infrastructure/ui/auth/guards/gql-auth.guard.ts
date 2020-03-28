@@ -8,11 +8,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Reflector } from '@nestjs/core';
 import { Roles } from '../../../../core/app/users/enums/roles.enum';
-import { AuthService } from '../services/auth.service';
+import AuthService from '../services/auth.service';
 import IUserCredential from '../../../../core/app/users/entities/userCredential.interface';
 
 @Injectable()
-export class GqlAuthGuard extends AuthGuard('jwt') {
+export default class GqlAuthGuard extends AuthGuard('jwt') {
   constructor(
     private readonly reflector: Reflector,
     private readonly authService: AuthService,
@@ -21,7 +21,7 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
   }
 
   getRequest(context: ExecutionContext) {
-    const ctx = GqlExecutionContext.create(context);
+    const ctx: GqlExecutionContext = GqlExecutionContext.create(context);
     return ctx.getContext().req;
   }
 

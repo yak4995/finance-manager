@@ -1,10 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import EntityCreator from '../../../core/domain/entityCreator.interface';
 import { Criteria } from '../../../core/domain/repository.interface';
 import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class TransactionCategoryCreator
+export default class TransactionCategoryCreator
   implements EntityCreator<ITransactionCategory> {
   getInstance(fields: Criteria<ITransactionCategory>): ITransactionCategory {
     return {

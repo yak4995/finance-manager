@@ -1,5 +1,5 @@
 import ITransaction from '../../../domain/transactions/entities/transaction.interface';
-import { TransactionDto } from '../dto/transaction.dto';
+import TransactionDto from '../dto/transaction.dto';
 import { OrderCriteria } from '../../../domain/repository.interface';
 import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
 

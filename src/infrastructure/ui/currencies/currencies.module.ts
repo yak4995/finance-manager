@@ -1,12 +1,12 @@
 import { Module, forwardRef } from '@nestjs/common';
 import CurrencyAbstractFactory from '../../../core/domain/transactions/factories/currencyFactory';
-import { CurrenciesResolver } from './currencies.resolver';
-import { CurrencyCreator } from '../../persistance/creators/currency.creator';
-import { CurrencyFactory } from '../../persistance/factories/currency.factory';
-import { PrismaService } from '../../persistance/prisma/prisma.service';
-import { CurrencyRepository } from '../../persistance/repositories/currency.repository';
-import { PrismaModule } from '../../persistance/prisma/prisma.module';
-import { AuthModule } from '../auth/auth.module';
+import CurrenciesResolver from './currencies.resolver';
+import CurrencyCreator from '../../persistance/creators/currency.creator';
+import CurrencyFactory from '../../persistance/factories/currency.factory';
+import PrismaService from '../../persistance/prisma/prisma.service';
+import CurrencyRepository from '../../persistance/repositories/currency.repository';
+import PrismaModule from '../../persistance/prisma/prisma.module';
+import AuthModule from '../auth/auth.module';
 
 @Module({
   imports: [forwardRef(() => AuthModule), PrismaModule],
@@ -25,14 +25,6 @@ import { AuthModule } from '../auth/auth.module';
       provide: CurrencyAbstractFactory,
       useClass: CurrencyFactory,
     },
-    {
-      provide: 'CurrencyRepo',
-      useFactory: (currencyFactory: CurrencyAbstractFactory) => {
-        CurrencyAbstractFactory.setInstance(currencyFactory);
-        return CurrencyAbstractFactory.getInstance().createCurrencyRepo();
-      },
-      inject: [CurrencyAbstractFactory],
-    },
   ],
 })
-export class CurrenciesModule {}
+export default class CurrenciesModule {}

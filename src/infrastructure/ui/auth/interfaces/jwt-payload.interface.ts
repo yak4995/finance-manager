@@ -1,6 +1,6 @@
 import { Roles } from '../../../../core/app/users/enums/roles.enum';
 
-export interface JwtPayloadInterface {
+export default interface JwtPayloadInterface {
   id: string;
   email: string;
   isActive: boolean;

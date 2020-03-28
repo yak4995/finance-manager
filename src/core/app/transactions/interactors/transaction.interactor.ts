@@ -4,7 +4,7 @@ import ITransaction from '../../../domain/transactions/entities/transaction.inte
 import IRepository, {
   OrderCriteria,
 } from '../../../domain/repository.interface';
-import { TransactionDto } from '../dto/transaction.dto';
+import TransactionDto from '../dto/transaction.dto';
 import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
 import ICurrency from '../../../domain/transactions/entities/currency.interface';
 import IUser from '../../../domain/users/entities/user.interface';

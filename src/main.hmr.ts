@@ -1,12 +1,25 @@
+import * as fs from 'fs';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ConfigService } from './infrastructure/ui/config/config.service';
+import { INestApplication } from '@nestjs/common';
+import AppModule from './app.module';
+import ConfigService from './infrastructure/ui/config/config.service';
 
 declare const module: any;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const configService: ConfigService = app.get<ConfigService>(ConfigService);
+  const configService: ConfigService = new ConfigService('.env');
+  const keyFile: Buffer = fs.readFileSync(
+    configService.get('SSL_KEY_FILE_PATH'),
+  );
+  const certFile: Buffer = fs.readFileSync(
+    configService.get('SSL_CERT_FILE_PATH'),
+  );
+  const app: INestApplication = await NestFactory.create(AppModule, {
+    httpsOptions: {
+      key: keyFile,
+      cert: certFile,
+    },
+  });
   await app.listen(configService.get('APP_PORT'));
 
   if (module.hot) {

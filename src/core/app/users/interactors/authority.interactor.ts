@@ -22,8 +22,6 @@ export default class AuthorityInteractor
     private readonly outputPort: AuthorityOutputPort,
   ) {}
 
-  // TODO: queue, mailing, outside auth provider
-
   public async signUp(payload: UserRegisterDto): Promise<any> {
     try {
       await this.userCredentialRepo.findOneByAndCriteria({

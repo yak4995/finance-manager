@@ -7,18 +7,18 @@ import {
   UpdateCurrencyInput,
 } from '../../graphql.schema.generated';
 import CurrencyAbstractFactory from '../../../core/domain/transactions/factories/currencyFactory';
-import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import GqlAuthGuard from '../auth/guards/gql-auth.guard';
 import { OnlyRoles } from '../auth/decorators/roles.decorator';
 import { Roles } from '../../../core/app/users/enums/roles.enum';
 
 @Resolver('Currency')
 @OnlyRoles(Roles.ADMINISTRATOR)
-export class CurrenciesResolver {
-  constructor(
-    @Inject('CurrencyRepo')
-    private readonly currencyRepo: IRepository<ICurrency>,
-    private readonly currencyFactory: CurrencyAbstractFactory,
-  ) {}
+export default class CurrenciesResolver {
+  private readonly currencyRepo: IRepository<ICurrency>;
+
+  constructor(private readonly currencyFactory: CurrencyAbstractFactory) {
+    this.currencyRepo = currencyFactory.createCurrencyRepo();
+  }
 
   @Query()
   @UseGuards(GqlAuthGuard)
@@ -41,16 +41,15 @@ export class CurrenciesResolver {
 
   @Mutation()
   @UseGuards(GqlAuthGuard)
-  updateCurrency(@Args('data') data: UpdateCurrencyInput) {
+  updateCurrency(@Args('data') data: UpdateCurrencyInput): Promise<ICurrency> {
     const { id, ...preparedData } = data;
     return this.currencyRepo.update(preparedData, id);
   }
 
   @Mutation()
   @UseGuards(GqlAuthGuard)
-  deleteCurrency(@Args('id') id: string) {
-    return this.currencyRepo
-      .delete({ id })
-      .then((result: ICurrency) => result[0]);
+  async deleteCurrency(@Args('id') id: string): Promise<ICurrency> {
+    const result: ICurrency[] = await this.currencyRepo.delete({ id });
+    return result[0];
   }
 }

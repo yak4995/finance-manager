@@ -5,8 +5,8 @@ import ITransactionCategory from '../../../core/domain/transactions/entities/tra
 import TransactionCategoryAbstractFactory from '../../../core/domain/transactions/factories/transactionCategoryFactory';
 
 @Injectable()
-export class TransactionCategoryFactory extends TransactionCategoryAbstractFactory {
-  public constructor(
+export default class TransactionCategoryFactory extends TransactionCategoryAbstractFactory {
+  constructor(
     @Inject('TransactionCategoryRepositoryForFactory')
     private readonly transactionCategoryRepository: IRepository<
       ITransactionCategory
@@ -17,7 +17,7 @@ export class TransactionCategoryFactory extends TransactionCategoryAbstractFacto
     super(transactionCategoryCreator);
   }
 
-  public createTransactionCategoryRepo(): IRepository<ITransactionCategory> {
+  createTransactionCategoryRepo(): IRepository<ITransactionCategory> {
     return this.transactionCategoryRepository;
   }
 }

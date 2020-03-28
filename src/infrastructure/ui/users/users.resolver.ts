@@ -7,20 +7,20 @@ import {
   Parent,
   Mutation,
 } from '@nestjs/graphql';
-import { PrismaService } from '../../persistance/prisma/prisma.service';
+import PrismaService from '../../persistance/prisma/prisma.service';
 import {
   UpdateUserCredentialInput,
   Role,
 } from '../../graphql.schema.generated';
 import IRepository from '../../../core/domain/repository.interface';
 import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
-import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import GqlAuthGuard from '../auth/guards/gql-auth.guard';
 import { OnlyRoles } from '../auth/decorators/roles.decorator';
 import { Roles } from '../../../core/app/users/enums/roles.enum';
 
 @Resolver('UserCredential')
 @OnlyRoles(Roles.ADMINISTRATOR)
-export class UsersResolver {
+export default class UsersResolver {
   constructor(
     private readonly prisma: PrismaService,
     @Inject('UserCredentialRepo')
@@ -52,7 +52,9 @@ export class UsersResolver {
 
   @Mutation()
   @UseGuards(GqlAuthGuard)
-  updateUserCredential(@Args('data') data: UpdateUserCredentialInput) {
+  updateUserCredential(
+    @Args('data') data: UpdateUserCredentialInput,
+  ): Promise<IUserCredential> {
     const { id, ...preparedData } = data;
     return this.userCredentialRepo.update(preparedData, id);
   }

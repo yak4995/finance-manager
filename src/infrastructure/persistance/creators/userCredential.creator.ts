@@ -5,7 +5,7 @@ import { Roles } from '../../../core/app/users/enums/roles.enum';
 import ISecuredUserCredential from '../entities/securedUserCredential';
 
 @Injectable()
-export class UserCredentialCreator
+export default class UserCredentialCreator
   implements EntityCreator<ISecuredUserCredential> {
   getInstance(
     fields: Criteria<ISecuredUserCredential>,

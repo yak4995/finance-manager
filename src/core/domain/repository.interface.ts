@@ -3,13 +3,9 @@ import IPersistantEntity from './persistantEntity';
 // we use public data fields instead of
 // private data fields and public get/set-methods in domain entities
 // for possibility of using criterias
-export type Criteria<T> = {
-  [P in keyof T]?: any;
-};
+export type Criteria<T> = { [P in keyof T]?: any };
 
-export type OrderCriteria<T> = {
-  [P in keyof T]?: 'ASC' | 'DESC';
-};
+export type OrderCriteria<T> = { [P in keyof T]?: 'ASC' | 'DESC' };
 
 // this is interface, not abstract class, because we interested in public methods,
 // not in private fields or implementation parts

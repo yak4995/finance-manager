@@ -1,10 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import EntityCreator from '../../../core/domain/entityCreator.interface';
 import ICurrency from '../../../core/domain/transactions/entities/currency.interface';
 import { Criteria } from '../../../core/domain/repository.interface';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class CurrencyCreator implements EntityCreator<ICurrency> {
+export default class CurrencyCreator implements EntityCreator<ICurrency> {
   getInstance(fields: Criteria<ICurrency>): ICurrency {
     return {
       id: fields.id ?? 'fakeId',

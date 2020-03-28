@@ -64,7 +64,6 @@ describe('TransactionCategoryService tests', () => {
       ).map((r: ITransactionCategory): string => r.id);
       expect(result).toEqual(['2', '3', '4']);
     } catch (e) {
-      console.log(e);
       throw e;
     }
   });

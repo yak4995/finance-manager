@@ -9,12 +9,12 @@ import UserCredentialAbstractFactory from '../../../../core/app/users/factories/
 import IRepository, {
   Criteria,
 } from '../../../../core/domain/repository.interface';
-import { JwtPayloadInterface } from '../interfaces/jwt-payload.interface';
-import { ConfigService } from '../../config/config.service';
+import JwtPayloadInterface from '../interfaces/jwt-payload.interface';
+import ConfigService from '../../config/config.service';
 import ISecuredUserCredential from '../../../persistance/entities/securedUserCredential';
 
 @Injectable()
-export class AuthService implements IAuthorityService {
+export default class AuthService implements IAuthorityService {
   private readonly userCredentialRepo: IRepository<ISecuredUserCredential>;
 
   constructor(
@@ -53,7 +53,7 @@ export class AuthService implements IAuthorityService {
     return user;
   }
 
-  signOut(_user: IUserCredential): Promise<boolean> {
+  signOut(_user: IUserCredential): never {
     throw new Error('Method not implemented.');
   }
 
@@ -70,7 +70,9 @@ export class AuthService implements IAuthorityService {
     return this.userCredentialRepo.findById(payload.id);
   }
 
-  async createToken(jwtPayload: JwtPayloadInterface) {
+  async createToken(
+    jwtPayload: JwtPayloadInterface,
+  ): Promise<{ accessToken: string }> {
     return {
       accessToken: await this.jwtService.signAsync(jwtPayload, {
         expiresIn: this.configService.get('JWT_TOKEN_EXPIRES_IN'),
@@ -78,7 +80,7 @@ export class AuthService implements IAuthorityService {
     };
   }
 
-  decodeToken(token: string) {
+  decodeToken(token: string): string | { [key: string]: any } {
     return this.jwtService.decode(token);
   }
 }

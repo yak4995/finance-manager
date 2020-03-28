@@ -5,8 +5,8 @@ import EntityCreator from '../../../core/domain/entityCreator.interface';
 import ISecuredUserCredential from '../entities/securedUserCredential';
 
 @Injectable()
-export class UserCredentialFactory extends UserCredentialAbstractFactory {
-  public constructor(
+export default class UserCredentialFactory extends UserCredentialAbstractFactory {
+  constructor(
     @Inject('UserCredentialRepositoryForFactory')
     private readonly userCredentialRepository: IRepository<
       ISecuredUserCredential
@@ -17,7 +17,7 @@ export class UserCredentialFactory extends UserCredentialAbstractFactory {
     super(userCredentialCreator);
   }
 
-  public createUserCredentialRepo(): IRepository<ISecuredUserCredential> {
+  createUserCredentialRepo(): IRepository<ISecuredUserCredential> {
     return this.userCredentialRepository;
   }
 }

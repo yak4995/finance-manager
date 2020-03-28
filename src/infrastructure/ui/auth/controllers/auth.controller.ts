@@ -8,7 +8,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from '../services/auth.service';
+import AuthService from '../services/auth.service';
 import AuthorityInteractor from '../../../../core/app/users/interactors/authority.interactor';
 import UserCredentialAbstractFactory from '../../../../core/app/users/factories/userCredentialFactory';
 import IEventDispatchService from '../../../../core/app/events/eventDispatchService.interface';
@@ -20,7 +20,7 @@ import { User } from '../decorators/user.decorator';
 import IUser from '../../../../core/domain/users/entities/user.interface';
 
 @Controller('auth')
-export class AuthController extends AuthorityInteractor {
+export default class AuthController extends AuthorityInteractor {
   constructor(
     authService: AuthService,
     userCredentialFactory: UserCredentialAbstractFactory,
@@ -36,6 +36,9 @@ export class AuthController extends AuthorityInteractor {
       authOutputPort,
     );
   }
+
+  // TODO: outside auth provider like auth0 with passwordless
+  // TODO: swagger and implements DTO interfaces like DTO-classes with class-validation
 
   @Post('signUp')
   signUp(@Body() payload: UserRegisterDto) {

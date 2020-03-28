@@ -1,4 +1,4 @@
-export class TransactionDto {
+export default interface TransactionDto {
   datetime: Date;
   amount: number;
   transactionCategoryId: string;

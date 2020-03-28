@@ -5,7 +5,7 @@ import {
   Criteria,
   OrderCriteria,
 } from '../../../core/domain/repository.interface';
-import { PrismaService } from '../prisma/prisma.service';
+import PrismaService from '../prisma/prisma.service';
 import { Role } from '../../graphql.schema.generated';
 import {
   UserCredential,
@@ -13,9 +13,10 @@ import {
   UserCredentialOrderByInput,
 } from '../../../../generated/prisma-client';
 import ISecuredUserCredential from '../entities/securedUserCredential';
+import IUserCredential from 'core/app/users/entities/userCredential.interface';
 
 @Injectable()
-export class UserCredentialRepository
+export default class UserCredentialRepository
   implements IRepository<ISecuredUserCredential> {
   constructor(private readonly prisma: PrismaService) {}
 
@@ -24,7 +25,7 @@ export class UserCredentialRepository
   ): Promise<ISecuredUserCredential> {
     const allRoles: Role[] = await this.prisma.client.roles();
     const roles: Array<{ id: string }> = [];
-    entity.roles.forEach((role: string) => {
+    entity.roles.forEach((role: string): void => {
       const neededRoles: Role[] = allRoles.filter(
         (dbRole: Role): boolean => dbRole.name === role,
       );
@@ -70,7 +71,7 @@ export class UserCredentialRepository
       }` as UserCredentialOrderByInput;
     }
     if (Object.keys(searchCriteria).length > 0) {
-      Object.keys(searchCriteria).forEach((key: string) => {
+      Object.keys(searchCriteria).forEach((key: string): void => {
         queryData.where[key] = searchCriteria[key];
       });
     }
@@ -85,9 +86,9 @@ export class UserCredentialRepository
           isActive: user.isActive,
           profileImageUrl: user.profileImageUrl,
           passwordHash: user.passwordHash,
-          roles: (
-            await this.prisma.client.userCredential({ id: user.id }).roles()
-          ).map((role: Role): Roles => role.name as Roles),
+          roles: (await this.getRelatedEntities(user.id, 'roles')).map(
+            (role: Role): Roles => role.name as Roles,
+          ),
         }),
       ),
     );
@@ -103,9 +104,9 @@ export class UserCredentialRepository
       isActive: result.isActive,
       profileImageUrl: result.profileImageUrl,
       passwordHash: result.passwordHash,
-      roles: (
-        await this.prisma.client.userCredential({ id: result.id }).roles()
-      ).map((role: Role): Roles => role.name as Roles),
+      roles: (await this.getRelatedEntities(result.id, 'roles')).map(
+        (role: Role): Roles => role.name as Roles,
+      ),
     };
   }
 
@@ -115,20 +116,20 @@ export class UserCredentialRepository
     const result: UserCredential[] = await this.findByAndCriteria(
       searchCriteria,
     );
-    return result.length > 0
-      ? {
-          id: result[0].id,
-          email: result[0].email,
-          isActive: result[0].isActive,
-          profileImageUrl: result[0].profileImageUrl,
-          passwordHash: result[0].passwordHash,
-          roles: (
-            await this.prisma.client
-              .userCredential({ id: result[0].id })
-              .roles()
-          ).map((role: Role): Roles => role.name as Roles),
-        }
-      : null;
+    if (result.length > 0) {
+      return {
+        id: result[0].id,
+        email: result[0].email,
+        isActive: result[0].isActive,
+        profileImageUrl: result[0].profileImageUrl,
+        passwordHash: result[0].passwordHash,
+        roles: (await this.getRelatedEntities(result[0].id, 'roles')).map(
+          (role: Role): Roles => role.name as Roles,
+        ),
+      };
+    } else {
+      throw new Error('This user has not been found');
+    }
   }
 
   async findByAndCriteria(
@@ -137,7 +138,7 @@ export class UserCredentialRepository
     const queryData: {
       where: UserCredentialWhereInput;
     } = { where: {} };
-    Object.keys(searchCriteria).forEach((key: string) => {
+    Object.keys(searchCriteria).forEach((key: string): void => {
       queryData.where[key] = searchCriteria[key];
     });
     const result: UserCredential[] = await this.prisma.client.userCredentials(
@@ -151,9 +152,9 @@ export class UserCredentialRepository
           isActive: user.isActive,
           profileImageUrl: user.profileImageUrl,
           passwordHash: user.passwordHash,
-          roles: (
-            await this.prisma.client.userCredential({ id: user.id }).roles()
-          ).map((role: Role): Roles => role.name as Roles),
+          roles: (await this.getRelatedEntities(user.id, 'roles')).map(
+            (role: Role): Roles => role.name as Roles,
+          ),
         }),
       ),
     );
@@ -191,32 +192,51 @@ export class UserCredentialRepository
           isActive: user.isActive,
           profileImageUrl: user.profileImageUrl,
           passwordHash: user.passwordHash,
-          roles: (
-            await this.prisma.client.userCredential({ id: user.id }).roles()
-          ).map((role: Role): Roles => role.name as Roles),
+          roles: (await this.getRelatedEntities(user.id, 'roles')).map(
+            (role: Role): Roles => role.name as Roles,
+          ),
         }),
       ),
     );
   }
 
-  update(
+  async update(
     updateData: Criteria<ISecuredUserCredential>,
     id: string,
-  ): Promise<any> {
-    return this.prisma.client.updateUserCredential({
-      data: updateData,
-      where: { id },
-    });
+  ): Promise<IUserCredential> {
+    const result: UserCredential = await this.prisma.client.updateUserCredential(
+      {
+        data: updateData,
+        where: { id },
+      },
+    );
+    return {
+      ...result,
+      profileImageUrl: result.profileImageUrl ?? null,
+      roles: (await this.getRelatedEntities(result.id, 'roles')).map(
+        (role: Role): Roles => role.name as Roles,
+      ),
+    };
   }
 
-  async delete(deleteCriteria: Criteria<ISecuredUserCredential>): Promise<any> {
+  async delete(
+    deleteCriteria: Criteria<ISecuredUserCredential>,
+  ): Promise<IUserCredential[]> {
     const usersForDelete: ISecuredUserCredential[] = await this.findByAndCriteria(
       deleteCriteria,
     );
     return Promise.all(
       usersForDelete.map(
-        (user: ISecuredUserCredential): Promise<UserCredential> =>
-          this.prisma.client.deleteUserCredential({ id: user.id }),
+        (user: ISecuredUserCredential): Promise<IUserCredential> =>
+          this.prisma.client.deleteUserCredential({ id: user.id }).then(
+            async (result: UserCredential): Promise<IUserCredential> => ({
+              ...result,
+              profileImageUrl: result.profileImageUrl ?? null,
+              roles: (await this.getRelatedEntities(result.id, 'roles')).map(
+                (role: Role): Roles => role.name as Roles,
+              ),
+            }),
+          ),
       ),
     );
   }
