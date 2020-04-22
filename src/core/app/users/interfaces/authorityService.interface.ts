@@ -1,5 +1,5 @@
-import UserRegisterDto from '../dto/userRegister.dto';
-import UserLoginDto from '../dto/userLogin.dto';
+import IUserRegisterDto from '../dto/iUserRegister.dto';
+import IUserLoginDto from '../dto/iUserLogin.dto';
 import IUser from '../../../domain/users/entities/user.interface';
 import IUserCredential from '../entities/userCredential.interface';
 
@@ -11,8 +11,8 @@ import IUserCredential from '../entities/userCredential.interface';
 // Then client needs to transfer a login and pass in the URL: https://username:password@www.example.com (DEPRECATED)
 // )
 export default interface IAuthorityService {
-  signUp(payload: UserRegisterDto): Promise<IUserCredential>;
-  signIn(payload: UserLoginDto): Promise<IUserCredential>;
+  signUp(payload: IUserRegisterDto): Promise<IUserCredential>;
+  signIn(payload: IUserLoginDto): Promise<IUserCredential>;
   signOut(user: IUser): Promise<boolean>;
   deleteAccount(user: IUser): Promise<boolean>;
 }

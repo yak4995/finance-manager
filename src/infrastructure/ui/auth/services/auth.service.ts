@@ -2,16 +2,16 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import IAuthorityService from '../../../../core/app/users/interfaces/authorityService.interface';
-import UserRegisterDto from '../../../../core/app/users/dto/userRegister.dto';
+import IUserRegisterDto from '../../../../core/app/users/dto/iUserRegister.dto';
 import IUserCredential from '../../../../core/app/users/entities/userCredential.interface';
-import UserLoginDto from '../../../../core/app/users/dto/userLogin.dto';
+import IUserLoginDto from '../../../../core/app/users/dto/iUserLogin.dto';
 import UserCredentialAbstractFactory from '../../../../core/app/users/factories/userCredentialFactory';
 import IRepository, {
   Criteria,
 } from '../../../../core/domain/repository.interface';
 import JwtPayloadInterface from '../interfaces/jwt-payload.interface';
-import ConfigService from '../../config/config.service';
 import ISecuredUserCredential from '../../../persistance/entities/securedUserCredential';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export default class AuthService implements IAuthorityService {
@@ -27,17 +27,17 @@ export default class AuthService implements IAuthorityService {
     >;
   }
 
-  async signUp(payload: UserRegisterDto): Promise<IUserCredential> {
+  async signUp(payload: IUserRegisterDto): Promise<IUserCredential> {
     return this.userCredentialFactory.createUserCredential({
       email: payload.email,
       passwordHash: await bcrypt.hash(
         payload.authorityData,
-        Number(this.configService.get('PASSWORD_HASH_ROUNDS_COUNT')),
+        Number(this.configService.get<number>('PASSWORD_HASH_ROUNDS_COUNT')),
       ),
     } as Criteria<ISecuredUserCredential>);
   }
 
-  async signIn(payload: UserLoginDto): Promise<IUserCredential> {
+  async signIn(payload: IUserLoginDto): Promise<IUserCredential> {
     const user: ISecuredUserCredential = await this.userCredentialRepo.findOneByAndCriteria(
       {
         email: payload.email,

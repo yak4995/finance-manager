@@ -1,12 +1,12 @@
 import IAuthorityService from '../../users/interfaces/authorityService.interface';
-import UserRegisterDto from '../../users/dto/userRegister.dto';
-import UserLoginDto from '../../users/dto/userLogin.dto';
+import IUserRegisterDto from '../../users/dto/iUserRegister.dto';
+import IUserLoginDto from '../../users/dto/iUserLogin.dto';
 import IUserCredential from '../../users/entities/userCredential.interface';
 import IUser from '../../../domain/users/entities/user.interface';
 import { Roles } from '../../users/enums/roles.enum';
 
 export default class FakeAuthorityService implements IAuthorityService {
-  async signUp(payload: UserRegisterDto): Promise<IUserCredential> {
+  async signUp(payload: IUserRegisterDto): Promise<IUserCredential> {
     if (payload.email === 'registrationDenied@example.com') {
       throw new Error('Registration process has been interrupted!');
     }
@@ -19,7 +19,7 @@ export default class FakeAuthorityService implements IAuthorityService {
     };
   }
 
-  async signIn(payload: UserLoginDto): Promise<IUserCredential> {
+  async signIn(payload: IUserLoginDto): Promise<IUserCredential> {
     if (payload.email === 'incorrectUser@example.com') {
       throw new Error('This user has not been found in auth service!');
     }

@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import AuthModule from './infrastructure/ui/auth/auth.module';
 import UsersModule from './infrastructure/ui/users/users.module';
 import PrismaModule from './infrastructure/persistance/prisma/prisma.module';
-import ConfigModule from './infrastructure/ui/config/config.module';
 import GraphqlOptions from './graphql.options';
 import CurrenciesModule from './infrastructure/ui/currencies/currencies.module';
 import TransactionCategoriesModule from './infrastructure/ui/transactionCategories/transactionCategories.module';
-import ConfigService from './infrastructure/ui/config/config.service';
 
+// TODO: interactors and controllers to more canonical scheme transfering (with DTOs)
+// TODO: async currencies\transaction_categories\users deleting
+// TODO: анализ паттернов
 @Module({
   imports: [
     AuthModule,
@@ -21,7 +23,9 @@ import ConfigService from './infrastructure/ui/config/config.service';
     CurrenciesModule,
     TransactionCategoriesModule,
     PrismaModule,
-    ConfigModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
 })
 export default class AppModule {}

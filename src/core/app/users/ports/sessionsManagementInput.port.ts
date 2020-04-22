@@ -1,7 +1,7 @@
 import IUser from '../../../domain/users/entities/user.interface';
-import UserLoginDto from '../dto/userLogin.dto';
+import IUserLoginDto from '../dto/iUserLogin.dto';
 
 export default interface SessionsManagementInputPort {
-  signIn(payload: UserLoginDto): Promise<any>;
+  signIn(payload: IUserLoginDto): Promise<any>;
   signOut(user: IUser): Promise<any>;
 }

@@ -2,17 +2,16 @@ import * as fs from 'fs';
 import { NestFactory } from '@nestjs/core';
 import { INestApplication } from '@nestjs/common';
 import AppModule from './app.module';
-import ConfigService from './infrastructure/ui/config/config.service';
+import { ConfigService } from '@nestjs/config';
 
 declare const module: any;
 
 async function bootstrap() {
-  const configService: ConfigService = new ConfigService('.env');
   const keyFile: Buffer = fs.readFileSync(
-    configService.get('SSL_KEY_FILE_PATH'),
+    process.env.SSL_KEY_FILE_PATH ?? 'ssl/client-1.local.key',
   );
   const certFile: Buffer = fs.readFileSync(
-    configService.get('SSL_CERT_FILE_PATH'),
+    process.env.SSL_CERT_FILE_PATH ?? 'ssl/client-1.local.crt',
   );
   const app: INestApplication = await NestFactory.create(AppModule, {
     httpsOptions: {
@@ -20,7 +19,8 @@ async function bootstrap() {
       cert: certFile,
     },
   });
-  await app.listen(configService.get('APP_PORT'));
+  const configService: ConfigService = app.get(ConfigService);
+  await app.listen(configService.get<number>('APP_PORT'));
 
   if (module.hot) {
     module.hot.accept();

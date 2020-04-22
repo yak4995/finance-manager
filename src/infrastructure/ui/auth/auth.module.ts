@@ -2,12 +2,10 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { BullModule, BullModuleOptions } from '@nestjs/bull';
-import { MailerService, MailerModule } from '@nestjs-modules/mailer';
+import { MailerService, MailerModule, PugAdapter } from '@nestjs-modules/mailer';
 import UsersModule from '../users/users.module';
 import AuthService from './services/auth.service';
 import JwtStrategy from './services/jwt.strategy';
-import ConfigService from '../config/config.service';
-import ConfigModule from '../config/config.module';
 import AuthController from './controllers/auth.controller';
 import UserCredentialAbstractFactory from '../../../core/app/users/factories/userCredentialFactory';
 import PrismaService from '../../persistance/prisma/prisma.service';
@@ -19,16 +17,17 @@ import DefAuthorityOutputPort from './ports/defAuthorityOutput.port';
 import PrismaModule from '../../persistance/prisma/prisma.module';
 import GqlAuthGuard from './guards/gql-auth.guard';
 import UserHasBeenCreatedEventListener from './listeners/userHasBeenCreatedEvent.listener';
+import { ConfigService } from '@nestjs/config';
+import { join } from 'path';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 @Module({
   imports: [
     UsersModule,
-    ConfigModule,
     PrismaModule,
     // TODO: use Kafka instead of Redis
     BullModule.registerQueueAsync({
       name: 'mailing',
-      imports: [ConfigModule],
       useFactory: async (
         configService: ConfigService,
       ): Promise<BullModuleOptions> => ({
@@ -41,14 +40,33 @@ import UserHasBeenCreatedEventListener from './listeners/userHasBeenCreatedEvent
       inject: [ConfigService],
     }),
     MailerModule.forRootAsync({
-      useFactory: (configService: ConfigService) =>
-        configService.getMailServiceConfiguration(),
+      useFactory: (configService: ConfigService) => ({
+          transport: {
+            host: configService.get<string>('SMTP_HOST'),
+            port: configService.get<number>('SMTP_PORT'),
+            ssl: false,
+            tls: true,
+            auth: {
+              user: configService.get<string>('SMTP_USER'),
+              pass: configService.get<string>('SMTP_PASSWORD'),
+            },
+          } as SMTPTransport.Options,
+          defaults: {
+            from: configService.get<string>('SMTP_FROM'),
+          },
+          template: {
+            adapter: new PugAdapter(),
+            dir: join(
+              __dirname,
+              '../../../..',
+              configService.get<string>('MAIL_TEMPLATES_PATH'),
+            ),
+          },
+        }),
       inject: [ConfigService],
-      imports: [ConfigModule],
     }),
     PassportModule.register({}),
     JwtModule.registerAsync({
-      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: { expiresIn: configService.get('JWT_TOKEN_EXPIRES_IN') },

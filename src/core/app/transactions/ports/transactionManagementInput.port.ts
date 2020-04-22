@@ -1,5 +1,5 @@
 import ITransaction from '../../../domain/transactions/entities/transaction.interface';
-import TransactionDto from '../dto/transaction.dto';
+import ITransactionDto from '../dto/iTransaction.dto';
 import { OrderCriteria } from '../../../domain/repository.interface';
 import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
 
@@ -16,10 +16,10 @@ export default interface TransactionManagementInputPort {
     category: ITransactionCategory,
   ): Promise<any>;
   search(content: string): Promise<any>;
-  addTransaction(payload: TransactionDto): Promise<any>;
+  addTransaction(payload: ITransactionDto): Promise<any>;
   updateTransaction(
     transaction: ITransaction,
-    payload: TransactionDto,
+    payload: ITransactionDto,
   ): Promise<any>;
   deleteTransaction(transaction: ITransaction): Promise<any>;
 }

@@ -2,7 +2,7 @@ import TransactionCategoryInputPort from '../ports/transactionCategotyInput.port
 import IRepository from '../../../domain/repository.interface';
 import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
 import IUser from '../../../domain/users/entities/user.interface';
-import TransactionCategoryDto from '../dto/transactionCategory.dto';
+import ITransactionCategoryDto from '../dto/iTransactionCategory.dto';
 import TransactionCategoryOutputPort from '../ports/transactionCategoryOutput.port';
 import ISearchService from '../../search/searchService.interface';
 import TransactionCategoryAbstractFactory from '../../../domain/transactions/factories/transactionCategoryFactory';
@@ -82,7 +82,7 @@ export default class TransactionCategoryInteractor
 
   async addCategory(
     user: IUser,
-    payload: TransactionCategoryDto,
+    payload: ITransactionCategoryDto,
   ): Promise<any> {
     try {
       const parentCategory: ITransactionCategory = await this.transactionCategoryRepo.findById(
@@ -111,7 +111,7 @@ export default class TransactionCategoryInteractor
 
   async updateCategory(
     category: ITransactionCategory,
-    payload: TransactionCategoryDto,
+    payload: ITransactionCategoryDto,
   ): Promise<any> {
     try {
       const parentCategory: ITransactionCategory = await this.transactionCategoryRepo.findById(

@@ -4,7 +4,7 @@ import ITransaction from '../../../domain/transactions/entities/transaction.inte
 import IRepository, {
   OrderCriteria,
 } from '../../../domain/repository.interface';
-import TransactionDto from '../dto/transaction.dto';
+import ITransactionDto from '../dto/iTransaction.dto';
 import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
 import ICurrency from '../../../domain/transactions/entities/currency.interface';
 import IUser from '../../../domain/users/entities/user.interface';
@@ -102,7 +102,7 @@ export default class TransactionInteractor
     }
   }
 
-  async addTransaction(payload: TransactionDto): Promise<any> {
+  async addTransaction(payload: ITransactionDto): Promise<any> {
     try {
       const [transactionCategory, currency]: [
         ITransactionCategory,
@@ -132,7 +132,7 @@ export default class TransactionInteractor
 
   async updateTransaction(
     transaction: ITransaction,
-    payload: TransactionDto,
+    payload: ITransactionDto,
   ): Promise<any> {
     try {
       const [transactionCategory, currency]: [

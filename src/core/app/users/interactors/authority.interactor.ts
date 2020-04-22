@@ -2,9 +2,9 @@ import SessionsManagementInputPort from '../ports/sessionsManagementInput.port';
 import AuthorityOutputPort from '../ports/authorityOutput.port';
 import UserCredentialsManagementInputPort from '../ports/userCredentialsManagementInput.port';
 import IUser from '../../../domain/users/entities/user.interface';
-import UserInfoDto from '../dto/userInfo.dto';
-import UserRegisterDto from '../dto/userRegister.dto';
-import UserLoginDto from '../dto/userLogin.dto';
+import IUserInfoDto from '../dto/iUserInfo.dto';
+import IUserRegisterDto from '../dto/iUserRegister.dto';
+import IUserLoginDto from '../dto/iUserLogin.dto';
 import IRepository from '../../../domain/repository.interface';
 import IUserCredential from '../entities/userCredential.interface';
 import IAuthorityService from '../interfaces/authorityService.interface';
@@ -22,7 +22,7 @@ export default class AuthorityInteractor
     private readonly outputPort: AuthorityOutputPort,
   ) {}
 
-  public async signUp(payload: UserRegisterDto): Promise<any> {
+  public async signUp(payload: IUserRegisterDto): Promise<any> {
     try {
       await this.userCredentialRepo.findOneByAndCriteria({
         email: payload.email,
@@ -56,7 +56,7 @@ export default class AuthorityInteractor
     );
   }
 
-  public async signIn(payload: UserLoginDto): Promise<any> {
+  public async signIn(payload: IUserLoginDto): Promise<any> {
     try {
       const [loginResult, foundUser]: [
         IUserCredential,
@@ -84,7 +84,7 @@ export default class AuthorityInteractor
 
   public async changeAccountInfo(
     user: IUser,
-    payload: UserInfoDto,
+    payload: IUserInfoDto,
   ): Promise<any> {
     try {
       await this.userCredentialRepo.update(
