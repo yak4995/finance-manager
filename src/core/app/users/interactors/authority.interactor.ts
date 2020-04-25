@@ -10,14 +10,18 @@ import IUserCredential from '../entities/userCredential.interface';
 import IAuthorityService from '../interfaces/authorityService.interface';
 import IEventDispatchService from '../../events/eventDispatchService.interface';
 import UserHasBeenCreatedEvent from '../events/userHasBeenCreated.event';
+import UserShouldBeDeletedEvent from '../events/userShouldBeDeleted.event';
 
 export default class AuthorityInteractor
   implements SessionsManagementInputPort, UserCredentialsManagementInputPort {
   constructor(
     private readonly authorityService: IAuthorityService,
     private readonly userCredentialRepo: IRepository<IUserCredential>,
-    private readonly eventDispatcher: IEventDispatchService<
+    private readonly userCreatedEventDispatcher: IEventDispatchService<
       UserHasBeenCreatedEvent
+    >,
+    private readonly userForDeleteEventDispatcher: IEventDispatchService<
+      UserShouldBeDeletedEvent
     >,
     private readonly outputPort: AuthorityOutputPort,
   ) {}
@@ -35,7 +39,7 @@ export default class AuthorityInteractor
           payload,
         );
         if (registrationResult) {
-          mailingResult = await this.eventDispatcher.emit(
+          mailingResult = await this.userCreatedEventDispatcher.emit(
             new UserHasBeenCreatedEvent(registrationResult),
           );
         }
@@ -121,7 +125,9 @@ export default class AuthorityInteractor
 
   public async deleteAccount(user: IUser): Promise<any> {
     try {
-      const result: boolean = await this.authorityService.deleteAccount(user);
+      const result: boolean = await this.userForDeleteEventDispatcher.emit(
+        new UserShouldBeDeletedEvent(user),
+      );
       return this.outputPort.processAccountDeleting(user, result, null);
     } catch (e) {
       return this.outputPort.processAccountDeleting(user, false, e);

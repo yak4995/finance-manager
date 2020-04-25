@@ -8,8 +8,6 @@ import GraphqlOptions from './graphql.options';
 import CurrenciesModule from './infrastructure/ui/currencies/currencies.module';
 import TransactionCategoriesModule from './infrastructure/ui/transactionCategories/transactionCategories.module';
 
-// TODO: interactors and controllers to more canonical scheme transfering (with DTOs)
-// TODO: async currencies\transaction_categories\users deleting
 // TODO: анализ паттернов
 @Module({
   imports: [

@@ -15,9 +15,11 @@ import AuthorityOutputPort from '../users/ports/authorityOutput.port';
 import FakeAuthorityService from './mocks/fakeAuthorityService';
 import FakeUserCredentialFactory from './mocks/fakeUserCredentialFactory';
 import FakeRegisteredUserEventDispatchService from './mocks/fakeRegisteredUserEventDispatchService';
+import FakeUserForDeletingEventDispatchService from './mocks/fakeUserForDeletingEventDispatchService';
 import FakeAuthorityOutputPort from './mocks/fakeAuthorityOutputPort';
 
 import { usersRepoSet } from './fixtures/users';
+import UserShouldBeDeletedEvent from '../users/events/userShouldBeDeleted.event';
 
 describe('AuthorityInteractor tests', () => {
   UserCredentialAbstractFactory.setInstance(
@@ -35,11 +37,15 @@ describe('AuthorityInteractor tests', () => {
   const userCredentialRepo: IRepository<IUserCredential> = fakeUserCredentialFactory.createUserCredentialRepo();
   const fakeAuthorityService: IAuthorityService = new FakeAuthorityService();
   const fakeRegisteredUserEventDispatchService: IEventDispatchService<UserHasBeenCreatedEvent> = new FakeRegisteredUserEventDispatchService();
+  const fakeUserForDeletingEventDispatchService: IEventDispatchService<UserShouldBeDeletedEvent> = new FakeUserForDeletingEventDispatchService(
+    fakeAuthorityService,
+  );
   const fakeAuthorityOutputPort: AuthorityOutputPort = new FakeAuthorityOutputPort();
   const service: AuthorityInteractor = new AuthorityInteractor(
     fakeAuthorityService,
     userCredentialRepo,
     fakeRegisteredUserEventDispatchService,
+    fakeUserForDeletingEventDispatchService,
     fakeAuthorityOutputPort,
   );
 

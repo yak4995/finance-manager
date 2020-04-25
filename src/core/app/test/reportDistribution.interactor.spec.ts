@@ -397,7 +397,7 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '2019-8-30': 0_00 });
+    ).toEqual({ '30.08.2019': 0_00 });
   });
   it('test send method: quarter period and TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
@@ -407,7 +407,7 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '2019-6-30': 1 });
+    ).toEqual({ '30.06.2019': 1 });
   });
   it('test send method: year period and TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
@@ -417,7 +417,7 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '2018-9-30': 5 });
+    ).toEqual({ '30.09.2018': 5 });
   });
 
   it('test send method: month period and TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
@@ -428,7 +428,7 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '2019-8-30': 0_00 });
+    ).toEqual({ '30.08.2019': 0_00 });
   });
   it('test send method: quarter period and TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
@@ -438,7 +438,7 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '2019-6-30': 5_01 });
+    ).toEqual({ '30.06.2019': 5_01 });
   });
   it('test send method: year period and TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
@@ -448,7 +448,7 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '2018-9-30': 250_02 });
+    ).toEqual({ '30.09.2018': 250_02 });
   });
 
   afterAll(() => {

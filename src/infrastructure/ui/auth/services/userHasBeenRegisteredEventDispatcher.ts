@@ -6,7 +6,7 @@ import UserHasBeenCreatedEvent from '../../../../core/app/users/events/userHasBe
 import IEventListener from '../../../../core/app/events/eventListener.interface';
 
 @Injectable()
-export default class AuthEventDispatcher extends IEventDispatchService<
+export default class UserHasBeenRegisteredEventDispatcher extends IEventDispatchService<
   UserHasBeenCreatedEvent
 > {
   constructor(
@@ -22,7 +22,11 @@ export default class AuthEventDispatcher extends IEventDispatchService<
     try {
       await this.mailingQueue.add(event);
     } catch (e) {
-      Logger.error(e.message, e.stack, 'AuthEventDispatcher::emit');
+      Logger.error(
+        e.message,
+        e.stack,
+        'UserHasBeenRegisteredEventDispatcher::emit',
+      );
       return false;
     }
     return true;

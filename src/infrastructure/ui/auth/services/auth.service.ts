@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import IAuthorityService from '../../../../core/app/users/interfaces/authorityService.interface';
 import IUserRegisterDto from '../../../../core/app/users/dto/iUserRegister.dto';
@@ -11,7 +12,7 @@ import IRepository, {
 } from '../../../../core/domain/repository.interface';
 import JwtPayloadInterface from '../interfaces/jwt-payload.interface';
 import ISecuredUserCredential from '../../../persistance/entities/securedUserCredential';
-import { ConfigService } from '@nestjs/config';
+import IUser from '../../../../core/domain/users/entities/user.interface';
 
 @Injectable()
 export default class AuthService implements IAuthorityService {
@@ -57,7 +58,7 @@ export default class AuthService implements IAuthorityService {
     throw new Error('Method not implemented.');
   }
 
-  async deleteAccount(user: IUserCredential): Promise<boolean> {
+  async deleteAccount(user: IUser): Promise<boolean> {
     try {
       await this.userCredentialRepo.delete({ id: user.id });
       return true;

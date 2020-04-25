@@ -13,7 +13,7 @@ import {
   UserCredentialOrderByInput,
 } from '../../../../generated/prisma-client';
 import ISecuredUserCredential from '../entities/securedUserCredential';
-import IUserCredential from 'core/app/users/entities/userCredential.interface';
+import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
 
 @Injectable()
 export default class UserCredentialRepository

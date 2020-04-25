@@ -584,8 +584,8 @@ describe('TransactionInteractor tests', () => {
         Period.YEAR,
       ),
     ).toEqual({
-      '2017-9-30': 5,
-      '2018-9-30': 5,
+      '30.09.2017': 5,
+      '30.09.2018': 5,
     });
   });
 
@@ -599,8 +599,8 @@ describe('TransactionInteractor tests', () => {
         fakeBaseCurrency,
       ),
     ).toEqual({
-      '2017-9-30': 250_02,
-      '2018-9-30': 250_02,
+      '30.09.2017': 250_02,
+      '30.09.2018': 250_02,
     });
   });
 });

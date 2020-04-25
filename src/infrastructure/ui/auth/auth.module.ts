@@ -2,7 +2,14 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { BullModule, BullModuleOptions } from '@nestjs/bull';
-import { MailerService, MailerModule, PugAdapter } from '@nestjs-modules/mailer';
+import {
+  MailerService,
+  MailerModule,
+  PugAdapter,
+} from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
+import { join } from 'path';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import UsersModule from '../users/users.module';
 import AuthService from './services/auth.service';
 import JwtStrategy from './services/jwt.strategy';
@@ -12,14 +19,14 @@ import PrismaService from '../../persistance/prisma/prisma.service';
 import UserCredentialRepository from '../../persistance/repositories/userCredential.repository';
 import UserCredentialCreator from '../../persistance/creators/userCredential.creator';
 import UserCredentialFactory from '../../persistance/factories/userCredential.factory';
-import AuthEventDispatcher from './services/authEventDispatcher';
+import UserHasBeenRegisteredEventDispatcher from './services/userHasBeenRegisteredEventDispatcher';
+import UserShouldBeDeletedEventDispatcher from './services/userShouldBeDeletedEventDispatcher';
 import DefAuthorityOutputPort from './ports/defAuthorityOutput.port';
 import PrismaModule from '../../persistance/prisma/prisma.module';
 import GqlAuthGuard from './guards/gql-auth.guard';
 import UserHasBeenCreatedEventListener from './listeners/userHasBeenCreatedEvent.listener';
-import { ConfigService } from '@nestjs/config';
-import { join } from 'path';
-import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import UserShouldBeDeletedEventListener from './listeners/userShouldBeDeletedEvent.listener';
+import AuthorityInteractor from '../../../core/app/users/interactors/authority.interactor';
 
 @Module({
   imports: [
@@ -41,28 +48,28 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
     }),
     MailerModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
-          transport: {
-            host: configService.get<string>('SMTP_HOST'),
-            port: configService.get<number>('SMTP_PORT'),
-            ssl: false,
-            tls: true,
-            auth: {
-              user: configService.get<string>('SMTP_USER'),
-              pass: configService.get<string>('SMTP_PASSWORD'),
-            },
-          } as SMTPTransport.Options,
-          defaults: {
-            from: configService.get<string>('SMTP_FROM'),
+        transport: {
+          host: configService.get<string>('SMTP_HOST'),
+          port: configService.get<number>('SMTP_PORT'),
+          ssl: false,
+          tls: true,
+          auth: {
+            user: configService.get<string>('SMTP_USER'),
+            pass: configService.get<string>('SMTP_PASSWORD'),
           },
-          template: {
-            adapter: new PugAdapter(),
-            dir: join(
-              __dirname,
-              '../../../..',
-              configService.get<string>('MAIL_TEMPLATES_PATH'),
-            ),
-          },
-        }),
+        } as SMTPTransport.Options,
+        defaults: {
+          from: configService.get<string>('SMTP_FROM'),
+        },
+        template: {
+          adapter: new PugAdapter(),
+          dir: join(
+            __dirname,
+            '../../../..',
+            configService.get<string>('MAIL_TEMPLATES_PATH'),
+          ),
+        },
+      }),
       inject: [ConfigService],
     }),
     PassportModule.register({}),
@@ -78,7 +85,10 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
   providers: [
     AuthService,
     JwtStrategy,
+    UserHasBeenRegisteredEventDispatcher,
+    UserShouldBeDeletedEventDispatcher,
     UserHasBeenCreatedEventListener,
+    UserShouldBeDeletedEventListener,
     DefAuthorityOutputPort,
     GqlAuthGuard,
     {
@@ -96,10 +106,6 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
       useClass: UserCredentialFactory,
     },
     {
-      provide: 'UserHasBeenCreatedEventDispatchService',
-      useClass: AuthEventDispatcher,
-    },
-    {
       provide: 'UserHasBeenCreatedEventListeners',
       useFactory: (mailService: MailerService) => [
         new UserHasBeenCreatedEventListener(mailService),
@@ -107,8 +113,35 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
       inject: [MailerService],
     },
     {
-      provide: 'AuthorityOutputPort',
-      useClass: DefAuthorityOutputPort,
+      provide: 'UserShouldBeDeletedEventListeners',
+      useFactory: (authService: AuthService) => [
+        new UserShouldBeDeletedEventListener(authService),
+      ],
+      inject: [AuthService],
+    },
+    {
+      provide: 'SessionsManagementInputPort&UserCredentialsManagementInputPort',
+      useFactory: (
+        authService: AuthService,
+        userCredentialFactory: UserCredentialAbstractFactory,
+        userHasBeenRegisteredEventDispatcher: UserHasBeenRegisteredEventDispatcher,
+        userShouldBeDeletedEventDispatcher: UserShouldBeDeletedEventDispatcher,
+        authOutputPort: DefAuthorityOutputPort,
+      ) =>
+        new AuthorityInteractor(
+          authService,
+          userCredentialFactory.createUserCredentialRepo(),
+          userHasBeenRegisteredEventDispatcher,
+          userShouldBeDeletedEventDispatcher,
+          authOutputPort,
+        ),
+      inject: [
+        AuthService,
+        UserCredentialAbstractFactory,
+        UserHasBeenRegisteredEventDispatcher,
+        UserShouldBeDeletedEventDispatcher,
+        DefAuthorityOutputPort,
+      ],
     },
   ],
   exports: [AuthService, GqlAuthGuard],
