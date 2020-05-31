@@ -19,7 +19,9 @@ export default class TransactionCategoryRepository
   implements IRepository<ITransactionCategory> {
   constructor(private readonly prisma: PrismaService) {}
 
-  async insert(entity: ITransactionCategory): Promise<ITransactionCategory> {
+  public async insert(
+    entity: ITransactionCategory,
+  ): Promise<ITransactionCategory> {
     const { id, ...preparedData } = entity;
     let parentCategory: TransactionCategoryCreateOneWithoutChildCategoriesInput = null;
     if (preparedData.parentCategory !== null) {
@@ -38,7 +40,7 @@ export default class TransactionCategoryRepository
     };
   }
 
-  async findAll(
+  public async findAll(
     page: number,
     perPage: number,
     orderBy: OrderCriteria<ITransactionCategory>,
@@ -81,7 +83,7 @@ export default class TransactionCategoryRepository
     );
   }
 
-  async findById(id: string): Promise<ITransactionCategory> {
+  public async findById(id: string): Promise<ITransactionCategory> {
     const result: TransactionCategory = await this.prisma.client.transactionCategory(
       { id },
     );
@@ -95,7 +97,7 @@ export default class TransactionCategoryRepository
     };
   }
 
-  async findOneByAndCriteria(
+  public async findOneByAndCriteria(
     searchCriteria: Criteria<ITransactionCategory>,
   ): Promise<ITransactionCategory> {
     const result: ITransactionCategory[] = await this.findByAndCriteria(
@@ -104,7 +106,7 @@ export default class TransactionCategoryRepository
     return result.length > 0 ? result[0] : null;
   }
 
-  async findByAndCriteria(
+  public async findByAndCriteria(
     searchCriteria: Criteria<ITransactionCategory>,
   ): Promise<ITransactionCategory[]> {
     const queryData: {
@@ -128,7 +130,7 @@ export default class TransactionCategoryRepository
     );
   }
 
-  async findByOrCriteria(
+  public async findByOrCriteria(
     searchCriteria: Criteria<ITransactionCategory>,
   ): Promise<ITransactionCategory[]> {
     const queryData: {
@@ -164,7 +166,7 @@ export default class TransactionCategoryRepository
     );
   }
 
-  async update(
+  public async update(
     updateData: Criteria<ITransactionCategory>,
     id: string,
   ): Promise<ITransactionCategory> {
@@ -193,7 +195,7 @@ export default class TransactionCategoryRepository
     };
   }
 
-  async delete(
+  public async delete(
     deleteCriteria: Criteria<ITransactionCategory>,
   ): Promise<ITransactionCategory[]> {
     const transactionCategoriesForDelete: ITransactionCategory[] = await this.findByAndCriteria(
@@ -216,7 +218,7 @@ export default class TransactionCategoryRepository
     );
   }
 
-  async getRelatedEntity(
+  public async getRelatedEntity(
     id: string,
     fieldName: keyof ITransactionCategory,
   ): Promise<IUserCredential | ITransactionCategory> {
@@ -228,7 +230,7 @@ export default class TransactionCategoryRepository
       : await this.prisma.client.transactionCategory({ id }).parentCategory();
   }
 
-  getRelatedEntities(
+  public getRelatedEntities(
     id: string,
     fieldName: keyof ITransactionCategory,
   ): Promise<never> {

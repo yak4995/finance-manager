@@ -20,7 +20,7 @@ export default class UserCredentialRepository
   implements IRepository<ISecuredUserCredential> {
   constructor(private readonly prisma: PrismaService) {}
 
-  async insert(
+  public async insert(
     entity: ISecuredUserCredential,
   ): Promise<ISecuredUserCredential> {
     const allRoles: Role[] = await this.prisma.client.roles();
@@ -47,7 +47,7 @@ export default class UserCredentialRepository
     };
   }
 
-  async findAll(
+  public async findAll(
     page: number,
     perPage: number,
     orderBy: OrderCriteria<ISecuredUserCredential>,
@@ -94,7 +94,7 @@ export default class UserCredentialRepository
     );
   }
 
-  async findById(id: string): Promise<ISecuredUserCredential> {
+  public async findById(id: string): Promise<ISecuredUserCredential> {
     const result: UserCredential = await this.prisma.client.userCredential({
       id,
     });
@@ -110,7 +110,7 @@ export default class UserCredentialRepository
     };
   }
 
-  async findOneByAndCriteria(
+  public async findOneByAndCriteria(
     searchCriteria: Criteria<ISecuredUserCredential>,
   ): Promise<ISecuredUserCredential> {
     const result: UserCredential[] = await this.findByAndCriteria(
@@ -132,7 +132,7 @@ export default class UserCredentialRepository
     }
   }
 
-  async findByAndCriteria(
+  public async findByAndCriteria(
     searchCriteria: Criteria<ISecuredUserCredential>,
   ): Promise<ISecuredUserCredential[]> {
     const queryData: {
@@ -160,7 +160,7 @@ export default class UserCredentialRepository
     );
   }
 
-  async findByOrCriteria(
+  public async findByOrCriteria(
     searchCriteria: Criteria<ISecuredUserCredential>,
   ): Promise<ISecuredUserCredential[]> {
     const queryData: {
@@ -200,7 +200,7 @@ export default class UserCredentialRepository
     );
   }
 
-  async update(
+  public async update(
     updateData: Criteria<ISecuredUserCredential>,
     id: string,
   ): Promise<IUserCredential> {
@@ -219,7 +219,7 @@ export default class UserCredentialRepository
     };
   }
 
-  async delete(
+  public async delete(
     deleteCriteria: Criteria<ISecuredUserCredential>,
   ): Promise<IUserCredential[]> {
     const usersForDelete: ISecuredUserCredential[] = await this.findByAndCriteria(
@@ -241,14 +241,14 @@ export default class UserCredentialRepository
     );
   }
 
-  getRelatedEntity(
+  public getRelatedEntity(
     _id: string,
     fieldName: keyof ISecuredUserCredential,
   ): Promise<never> {
     throw new Error(`${fieldName} of class doesn't have object type`);
   }
 
-  getRelatedEntities(
+  public getRelatedEntities(
     id: string,
     fieldName: keyof ISecuredUserCredential,
   ): Promise<Role[]> {

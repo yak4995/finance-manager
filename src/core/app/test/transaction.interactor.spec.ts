@@ -160,16 +160,7 @@ describe('TransactionInteractor tests', () => {
   it('check getTransactions method: smth error', async () => {
     jest
       .spyOn(fakeTransactionRepo, 'findAll')
-      .mockImplementationOnce(
-        (
-          page: number,
-          perPage: number,
-          orderBy: OrderCriteria<ITransaction>,
-          searchCriteria: Criteria<ITransaction>,
-        ) => {
-          throw new Error('findAll exception');
-        },
-      );
+      .mockReturnValueOnce(Promise.reject(new Error('findAll exception')));
     try {
       await service.getTransactions(1, 2, { id: 'ASC' });
     } catch (e) {
@@ -188,9 +179,9 @@ describe('TransactionInteractor tests', () => {
   it('check getTransactionsByCategory method', async () => {
     jest
       .spyOn(transactionCategoryService, 'getTransactionCategoryChildren')
-      .mockImplementationOnce((parentCategory: ITransactionCategory) => {
-        throw new Error('Incorrect category exception');
-      });
+      .mockReturnValueOnce(
+        Promise.reject(new Error('Incorrect category exception')),
+      );
     try {
       await service.getTransactionsByCategory(
         new Date('2017-10-01 00:00:00'),
@@ -434,9 +425,7 @@ describe('TransactionInteractor tests', () => {
   it('check deleteTransaction method: some deletion error', async () => {
     jest
       .spyOn(fakeTransactionRepo, 'delete')
-      .mockImplementationOnce((deleteCriteria: Criteria<ITransaction>) => {
-        throw new Error('Deletion error');
-      });
+      .mockReturnValueOnce(Promise.reject(new Error('Deletion error')));
     try {
       await service.deleteTransaction({
         amount: 100_00,

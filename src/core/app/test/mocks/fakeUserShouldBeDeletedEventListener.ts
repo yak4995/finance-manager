@@ -3,6 +3,7 @@ import { EventStatus } from '../../events/eventStatus.enum';
 import UserShouldBeDeletedEvent from '../../../../core/app/users/events/userShouldBeDeleted.event';
 import IAuthorityService from '../../../../core/app/users/interfaces/authorityService.interface';
 
+/* istanbul ignore next */
 export default class FakeUserShouldBeDeletedEventListener
   implements IEventListener<UserShouldBeDeletedEvent> {
   constructor(private readonly authorityService: IAuthorityService) {}

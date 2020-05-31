@@ -4,6 +4,7 @@ import IRepository, {
 } from '../../repository.interface';
 import IPersistantEntity from '../../persistantEntity';
 
+/* istanbul ignore next */
 export default class FakeRepo<T extends IPersistantEntity>
   implements IRepository<T> {
   constructor(private readonly repoArr: T[]) {}

@@ -6,7 +6,9 @@ import IRepository, { Criteria } from '../../repository.interface';
 // we use abstract class instead of interface
 // because in this case we interested in private field and some implementation details
 export default abstract class CurrencyAbstractFactory {
-  protected constructor(private currencyCreator: EntityCreator<ICurrency>) {}
+  protected constructor(
+    private readonly currencyCreator: EntityCreator<ICurrency>,
+  ) {}
 
   public static setInstance(instance: CurrencyAbstractFactory) {
     this.instance = instance;
@@ -16,10 +18,7 @@ export default abstract class CurrencyAbstractFactory {
 
   /* istanbul ignore next */
   public static getInstance(): CurrencyAbstractFactory {
-    if (this.instance !== null) {
-      return this.instance;
-    }
-    return null;
+    return this.instance;
   }
 
   public createCurrency(fields: Criteria<ICurrency>): ICurrency {

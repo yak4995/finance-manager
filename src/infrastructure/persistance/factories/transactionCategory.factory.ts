@@ -17,7 +17,7 @@ export default class TransactionCategoryFactory extends TransactionCategoryAbstr
     super(transactionCategoryCreator);
   }
 
-  createTransactionCategoryRepo(): IRepository<ITransactionCategory> {
+  public createTransactionCategoryRepo(): IRepository<ITransactionCategory> {
     return this.transactionCategoryRepository;
   }
 }

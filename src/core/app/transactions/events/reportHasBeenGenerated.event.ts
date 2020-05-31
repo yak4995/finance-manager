@@ -7,8 +7,8 @@ export default class ReportHasBeenGeneratedEvent implements IEvent {
   private eventState: EventStatus = EventStatus.WAITING;
 
   constructor(
-    item: IDistributingMetricItem,
-    result: number | TransactionsComparisonDto,
+    public readonly item: IDistributingMetricItem,
+    public readonly result: number | TransactionsComparisonDto,
   ) {}
 
   get state(): EventStatus {

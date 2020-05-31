@@ -2,6 +2,7 @@ import AuthorityOutputPort from '../../users/ports/authorityOutput.port';
 import IUser from '../../../domain/users/entities/user.interface';
 import IUserCredential from '../../users/entities/userCredential.interface';
 
+/* istanbul ignore next */
 export default class FakeAuthorityOutputPort implements AuthorityOutputPort {
   async processLogin(
     user: IUserCredential,

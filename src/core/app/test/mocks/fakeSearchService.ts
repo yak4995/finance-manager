@@ -1,6 +1,7 @@
 import ISearchService from '../../search/searchService.interface';
 import IPersistantEntity from '../../../../core/domain/persistantEntity';
 
+/* istanbul ignore next */
 export default class FakeSearchService<T extends IPersistantEntity>
   implements ISearchService<T> {
   constructor(public readonly repoArr: T[]) {}

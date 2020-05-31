@@ -174,11 +174,7 @@ describe('TransactionCategoryInteractor tests', () => {
   it('check deleteCategory method: some error', async () => {
     jest
       .spyOn(fakeTransactionCategoryRepo, 'delete')
-      .mockImplementationOnce(
-        (deleteCriteria: Criteria<ITransactionCategory>) => {
-          throw new Error('Delete error');
-        },
-      );
+      .mockReturnValueOnce(Promise.reject(new Error('Delete error')));
     try {
       await service.deleteCategory(seventhCategory);
     } catch (e) {

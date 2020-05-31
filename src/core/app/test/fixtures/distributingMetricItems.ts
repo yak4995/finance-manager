@@ -4,6 +4,7 @@ import { Period } from '../../../domain/period/enums/period.enum';
 import { firstCategory } from '../../../domain/test/fixtures/transactionCategories';
 import { fakeBaseCurrency } from '../../../domain/test/fixtures/currencies';
 
+/* istanbul ignore next */
 export const subscribeItems: IDistributingMetricItem[] = [
   {
     id: '1',
@@ -16,6 +17,7 @@ export const subscribeItems: IDistributingMetricItem[] = [
   },
 ];
 
+/* istanbul ignore next */
 export const generateDistributingMetricItemForMetricAndItem: (
   period: Period,
   metric: AvailableAnalyticMetric,

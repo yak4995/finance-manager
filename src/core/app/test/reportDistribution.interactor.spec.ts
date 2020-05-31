@@ -109,8 +109,8 @@ describe('TransactionCategoryInteractor tests', () => {
   );
 
   beforeAll(() => {
-    jest
-      .spyOn(service, 'defineDateRange')
+    service['defineDateRange'] = jest
+      .fn()
       .mockImplementation((period: Period): [Date, Date] => {
         const startDate: Date = new Date(dateEndForTransactionChangeMetrics);
         switch (period) {
@@ -160,9 +160,7 @@ describe('TransactionCategoryInteractor tests', () => {
   it('test subscribe method: some insert error', async () => {
     jest
       .spyOn(fakeDistributingMetricItemRepo, 'insert')
-      .mockImplementationOnce((entity: IDistributingMetricItem) => {
-        throw new Error('Insert error');
-      });
+      .mockReturnValueOnce(Promise.reject(new Error('Insert error')));
     try {
       await service.subscribe(subscribeItems);
     } catch (e) {
@@ -176,13 +174,9 @@ describe('TransactionCategoryInteractor tests', () => {
   });
 
   it('test unsubscribe method: some delete error', async () => {
-    jest.spyOn(fakeDistributingMetricItemRepo, 'delete').mockImplementationOnce(
-      async (
-        deleteCriteria: Criteria<IDistributingMetricItem>,
-      ): Promise<null> => {
-        throw new Error('Delete error');
-      },
-    );
+    jest
+      .spyOn(fakeDistributingMetricItemRepo, 'delete')
+      .mockReturnValueOnce(Promise.reject(new Error('Delete error')));
     try {
       await service.unsubscribe(subscribeItems);
     } catch (e) {
@@ -192,13 +186,9 @@ describe('TransactionCategoryInteractor tests', () => {
   });
 
   it('test unsubscribe method', async () => {
-    jest.spyOn(fakeDistributingMetricItemRepo, 'delete').mockImplementationOnce(
-      async (
-        deleteCriteria: Criteria<IDistributingMetricItem>,
-      ): Promise<null> => {
-        return null;
-      },
-    );
+    jest
+      .spyOn(fakeDistributingMetricItemRepo, 'delete')
+      .mockReturnValueOnce(Promise.resolve(null));
     expect(await service.unsubscribe(subscribeItems)).not.toBeInstanceOf(Error);
     jest.spyOn(fakeDistributingMetricItemRepo, 'delete').mockClear();
   });
@@ -213,6 +203,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual(0);
   });
+
   it('test send method: quarter period and TRANSACTIONS_COUNT_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -223,6 +214,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual(1);
   });
+
   it('test send method: year period and TRANSACTIONS_COUNT_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -244,6 +236,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual(0_00);
   });
+
   it('test send method: quarter period and TRANSACTIONS_SUM_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -254,6 +247,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual(5_01);
   });
+
   it('test send method: year period and TRANSACTIONS_SUM_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -275,6 +269,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual(0);
   });
+
   it('test send method: quarter period and TRANSACTIONS_COUNT_BY_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -285,6 +280,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual(1);
   });
+
   it('test send method: year period and TRANSACTIONS_COUNT_BY_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -306,6 +302,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual(0_00);
   });
+
   it('test send method: quarter period and TRANSACTIONS_SUM_BY_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -316,6 +313,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual(5_01);
   });
+
   it('test send method: year period and TRANSACTIONS_SUM_BY_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -337,6 +335,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual({ '2': 0, '3': 0, '4': 0 });
   });
+
   it('test send method: quarter period and TRANSACTIONS_COUNT_RATIO_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -347,6 +346,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual({ '2': 0, '3': 0, '4': 0 });
   });
+
   it('test send method: year period and TRANSACTIONS_COUNT_RATIO_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -368,6 +368,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual({ '2': 0, '3': 0, '4': 0 });
   });
+
   it('test send method: quarter period and TRANSACTIONS_SUM_RATIO_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -378,6 +379,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual({ '2': 0, '3': 0, '4': 0 });
   });
+
   it('test send method: year period and TRANSACTIONS_SUM_RATIO_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -399,6 +401,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual({ '30.08.2019': 0_00 });
   });
+
   it('test send method: quarter period and TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -409,6 +412,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual({ '30.06.2019': 1 });
   });
+
   it('test send method: year period and TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -430,6 +434,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual({ '30.08.2019': 0_00 });
   });
+
   it('test send method: quarter period and TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(
@@ -440,6 +445,7 @@ describe('TransactionCategoryInteractor tests', () => {
       ),
     ).toEqual({ '30.06.2019': 5_01 });
   });
+
   it('test send method: year period and TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
     expect(
       await service.send(

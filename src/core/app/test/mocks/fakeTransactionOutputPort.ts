@@ -2,6 +2,7 @@ import TransactionOutputPort from '../../transactions/ports/transactionOutput.po
 import ITransaction from '../../../domain/transactions/entities/transaction.interface';
 import { TransactionsComparisonDto } from '../../../domain/transactions/dto/transactionsComparison.dto';
 
+/* istanbul ignore next */
 export default class FakeTransactionOutputPort
   implements TransactionOutputPort {
   async getTransactionDetail(

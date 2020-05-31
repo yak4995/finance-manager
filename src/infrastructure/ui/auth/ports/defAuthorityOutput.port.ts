@@ -14,6 +14,7 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
     e: Error,
   ): Promise<{ accessToken: string }> {
     if (e) {
+      Logger.error(e.message, e.stack, 'DefAuthorityOutputPort::processLogin');
       throw e;
     }
     return this.authService.createToken({
@@ -30,10 +31,19 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
     e: Error,
   ): Promise<IUserCredential> {
     if (e) {
+      Logger.error(
+        e.message,
+        e.stack,
+        'DefAuthorityOutputPort::processRegistration',
+      );
       throw new BadRequestException(e.message);
     }
     if (!mailingResult) {
-      Logger.error('Mail has not been sent!', null, 'DefAuthorityOutputPort');
+      Logger.error(
+        'Mail has not been sent!',
+        null,
+        'DefAuthorityOutputPort::processRegistration',
+      );
     }
     const { passwordHash, ...result } = savedUser;
     return result;
@@ -52,6 +62,11 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
     e: Error,
   ): Promise<IUser> {
     if (e) {
+      Logger.error(
+        e.message,
+        e.stack,
+        'DefAuthorityOutputPort::processAccountProfileImageChanging',
+      );
       throw new BadRequestException(e.message);
     }
     const { passwordHash, ...result } = user;
@@ -64,6 +79,11 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
     e: Error,
   ): Promise<boolean> {
     if (e) {
+      Logger.error(
+        e.message,
+        e.stack,
+        'DefAuthorityOutputPort::processAccountDeleting',
+      );
       throw new BadRequestException(e.message);
     }
     return deletingResult;

@@ -4,6 +4,7 @@ import EntityCreator from '../../../domain/entityCreator.interface';
 import IRepository, { Criteria } from '../../../domain/repository.interface';
 import FakeRepo from '../../../domain/test/mocks/fakeRepo';
 
+/* istanbul ignore next */
 export default class FakeCurrencyFactory extends CurrencyAbstractFactory {
   constructor(
     private readonly currencies: ICurrency[],

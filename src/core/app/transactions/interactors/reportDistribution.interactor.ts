@@ -53,84 +53,88 @@ export default class ReportDistributionInteractor
   }
 
   public async send(item: IDistributingMetricItem): Promise<any> {
-    const transactions: ITransaction[] = await this.transactionsRepo.findByAndCriteria(
-      {
-        owner: item.user,
-      },
-    );
-    this.transactionAnalyticService.transactions = transactions;
-    let message: number | TransactionsComparisonDto = null;
-    const [startDate, endDate] = this.defineDateRange(item.period);
-    switch (item.metric) {
-      case AvailableAnalyticMetric.TRANSACTIONS_COUNT_BY_CATEGORY_AND_DATE_RANGE:
-        message = await this.transactionAnalyticService.getTransactionsCountBy(
-          item.category,
-          startDate,
-          endDate,
-        );
-        break;
-      case AvailableAnalyticMetric.TRANSACTIONS_SUM_BY_CATEGORY_AND_DATE_RANGE:
-        message = await this.transactionAnalyticService.getTransactionsSumBy(
-          item.category,
-          startDate,
-          endDate,
-          item.baseCurrency,
-        );
-        break;
-      case AvailableAnalyticMetric.TRANSACTIONS_COUNT_BY_DATE_RANGE:
-        message = await this.transactionAnalyticService.getTransactionsCountForDateRange(
-          startDate,
-          endDate,
-        );
-        break;
-      case AvailableAnalyticMetric.TRANSACTIONS_SUM_BY_DATE_RANGE:
-        message = await this.transactionAnalyticService.getTransactionsSumForDateRange(
-          startDate,
-          endDate,
-          item.baseCurrency,
-        );
-        break;
-      case AvailableAnalyticMetric.TRANSACTIONS_COUNT_RATIO_BY_CATEGORY_AND_DATE_RANGE:
-        message = await this.transactionAnalyticService.getTransactionCountRatioByCategories(
-          item.category,
-          startDate,
-          endDate,
-        );
-        break;
-      case AvailableAnalyticMetric.TRANSACTIONS_SUM_RATIO_BY_CATEGORY_AND_DATE_RANGE:
-        message = await this.transactionAnalyticService.getTransactionSumRatioByCategories(
-          item.category,
-          startDate,
-          endDate,
-          item.baseCurrency,
-        );
-        break;
-      case AvailableAnalyticMetric.TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE:
-        message = await this.transactionAnalyticService.getTransactionCountChangeByPeriod(
-          item.category,
-          startDate,
-          endDate,
-          item.period,
-        );
-        break;
-      case AvailableAnalyticMetric.TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE:
-        message = await this.transactionAnalyticService.getTransactionSumChangeByPeriod(
-          item.category,
-          startDate,
-          endDate,
-          item.period,
-          item.baseCurrency,
-        );
-        break;
+    try {
+      const transactions: ITransaction[] = await this.transactionsRepo.findByAndCriteria(
+        {
+          owner: item.user,
+        },
+      );
+      this.transactionAnalyticService.transactions = transactions;
+      let message: number | TransactionsComparisonDto = null;
+      const [startDate, endDate] = this.defineDateRange(item.period);
+      switch (item.metric) {
+        case AvailableAnalyticMetric.TRANSACTIONS_COUNT_BY_CATEGORY_AND_DATE_RANGE:
+          message = await this.transactionAnalyticService.getTransactionsCountBy(
+            item.category,
+            startDate,
+            endDate,
+          );
+          break;
+        case AvailableAnalyticMetric.TRANSACTIONS_SUM_BY_CATEGORY_AND_DATE_RANGE:
+          message = await this.transactionAnalyticService.getTransactionsSumBy(
+            item.category,
+            startDate,
+            endDate,
+            item.baseCurrency,
+          );
+          break;
+        case AvailableAnalyticMetric.TRANSACTIONS_COUNT_BY_DATE_RANGE:
+          message = await this.transactionAnalyticService.getTransactionsCountForDateRange(
+            startDate,
+            endDate,
+          );
+          break;
+        case AvailableAnalyticMetric.TRANSACTIONS_SUM_BY_DATE_RANGE:
+          message = await this.transactionAnalyticService.getTransactionsSumForDateRange(
+            startDate,
+            endDate,
+            item.baseCurrency,
+          );
+          break;
+        case AvailableAnalyticMetric.TRANSACTIONS_COUNT_RATIO_BY_CATEGORY_AND_DATE_RANGE:
+          message = await this.transactionAnalyticService.getTransactionCountRatioByCategories(
+            item.category,
+            startDate,
+            endDate,
+          );
+          break;
+        case AvailableAnalyticMetric.TRANSACTIONS_SUM_RATIO_BY_CATEGORY_AND_DATE_RANGE:
+          message = await this.transactionAnalyticService.getTransactionSumRatioByCategories(
+            item.category,
+            startDate,
+            endDate,
+            item.baseCurrency,
+          );
+          break;
+        case AvailableAnalyticMetric.TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE:
+          message = await this.transactionAnalyticService.getTransactionCountChangeByPeriod(
+            item.category,
+            startDate,
+            endDate,
+            item.period,
+          );
+          break;
+        case AvailableAnalyticMetric.TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE:
+          message = await this.transactionAnalyticService.getTransactionSumChangeByPeriod(
+            item.category,
+            startDate,
+            endDate,
+            item.period,
+            item.baseCurrency,
+          );
+          break;
+      }
+      await this.eventDispatcher.emit(
+        new ReportHasBeenGeneratedEvent(item, message),
+      );
+      return this.outputPort.processSending(item, message, null);
+    } catch (e) {
+      return this.outputPort.processSending(item, null, e);
     }
-    await this.eventDispatcher.emit(
-      new ReportHasBeenGeneratedEvent(item, message),
-    );
-    return this.outputPort.processSending(item, message, null);
   }
 
   /* istanbul ignore next */
-  public defineDateRange(period: Period): [Date, Date] {
+  private defineDateRange(period: Period): [Date, Date] {
     const startDate: Date = new Date();
     switch (period) {
       case Period.MONTH:

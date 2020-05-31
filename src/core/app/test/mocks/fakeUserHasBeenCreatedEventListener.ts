@@ -2,6 +2,7 @@ import IEventListener from '../../events/eventListener.interface';
 import UserHasBeenCreatedEvent from '../../users/events/userHasBeenCreated.event';
 import { EventStatus } from '../../events/eventStatus.enum';
 
+/* istanbul ignore next */
 export default class FakeUserHasBeenCreatedEventListener
   implements IEventListener<UserHasBeenCreatedEvent> {
   async process(event: UserHasBeenCreatedEvent): Promise<void> {

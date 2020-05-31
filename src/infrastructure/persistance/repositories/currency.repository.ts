@@ -15,11 +15,11 @@ import {
 export default class CurrencyRepository implements IRepository<ICurrency> {
   constructor(private readonly prisma: PrismaService) {}
 
-  async insert(entity: ICurrency): Promise<ICurrency> {
+  public async insert(entity: ICurrency): Promise<ICurrency> {
     return this.prisma.client.createCurrency(entity);
   }
 
-  findAll(
+  public findAll(
     page: number,
     perPage: number,
     orderBy: OrderCriteria<ICurrency>,
@@ -50,7 +50,7 @@ export default class CurrencyRepository implements IRepository<ICurrency> {
     return this.prisma.client.currencies(queryData);
   }
 
-  findById(id: string): Promise<ICurrency> {
+  public findById(id: string): Promise<ICurrency> {
     return this.prisma.client.currency({ id });
   }
 
@@ -61,7 +61,9 @@ export default class CurrencyRepository implements IRepository<ICurrency> {
     return result.length > 0 ? result[0] : null;
   }
 
-  findByAndCriteria(searchCriteria: Criteria<ICurrency>): Promise<ICurrency[]> {
+  public findByAndCriteria(
+    searchCriteria: Criteria<ICurrency>,
+  ): Promise<ICurrency[]> {
     const queryData: {
       where?: CurrencyWhereInput;
     } = { where: {} };
@@ -71,7 +73,9 @@ export default class CurrencyRepository implements IRepository<ICurrency> {
     return this.prisma.client.currencies(queryData);
   }
 
-  findByOrCriteria(searchCriteria: Criteria<ICurrency>): Promise<ICurrency[]> {
+  public findByOrCriteria(
+    searchCriteria: Criteria<ICurrency>,
+  ): Promise<ICurrency[]> {
     const queryData: {
       where?: CurrencyWhereInput;
     } = {};
@@ -90,14 +94,19 @@ export default class CurrencyRepository implements IRepository<ICurrency> {
     return this.prisma.client.currencies(queryData);
   }
 
-  update(updateData: Criteria<ICurrency>, id: string): Promise<ICurrency> {
+  public update(
+    updateData: Criteria<ICurrency>,
+    id: string,
+  ): Promise<ICurrency> {
     return this.prisma.client.updateCurrency({
       data: updateData,
       where: { id },
     });
   }
 
-  async delete(deleteCriteria: Criteria<ICurrency>): Promise<ICurrency[]> {
+  public async delete(
+    deleteCriteria: Criteria<ICurrency>,
+  ): Promise<ICurrency[]> {
     const currenciesForDelete: ICurrency[] = await this.findByAndCriteria(
       deleteCriteria,
     );
@@ -109,14 +118,14 @@ export default class CurrencyRepository implements IRepository<ICurrency> {
     );
   }
 
-  async getRelatedEntity(
+  public async getRelatedEntity(
     id: string,
     fieldName: keyof ICurrency,
   ): Promise<never> {
     throw new Error(`${fieldName} of entity doesn't have object type`);
   }
 
-  async getRelatedEntities(
+  public async getRelatedEntities(
     id: string,
     fieldName: keyof ICurrency,
   ): Promise<never> {

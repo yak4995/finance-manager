@@ -17,7 +17,7 @@ export default class UserCredentialFactory extends UserCredentialAbstractFactory
     super(userCredentialCreator);
   }
 
-  createUserCredentialRepo(): IRepository<ISecuredUserCredential> {
+  public createUserCredentialRepo(): IRepository<ISecuredUserCredential> {
     return this.userCredentialRepository;
   }
 }

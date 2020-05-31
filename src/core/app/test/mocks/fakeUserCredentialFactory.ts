@@ -4,6 +4,7 @@ import IUserCredential from '../../users/entities/userCredential.interface';
 import IRepository, { Criteria } from '../../../domain/repository.interface';
 import FakeRepo from '../../../domain/test/mocks/fakeRepo';
 
+/* istanbul ignore next */
 export default class FakeUserCredentialFactory extends UserCredentialAbstractFactory {
   constructor(
     private readonly users: IUserCredential[],

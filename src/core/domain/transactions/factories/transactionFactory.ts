@@ -7,7 +7,7 @@ import IRepository, { Criteria } from '../../repository.interface';
 // because in this case we interested in private field and some implementation details
 export default abstract class TransactionAbstractFactory {
   protected constructor(
-    private transactionCreator: EntityCreator<ITransaction>,
+    private readonly transactionCreator: EntityCreator<ITransaction>,
   ) {}
 
   public static setInstance(instance: TransactionAbstractFactory) {
@@ -18,10 +18,7 @@ export default abstract class TransactionAbstractFactory {
 
   /* istanbul ignore next */
   public static getInstance(): TransactionAbstractFactory {
-    if (this.instance !== null) {
-      return this.instance;
-    }
-    return null;
+    return this.instance;
   }
 
   public createTransaction(fields: Criteria<ITransaction>): ITransaction {

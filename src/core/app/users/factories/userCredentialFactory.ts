@@ -7,7 +7,7 @@ import IRepository, { Criteria } from '../../../domain/repository.interface';
 // because in this case we interested in private field and some implementation details
 export default abstract class UserCredentialAbstractFactory {
   protected constructor(
-    private userCredentialCreator: EntityCreator<IUserCredential>,
+    private readonly userCredentialCreator: EntityCreator<IUserCredential>,
   ) {}
 
   public static setInstance(instance: UserCredentialAbstractFactory) {
@@ -17,10 +17,7 @@ export default abstract class UserCredentialAbstractFactory {
   protected static instance: UserCredentialAbstractFactory = null;
 
   public static getInstance(): UserCredentialAbstractFactory {
-    if (this.instance !== null) {
-      return this.instance;
-    }
-    return null;
+    return this.instance;
   }
 
   public createUserCredential(

@@ -3,11 +3,11 @@ import { TransactionsComparisonDto } from '../../../domain/transactions/dto/tran
 
 export default interface ReportDistributionOutputPort {
   processMetricSubscribing(
-    result: IDistributingMetricItem[] | null,
+    result: IDistributingMetricItem[],
     e: Error,
   ): Promise<any>;
   processMetricUnsubscribing(
-    result: IDistributingMetricItem[] | null,
+    result: IDistributingMetricItem[],
     e: Error,
   ): Promise<any>;
   processSending(

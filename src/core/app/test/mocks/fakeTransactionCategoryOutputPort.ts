@@ -1,6 +1,7 @@
 import TransactionCategoryOutputPort from '../../transactions/ports/transactionCategoryOutput.port';
 import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
 
+/* istanbul ignore next */
 export default class FakeTransactionCategoryOutputPort
   implements TransactionCategoryOutputPort {
   async getTopCategories(

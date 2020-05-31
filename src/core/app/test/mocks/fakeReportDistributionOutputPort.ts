@@ -2,6 +2,7 @@ import IDistributingMetricItem from '../../transactions/entities/distributingMet
 import { TransactionsComparisonDto } from '../../../domain/transactions/dto/transactionsComparison.dto';
 import ReportDistributionOutputPort from '../../transactions/ports/reportDistributionOutput.port';
 
+/* istanbul ignore next */
 export default class FakeReportDistributionOutputPort
   implements ReportDistributionOutputPort {
   async processMetricSubscribing(

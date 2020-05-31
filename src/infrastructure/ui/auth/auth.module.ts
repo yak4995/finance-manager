@@ -33,19 +33,35 @@ import AuthorityInteractor from '../../../core/app/users/interactors/authority.i
     UsersModule,
     PrismaModule,
     // TODO: use Kafka instead of Redis
-    BullModule.registerQueueAsync({
-      name: 'mailing',
-      useFactory: async (
-        configService: ConfigService,
-      ): Promise<BullModuleOptions> => ({
-        redis: {
-          host: configService.get('QUEUE_HOST'),
-          port: configService.get('QUEUE_PORT'),
-          password: configService.get('QUEUE_PASSWORD'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    // TODO: reorganize
+    BullModule.registerQueueAsync(
+      {
+        name: 'mailing',
+        useFactory: async (
+          configService: ConfigService,
+        ): Promise<BullModuleOptions> => ({
+          redis: {
+            host: configService.get('QUEUE_HOST'),
+            port: configService.get('QUEUE_PORT'),
+            password: configService.get('QUEUE_PASSWORD'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+      {
+        name: 'sheduledUsersForDelete',
+        useFactory: async (
+          configService: ConfigService,
+        ): Promise<BullModuleOptions> => ({
+          redis: {
+            host: configService.get('QUEUE_HOST'),
+            port: configService.get('QUEUE_PORT'),
+            password: configService.get('QUEUE_PASSWORD'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+    ),
     MailerModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         transport: {

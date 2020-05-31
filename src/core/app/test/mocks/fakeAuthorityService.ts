@@ -5,6 +5,7 @@ import IUserCredential from '../../users/entities/userCredential.interface';
 import IUser from '../../../domain/users/entities/user.interface';
 import { Roles } from '../../users/enums/roles.enum';
 
+/* istanbul ignore next */
 export default class FakeAuthorityService implements IAuthorityService {
   async signUp(payload: IUserRegisterDto): Promise<IUserCredential> {
     if (payload.email === 'registrationDenied@example.com') {

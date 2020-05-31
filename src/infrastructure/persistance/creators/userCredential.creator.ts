@@ -7,7 +7,7 @@ import ISecuredUserCredential from '../entities/securedUserCredential';
 @Injectable()
 export default class UserCredentialCreator
   implements EntityCreator<ISecuredUserCredential> {
-  getInstance(
+  public getInstance(
     fields: Criteria<ISecuredUserCredential>,
   ): ISecuredUserCredential {
     return {

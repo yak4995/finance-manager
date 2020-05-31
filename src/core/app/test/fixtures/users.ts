@@ -1,6 +1,7 @@
 import IUserCredential from '../../users/entities/userCredential.interface';
 import { Roles } from '../../users/enums/roles.enum';
 
+/* istanbul ignore next */
 export const usersRepoSet: IUserCredential[] = [
   {
     id: '1',

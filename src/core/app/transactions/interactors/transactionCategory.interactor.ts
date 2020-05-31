@@ -17,67 +17,86 @@ export default class TransactionCategoryInteractor
   ) {}
 
   async getTopCategories(user: IUser): Promise<any> {
-    const [ownTopCategories, systemTopCategories]: [
-      ITransactionCategory[],
-      ITransactionCategory[],
-    ] = await Promise.all([
-      this.transactionCategoryRepo.findByAndCriteria({
-        isSystem: false,
-        parentCategory: null,
-        owner: user,
-      }),
-      this.transactionCategoryRepo.findByAndCriteria({
-        isSystem: true,
-        parentCategory: null,
-        owner: null,
-      }),
-    ]);
-    return this.transactionCategoryOutputPort.getTopCategories(
-      [...ownTopCategories, ...systemTopCategories],
-      null,
-    );
+    try {
+      const [ownTopCategories, systemTopCategories]: [
+        ITransactionCategory[],
+        ITransactionCategory[],
+      ] = await Promise.all([
+        this.transactionCategoryRepo.findByAndCriteria({
+          isSystem: false,
+          parentCategory: null,
+          owner: user,
+        }),
+        this.transactionCategoryRepo.findByAndCriteria({
+          isSystem: true,
+          parentCategory: null,
+          owner: null,
+        }),
+      ]);
+      return this.transactionCategoryOutputPort.getTopCategories(
+        [...ownTopCategories, ...systemTopCategories],
+        null,
+      );
+    } catch (e) {
+      return this.transactionCategoryOutputPort.getTopCategories(null, e);
+    }
   }
 
   async getCategoryDirectChildren(
     user: IUser,
     parentCategory: ITransactionCategory,
   ): Promise<any> {
-    const [systemCategories, ownCategories]: [
-      ITransactionCategory[],
-      ITransactionCategory[],
-    ] = await Promise.all([
-      this.transactionCategoryRepo.findByAndCriteria({
-        parentCategory,
-        isSystem: true,
-        owner: null,
-      }),
-      this.transactionCategoryRepo.findByAndCriteria({
-        parentCategory,
-        isSystem: false,
-        owner: user,
-      }),
-    ]);
-    return this.transactionCategoryOutputPort.getCategoryDirectChildren(
-      [...systemCategories, ...ownCategories],
-      null,
-    );
+    try {
+      const [systemCategories, ownCategories]: [
+        ITransactionCategory[],
+        ITransactionCategory[],
+      ] = await Promise.all([
+        this.transactionCategoryRepo.findByAndCriteria({
+          parentCategory,
+          isSystem: true,
+          owner: null,
+        }),
+        this.transactionCategoryRepo.findByAndCriteria({
+          parentCategory,
+          isSystem: false,
+          owner: user,
+        }),
+      ]);
+      return this.transactionCategoryOutputPort.getCategoryDirectChildren(
+        [...systemCategories, ...ownCategories],
+        null,
+      );
+    } catch (e) {
+      return this.transactionCategoryOutputPort.getCategoryDirectChildren(
+        null,
+        e,
+      );
+    }
   }
 
   async getOwnCategories(user: IUser): Promise<any> {
-    const result: ITransactionCategory[] = await this.transactionCategoryRepo.findByAndCriteria(
-      {
-        owner: user,
-        isSystem: false,
-      },
-    );
-    return this.transactionCategoryOutputPort.getOwnCategories(result, null);
+    try {
+      const result: ITransactionCategory[] = await this.transactionCategoryRepo.findByAndCriteria(
+        {
+          owner: user,
+          isSystem: false,
+        },
+      );
+      return this.transactionCategoryOutputPort.getOwnCategories(result, null);
+    } catch (e) {
+      return this.transactionCategoryOutputPort.getOwnCategories(null, e);
+    }
   }
 
   async search(user: IUser, content: string): Promise<any> {
-    const result: ITransactionCategory[] = (
-      await this.searchService.search(content, 'name')
-    ).filter((c: ITransactionCategory): boolean => c.owner.id !== user.id);
-    return this.transactionCategoryOutputPort.search(result, null);
+    try {
+      const result: ITransactionCategory[] = (
+        await this.searchService.search(content, 'name')
+      ).filter((c: ITransactionCategory): boolean => c.owner.id !== user.id);
+      return this.transactionCategoryOutputPort.search(result, null);
+    } catch (e) {
+      return this.transactionCategoryOutputPort.search(null, e);
+    }
   }
 
   async addCategory(

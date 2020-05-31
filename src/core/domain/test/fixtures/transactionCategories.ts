@@ -1,5 +1,6 @@
 import ITransactionCategory from '../../transactions/entities/transactionCategory.interface';
 
+/* istanbul ignore next */
 export const firstCategory: ITransactionCategory = {
   id: '1',
   name: '',
@@ -9,6 +10,7 @@ export const firstCategory: ITransactionCategory = {
   isOutcome: true,
 };
 
+/* istanbul ignore next */
 export const secondCategory: ITransactionCategory = {
   id: '2',
   name: '',
@@ -18,6 +20,7 @@ export const secondCategory: ITransactionCategory = {
   isOutcome: true,
 };
 
+/* istanbul ignore next */
 export const thirdCategory: ITransactionCategory = {
   id: '3',
   name: '',
@@ -27,6 +30,7 @@ export const thirdCategory: ITransactionCategory = {
   isOutcome: true,
 };
 
+/* istanbul ignore next */
 export const fourthCategory: ITransactionCategory = {
   id: '4',
   name: '',
@@ -36,6 +40,7 @@ export const fourthCategory: ITransactionCategory = {
   isOutcome: true,
 };
 
+/* istanbul ignore next */
 export const fifthCategory: ITransactionCategory = {
   id: '5',
   name: '',
@@ -45,6 +50,7 @@ export const fifthCategory: ITransactionCategory = {
   isOutcome: true,
 };
 
+/* istanbul ignore next */
 export const sixthCategory: ITransactionCategory = {
   id: '6',
   name: '',
@@ -54,6 +60,7 @@ export const sixthCategory: ITransactionCategory = {
   isOutcome: true,
 };
 
+/* istanbul ignore next */
 export const seventhCategory: ITransactionCategory = {
   id: '7',
   name: '',
@@ -63,6 +70,7 @@ export const seventhCategory: ITransactionCategory = {
   isOutcome: true,
 };
 
+/* istanbul ignore next */
 export const testCategoriesChildrenMap: Array<[
   string,
   ITransactionCategory,
@@ -72,6 +80,7 @@ export const testCategoriesChildrenMap: Array<[
   [thirdCategory.id, thirdCategory, ['3', '6', '7']],
 ];
 
+/* istanbul ignore next */
 export const testCategoriesSiblingsMap: Array<[
   string,
   ITransactionCategory,
@@ -81,6 +90,7 @@ export const testCategoriesSiblingsMap: Array<[
   [thirdCategory.id, thirdCategory, ['2', '3', '4']],
 ];
 
+/* istanbul ignore next */
 export const transactionCategoriesForSearch: ITransactionCategory[] = [
   {
     id: 'abc',

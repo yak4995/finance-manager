@@ -7,7 +7,7 @@ import IRepository, { Criteria } from '../../../domain/repository.interface';
 // because in this case we interested in private field and some implementation details
 export default abstract class DistributingMetricItemAbstractFactory {
   protected constructor(
-    private distributingMetricItemCreator: EntityCreator<
+    private readonly distributingMetricItemCreator: EntityCreator<
       IDistributingMetricItem
     >,
   ) {}
@@ -20,10 +20,7 @@ export default abstract class DistributingMetricItemAbstractFactory {
 
   /* istanbul ignore next */
   public static getInstance(): DistributingMetricItemAbstractFactory {
-    if (this.instance !== null) {
-      return this.instance;
-    }
-    return null;
+    return this.instance;
   }
 
   public createDistributingMetricItem(

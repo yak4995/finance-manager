@@ -6,7 +6,9 @@ import ITransactionCategory from '../../../core/domain/transactions/entities/tra
 @Injectable()
 export default class TransactionCategoryCreator
   implements EntityCreator<ITransactionCategory> {
-  getInstance(fields: Criteria<ITransactionCategory>): ITransactionCategory {
+  public getInstance(
+    fields: Criteria<ITransactionCategory>,
+  ): ITransactionCategory {
     return {
       id: fields.id ?? 'fakeId',
       name: fields.name ?? 'test',

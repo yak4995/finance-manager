@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -28,7 +28,7 @@ export default class AuthService implements IAuthorityService {
     >;
   }
 
-  async signUp(payload: IUserRegisterDto): Promise<IUserCredential> {
+  public async signUp(payload: IUserRegisterDto): Promise<IUserCredential> {
     return this.userCredentialFactory.createUserCredential({
       email: payload.email,
       passwordHash: await bcrypt.hash(
@@ -38,7 +38,7 @@ export default class AuthService implements IAuthorityService {
     } as Criteria<ISecuredUserCredential>);
   }
 
-  async signIn(payload: IUserLoginDto): Promise<IUserCredential> {
+  public async signIn(payload: IUserLoginDto): Promise<IUserCredential> {
     const user: ISecuredUserCredential = await this.userCredentialRepo.findOneByAndCriteria(
       {
         email: payload.email,
@@ -54,24 +54,27 @@ export default class AuthService implements IAuthorityService {
     return user;
   }
 
-  signOut(_user: IUserCredential): never {
+  public signOut(_user: IUserCredential): never {
     throw new Error('Method not implemented.');
   }
 
-  async deleteAccount(user: IUser): Promise<boolean> {
+  public async deleteAccount(user: IUser): Promise<boolean> {
     try {
       await this.userCredentialRepo.delete({ id: user.id });
       return true;
     } catch (e) {
+      Logger.error(e.message, e.stack, 'AuthService::deleteAccount');
       return false;
     }
   }
 
-  async validateUser(payload: JwtPayloadInterface): Promise<IUserCredential> {
+  public async validateUser(
+    payload: JwtPayloadInterface,
+  ): Promise<IUserCredential> {
     return this.userCredentialRepo.findById(payload.id);
   }
 
-  async createToken(
+  public async createToken(
     jwtPayload: JwtPayloadInterface,
   ): Promise<{ accessToken: string }> {
     return {
@@ -81,7 +84,7 @@ export default class AuthService implements IAuthorityService {
     };
   }
 
-  decodeToken(token: string): string | { [key: string]: any } {
+  public decodeToken(token: string): string | { [key: string]: any } {
     return this.jwtService.decode(token);
   }
 }

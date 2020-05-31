@@ -39,7 +39,7 @@ export default class TransactionCategoryService {
     });
   }
 
-  public async getTransactionCategorySiblings(
+  public getTransactionCategorySiblings(
     category: ITransactionCategory,
   ): Promise<ITransactionCategory[]> {
     return this.transactionCategoryRepository.findByAndCriteria({

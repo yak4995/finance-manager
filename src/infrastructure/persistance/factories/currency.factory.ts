@@ -15,7 +15,7 @@ export default class CurrencyFactory extends CurrencyAbstractFactory {
     super(currencyCreator);
   }
 
-  createCurrencyRepo(): IRepository<ICurrency> {
+  public createCurrencyRepo(): IRepository<ICurrency> {
     return this.currencyRepository;
   }
 }

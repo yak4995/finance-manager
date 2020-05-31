@@ -9,6 +9,7 @@ import {
 import ITransaction from '../../transactions/entities/transaction.interface';
 import { TransactionsComparisonDto } from '../../transactions/dto/transactionsComparison.dto';
 
+/* istanbul ignore next */
 export const generateTransactionsForCountMetrics: (
   date: Date,
 ) => ITransaction[] = (date: Date): ITransaction[] => [
@@ -30,6 +31,7 @@ export const generateTransactionsForCountMetrics: (
   },
 ];
 
+/* istanbul ignore next */
 export const generateTransactionsForSumMetrics: (
   date: Date,
 ) => ITransaction[] = (date: Date): ITransaction[] => [
@@ -59,6 +61,7 @@ export const generateTransactionsForSumMetrics: (
   },
 ];
 
+/* istanbul ignore next */
 export const generateTransactionsForRatioByCategories: (
   date: Date,
 ) => ITransaction[] = (date: Date): ITransaction[] => [
@@ -88,6 +91,7 @@ export const generateTransactionsForRatioByCategories: (
   },
 ];
 
+/* istanbul ignore next */
 export const transactionForTransactionChangeMetrics: ITransaction[] = [
   // 2017-2018: quarters
   {
@@ -175,6 +179,7 @@ export const transactionForTransactionChangeMetrics: ITransaction[] = [
   },
 ];
 
+/* istanbul ignore next */
 export const getTransactionCountChangeByMonthPeriodResult: TransactionsComparisonDto = {
   '30.10.2017': 0,
   '30.11.2017': 0,
@@ -202,6 +207,7 @@ export const getTransactionCountChangeByMonthPeriodResult: TransactionsCompariso
   '02.09.2019': 0,
 };
 
+/* istanbul ignore next */
 export const getTransactionCountChangeByQuarterPeriodResult: TransactionsComparisonDto = {
   '30.12.2017': 1,
   '30.09.2017': 1,
@@ -213,11 +219,13 @@ export const getTransactionCountChangeByQuarterPeriodResult: TransactionsCompari
   '30.06.2019': 1,
 };
 
+/* istanbul ignore next */
 export const getTransactionCountChangeByYearPeriodResult: TransactionsComparisonDto = {
   '30.09.2017': 5,
   '30.09.2018': 5,
 };
 
+/* istanbul ignore next */
 export const getTransactionSumChangeByMonthPeriodResult: TransactionsComparisonDto = {
   '30.10.2017': 0,
   '30.11.2017': 0,
@@ -245,6 +253,7 @@ export const getTransactionSumChangeByMonthPeriodResult: TransactionsComparisonD
   '02.09.2019': 0,
 };
 
+/* istanbul ignore next */
 export const getTransactionSumChangeByQuarterPeriodResult: TransactionsComparisonDto = {
   '30.12.2017': 5_01,
   '30.09.2017': 80_00,
@@ -256,11 +265,13 @@ export const getTransactionSumChangeByQuarterPeriodResult: TransactionsCompariso
   '30.06.2019': 5_01,
 };
 
+/* istanbul ignore next */
 export const getTransactionSumChangeByYearPeriodResult: TransactionsComparisonDto = {
   '30.09.2017': 250_02,
   '30.09.2018': 250_02,
 };
 
+/* istanbul ignore next */
 export const generateTransactionsForSearch: (
   datetime: Date,
 ) => ITransaction[] = (datetime: Date): ITransaction[] => [
