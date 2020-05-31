@@ -4,6 +4,7 @@ coverage/
 .vscode/
 generated/
 .env
+prisma.yml
 .graphqlconfig.yml
 src/infrastructure/persistance/prisma/prisma-types.graphql
 src/infrastructure/persistance/prisma/prisma.binding.ts

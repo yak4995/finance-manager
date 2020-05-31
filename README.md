@@ -1,3 +1,25 @@
+This project is my pet-project, that provided HTTP API for personal finance management and analysis. It implemented fromRobert Martin "clear architecture" principles for more scalability and independent extensionsiability.
+
+For user interfaces uses HTTP protocol, for data storage - cloud Prisma solution (MySQL with GraphQL interface), for asyncronyous task executing and queueing - Redis, for unit and e2e tests - jest library. Base programming language is TypeScript.
+
+In future, I plan to transfer asyncronyous task executing and queueing to Kafka, logging and full-text search to ELK stack, authorization - to passwordless, infrastructure and CI/CD - to Docker, docker-compose, Jenkins. Also, the project architecture will be scaled to microservices accross GRPC protocol and documentation will be implemented with Swagger and Compodoc.
+
+In future, the project will be extended with localization (by languages, default currencies and timezones), taxes management, inventory management, budget and cost-estimate management.
+
+Preparation to DB using:
+Copy .graphqlconfig.yml.example to .graphqlconfig.yml with own endpoint (you can get it via "npm install -g prisma && prisma init").
+"prisma init" command will allow you create or use existing prisma server and will create for you default datamodel.prisma/datamodel.graphql (but replace it with datamodel.graphql from code repo) and prisma.yml (there you have replace "datamodel: datamodel.prisma" to "datamodel: datamodel.graphql").
+"prisma deploy --force" will migrate DB schema from datamodel.graphql to prisma server and generate/update client typescript code to generated/prisma-client.
+"prisma generate" just generate/update client typescript code to generated/prisma-client.
+"npm install -g graphql-cli" will allow you to execute commands below (for NestJS PrismaModule), that also uses .graphqlconfig.yml:
+"graphql get-schema --project database" will download Prisma GraphQL schema to src/infrastructure/persistance/prisma/prisma-types.graphql.
+"graphql codegen --project database" will create Prisma client under src/infrastructure/persistance/prisma/prisma.binding.ts.
+
+PrismaModule uses modules from "generated" path, so you should execute "npm run migrate" before start.
+PrismaService for PrismaModule has to extend (and instantiate it with super(...)) Prisma class from prisma.binding.ts, that has been created by "graphql codegen --project database" command.
+
+In resolvers, that import GQL types, we import them from src/infrastructure/graphql.schema.generated.ts, that will be created by NestJS GraphQLModule from src/infrastructure/ui/schema.graphql (graphql types for UI) when you start the app.
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
@@ -62,6 +84,18 @@ $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
+```
+
+## Code formatting
+
+```bash
+$ npm run format
+```
+
+## DB migrations execution
+
+```bash
+$ npm run migrate
 ```
 
 ## Support
