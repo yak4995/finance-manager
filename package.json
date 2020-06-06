@@ -33,7 +33,7 @@
     "@nestjs/platform-express": "^6.11.1",
     "@nestjs/swagger": "^4.5.9",
     "@types/nodemailer": "^6.4.0",
-    "apollo-server-express": "^2.9.16",
+    "apollo-server-express": "^2.14.2",
     "bcrypt": "^4.0.1",
     "bull": "^3.13.0",
     "class-transformer": "^0.2.3",
