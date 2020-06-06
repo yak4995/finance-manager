@@ -10,6 +10,7 @@ import {
   TransactionCategoryWhereInput,
   TransactionCategoryOrderByInput,
   TransactionCategoryCreateOneWithoutChildCategoriesInput,
+  UserCredentialCreateOneWithoutTransactionCategoriesInput,
 } from '../../../../generated/prisma-client';
 import { TransactionCategory } from '../../graphql.schema.generated';
 import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
@@ -24,11 +25,15 @@ export default class TransactionCategoryRepository
   ): Promise<ITransactionCategory> {
     const { id, ...preparedData } = entity;
     let parentCategory: TransactionCategoryCreateOneWithoutChildCategoriesInput = null;
+    let owner: UserCredentialCreateOneWithoutTransactionCategoriesInput = null;
     if (preparedData.parentCategory !== null) {
       parentCategory = { connect: { id: preparedData.parentCategory.id } };
     }
+    if (preparedData.owner !== null) {
+      owner = { connect: { id: preparedData.owner.id } };
+    }
     const createdTransactionCategory: TransactionCategory = await this.prisma.client.createTransactionCategory(
-      Object.assign(preparedData, { parentCategory, owner: null }),
+      Object.assign(preparedData, { parentCategory, owner }),
     );
     return {
       id: createdTransactionCategory.id,
@@ -113,6 +118,12 @@ export default class TransactionCategoryRepository
       where?: TransactionCategoryWhereInput;
     } = { where: {} };
     Object.keys(searchCriteria).forEach((key: string): void => {
+      if (key === 'owner') {
+        if (searchCriteria[key]) {
+          queryData.where[key] = { id: searchCriteria[key].id };
+        }
+        return;
+      }
       queryData.where[key] = searchCriteria[key];
     });
     const result: TransactionCategory[] = await this.prisma.client.transactionCategories(

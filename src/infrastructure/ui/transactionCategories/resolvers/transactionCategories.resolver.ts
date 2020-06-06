@@ -7,17 +7,17 @@ import {
   Parent,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import IRepository from '../../../core/domain/repository.interface';
-import TransactionCategoryAbstractFactory from '../../../core/domain/transactions/factories/transactionCategoryFactory';
-import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
+import IRepository from '../../../../core/domain/repository.interface';
+import TransactionCategoryAbstractFactory from '../../../../core/domain/transactions/factories/transactionCategoryFactory';
+import ITransactionCategory from '../../../../core/domain/transactions/entities/transactionCategory.interface';
 import {
   CreateTransactionCategoryInput,
   UpdateTransactionCategoryInput,
   TransactionCategory,
-} from '../../graphql.schema.generated';
-import GqlAuthGuard from '../auth/guards/gql-auth.guard';
-import { OnlyRoles } from '../auth/decorators/roles.decorator';
-import { Roles } from '../../../core/app/users/enums/roles.enum';
+} from '../../../graphql.schema.generated';
+import GqlAuthGuard from '../../auth/guards/gql-auth.guard';
+import { OnlyRoles } from '../../../decorators/roles.decorator';
+import { Roles } from '../../../../core/app/users/enums/roles.enum';
 
 @Resolver('TransactionCategory')
 @OnlyRoles(Roles.ADMINISTRATOR)

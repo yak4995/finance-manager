@@ -5,6 +5,7 @@ import IRepository, { Criteria } from '../../repository.interface';
 // For instantiating objects of related classes without their source dependency
 // we use abstract class instead of interface
 // because in this case we interested in private field and some implementation details
+// Also we choose between Singleton and type-parameterized factory, because static fields doesn`t support type parameters
 export default abstract class TransactionAbstractFactory {
   protected constructor(
     private readonly transactionCreator: EntityCreator<ITransaction>,

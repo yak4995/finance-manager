@@ -1,8 +1,9 @@
 import * as fs from 'fs';
 import { NestFactory } from '@nestjs/core';
 import { INestApplication } from '@nestjs/common';
-import AppModule from './app.module';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import AppModule from './app.module';
 
 declare const module: any;
 
@@ -19,6 +20,16 @@ async function bootstrap() {
       cert: certFile,
     },
   });
+
+  const options = new DocumentBuilder()
+    .setTitle('Finance manager')
+    .setDescription('The finance manager API description')
+    .setVersion('0.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api/docs', app, document);
+
   const configService: ConfigService = app.get(ConfigService);
   await app.listen(configService.get<number>('APP_PORT'));
 

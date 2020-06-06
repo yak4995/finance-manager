@@ -15,7 +15,7 @@ import {
 import IRepository from '../../../core/domain/repository.interface';
 import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
 import GqlAuthGuard from '../auth/guards/gql-auth.guard';
-import { OnlyRoles } from '../auth/decorators/roles.decorator';
+import { OnlyRoles } from '../../decorators/roles.decorator';
 import { Roles } from '../../../core/app/users/enums/roles.enum';
 
 @Resolver('UserCredential')

@@ -8,7 +8,7 @@ import GraphqlOptions from './graphql.options';
 import CurrenciesModule from './infrastructure/ui/currencies/currencies.module';
 import TransactionCategoriesModule from './infrastructure/ui/transactionCategories/transactionCategories.module';
 
-// TODO: анализ паттернов
+// TODO: нужен ли фасад (который должен быть синглтоном) и посредник (особенно при разбитии на микросервисы)?
 @Module({
   imports: [
     AuthModule,

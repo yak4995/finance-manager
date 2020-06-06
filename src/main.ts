@@ -1,8 +1,9 @@
 import * as fs from 'fs';
 import { NestFactory } from '@nestjs/core';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import AppModule from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import AppModule from './app.module';
 
 async function bootstrap() {
   const keyFile: Buffer = fs.readFileSync(
@@ -17,6 +18,16 @@ async function bootstrap() {
       cert: certFile,
     },
   });
+
+  const options = new DocumentBuilder()
+    .setTitle('Finance manager')
+    .setDescription('The finance manager API description')
+    .setVersion('0.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api/docs', app, document);
+
   const configService: ConfigService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(configService.get<number>('APP_PORT'));

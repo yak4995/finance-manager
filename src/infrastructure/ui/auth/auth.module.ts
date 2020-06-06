@@ -33,7 +33,6 @@ import AuthorityInteractor from '../../../core/app/users/interactors/authority.i
     UsersModule,
     PrismaModule,
     // TODO: use Kafka instead of Redis
-    // TODO: reorganize
     BullModule.registerQueueAsync(
       {
         name: 'mailing',

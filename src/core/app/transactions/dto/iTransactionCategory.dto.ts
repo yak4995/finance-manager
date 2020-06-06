@@ -1,5 +1,5 @@
 export default interface ITransactionCategoryDto {
   name: string;
-  parentCategoryId: string;
+  parentCategoryId?: string;
   isOutcome: boolean;
 }

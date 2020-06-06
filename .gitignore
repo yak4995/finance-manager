@@ -3,6 +3,7 @@ node_modules/
 coverage/
 .vscode/
 generated/
+documentation/
 .env
 prisma.yml
 .graphqlconfig.yml

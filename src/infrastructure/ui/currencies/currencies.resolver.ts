@@ -8,7 +8,7 @@ import {
 } from '../../graphql.schema.generated';
 import CurrencyAbstractFactory from '../../../core/domain/transactions/factories/currencyFactory';
 import GqlAuthGuard from '../auth/guards/gql-auth.guard';
-import { OnlyRoles } from '../auth/decorators/roles.decorator';
+import { OnlyRoles } from '../../decorators/roles.decorator';
 import { Roles } from '../../../core/app/users/enums/roles.enum';
 
 @Resolver('Currency')

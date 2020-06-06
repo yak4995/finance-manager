@@ -104,11 +104,14 @@ export default class TransactionCategoryInteractor
     payload: ITransactionCategoryDto,
   ): Promise<any> {
     try {
-      const parentCategory: ITransactionCategory = await this.transactionCategoryRepo.findById(
-        payload.parentCategoryId,
-      );
-      if (parentCategory.isOutcome !== payload.isOutcome) {
-        throw new Error('isOutcome field is common for all category tree');
+      let parentCategory: ITransactionCategory = null;
+      if (payload.parentCategoryId) {
+        parentCategory = await this.transactionCategoryRepo.findById(
+          payload.parentCategoryId,
+        );
+        if (parentCategory.isOutcome !== payload.isOutcome) {
+          throw new Error('isOutcome field is common for all category tree');
+        }
       }
       const createdCategory: ITransactionCategory = this.transactionCategoryFactory.createTransactionCategory(
         {
@@ -133,11 +136,14 @@ export default class TransactionCategoryInteractor
     payload: ITransactionCategoryDto,
   ): Promise<any> {
     try {
-      const parentCategory: ITransactionCategory = await this.transactionCategoryRepo.findById(
-        payload.parentCategoryId,
-      );
-      if (parentCategory.isOutcome !== payload.isOutcome) {
-        throw new Error('isOutcome field is common for all category tree');
+      let parentCategory: ITransactionCategory = null;
+      if (payload.parentCategoryId) {
+        parentCategory = await this.transactionCategoryRepo.findById(
+          payload.parentCategoryId,
+        );
+        if (parentCategory.isOutcome !== payload.isOutcome) {
+          throw new Error('isOutcome field is common for all category tree');
+        }
       }
       await this.transactionCategoryRepo.update(
         {
