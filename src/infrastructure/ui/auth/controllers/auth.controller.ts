@@ -16,8 +16,9 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiUnauthorizedResponse,
+  ApiForbiddenResponse,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { User } from '../../../decorators/user.decorator';
 import IUser from '../../../../core/domain/users/entities/user.interface';
 import UserRegisterDto from '../dtos/userRegister.dto';
@@ -26,10 +27,27 @@ import SessionsManagementInputPort from '../../../../core/app/users/ports/sessio
 import UserCredentialsManagementInputPort from '../../../../core/app/users/ports/userCredentialsManagementInput.port';
 import IUserCredential from '../../../../core/app/users/entities/userCredential.interface';
 import ISecuredUserCredential from '../../../persistance/entities/securedUserCredential';
+import JwtAuthGuard from '../guards/jwt-auth.guard';
 
 // TODO: outside auth provider like auth0 with passwordless
 @ApiTags('Authorization and profile management')
-@ApiUnauthorizedResponse({ schema: { type: 'string' } })
+@ApiUnauthorizedResponse({
+  schema: {
+    type: 'string',
+    examples: [
+      'Incorrect token',
+      'User from token is invalid!',
+      'User is not active!',
+      'User token is invalid or expired',
+    ],
+  },
+})
+@ApiForbiddenResponse({
+  schema: {
+    type: 'string',
+    example: 'This user doesn`t have any of these groups',
+  },
+})
 @Controller('auth')
 export default class AuthController {
   constructor(
@@ -51,7 +69,7 @@ export default class AuthController {
       },
     },
   })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Get('/profile')
   getProfile(@User() user: ISecuredUserCredential) {
     const { id, passwordHash, ...result } = user;
@@ -59,6 +77,12 @@ export default class AuthController {
   }
 
   @ApiOperation({ description: 'Create new user in the system' })
+  @ApiBadRequestResponse({
+    schema: {
+      type: 'string',
+      example: 'Such user already exists',
+    },
+  })
   @ApiCreatedResponse({
     description: 'created user',
     status: 201,
@@ -77,6 +101,15 @@ export default class AuthController {
   }
 
   @ApiOperation({ description: 'Get API access token for existing user' })
+  @ApiBadRequestResponse({
+    schema: {
+      type: 'string',
+      examples: [
+        'This user has not been found',
+        'Password is invalid!',
+      ],
+    },
+  })
   @ApiCreatedResponse({
     description: 'access token for API access',
     schema: {
@@ -118,7 +151,7 @@ export default class AuthController {
       },
     },
   })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Patch('changeProfileImage')
   changeProfileImageMethod(
     @User() user: IUser,
@@ -136,7 +169,7 @@ export default class AuthController {
       type: 'boolean',
     },
   })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Delete('deleteAccount')
   deleteAccount(@User() user: IUser): Promise<boolean> {
     return this.authorityInputPort.deleteAccount(user);
