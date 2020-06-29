@@ -4,6 +4,7 @@ import { INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import AppModule from './app.module';
+import HttpExceptionFilter from './infrastructure/http-exception.filter';
 
 declare const module: any;
 
@@ -28,6 +29,7 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
+  app.useGlobalFilters(new HttpExceptionFilter());
   SwaggerModule.setup('api/docs', app, document);
 
   const configService: ConfigService = app.get(ConfigService);

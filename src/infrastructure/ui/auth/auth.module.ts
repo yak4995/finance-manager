@@ -27,6 +27,7 @@ import GqlAuthGuard from './guards/gql-auth.guard';
 import UserHasBeenCreatedEventListener from './listeners/userHasBeenCreatedEvent.listener';
 import UserShouldBeDeletedEventListener from './listeners/userShouldBeDeletedEvent.listener';
 import AuthorityInteractor from '../../../core/app/users/interactors/authority.interactor';
+import JwtAuthGuard from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -106,6 +107,7 @@ import AuthorityInteractor from '../../../core/app/users/interactors/authority.i
     UserShouldBeDeletedEventListener,
     DefAuthorityOutputPort,
     GqlAuthGuard,
+    JwtAuthGuard,
     {
       provide: 'UserCredentialCreator',
       useClass: UserCredentialCreator,
@@ -159,6 +161,6 @@ import AuthorityInteractor from '../../../core/app/users/interactors/authority.i
       ],
     },
   ],
-  exports: [AuthService, GqlAuthGuard],
+  exports: [AuthService, GqlAuthGuard, JwtAuthGuard],
 })
 export default class AuthModule {}

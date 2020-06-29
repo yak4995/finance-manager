@@ -15,7 +15,7 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
   ): Promise<{ accessToken: string }> {
     if (e) {
       Logger.error(e.message, e.stack, 'DefAuthorityOutputPort::processLogin');
-      throw e;
+      throw new BadRequestException(e.message);
     }
     return this.authService.createToken({
       id: user.id,
@@ -85,6 +85,9 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
         'DefAuthorityOutputPort::processAccountDeleting',
       );
       throw new BadRequestException(e.message);
+    }
+    if (!deletingResult) {
+      throw new BadRequestException('task for user deletion has not been added to queue');
     }
     return deletingResult;
   }

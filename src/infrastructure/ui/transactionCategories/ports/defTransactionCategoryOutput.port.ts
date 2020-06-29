@@ -9,7 +9,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefAuthorityOutputPort::processLogin');
+      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::getTopCategories');
       throw e;
     }
     return result.map((tc: ITransactionCategory) => {
@@ -23,7 +23,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefAuthorityOutputPort::processLogin');
+      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::getCategoryDirectChildren');
       throw e;
     }
     return result.map((tc: ITransactionCategory) => {
@@ -37,7 +37,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefAuthorityOutputPort::processLogin');
+      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::getOwnCategories');
       throw e;
     }
     return result.map((tc: ITransactionCategory) => {
@@ -51,7 +51,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefAuthorityOutputPort::processLogin');
+      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::search');
       throw e;
     }
     return result.map((tc: ITransactionCategory) => {
@@ -65,8 +65,8 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefAuthorityOutputPort::processLogin');
-      throw e;
+      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::addCategory');
+      throw e; // TODO: есть одна конкретная ошибка, которую бы обернуть
     }
     return result;
   }
@@ -76,8 +76,8 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefAuthorityOutputPort::processLogin');
-      throw e;
+      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::updateCategory');
+      throw e; // TODO: есть одна конкретная ошибка, которую бы обернуть
     }
     return result;
   }
@@ -87,7 +87,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<boolean> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefAuthorityOutputPort::processLogin');
+      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::deleteCategory');
       throw e;
     }
     return true;

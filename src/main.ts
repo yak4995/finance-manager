@@ -4,6 +4,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import AppModule from './app.module';
+import HttpExceptionFilter from './infrastructure/http-exception.filter';
 
 async function bootstrap() {
   const keyFile: Buffer = fs.readFileSync(
@@ -30,6 +31,7 @@ async function bootstrap() {
 
   const configService: ConfigService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new HttpExceptionFilter());
   await app.listen(configService.get<number>('APP_PORT'));
 }
 bootstrap();
