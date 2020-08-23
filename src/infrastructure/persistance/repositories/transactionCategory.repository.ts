@@ -40,8 +40,14 @@ export default class TransactionCategoryRepository
       isOutcome: createdTransactionCategory.isOutcome,
       isSystem: createdTransactionCategory.isSystem,
       name: createdTransactionCategory.name,
-      owner: null,
-      parentCategory: null,
+      owner: await this.getRelatedEntity(
+        createdTransactionCategory.id,
+        'owner',
+      ),
+      parentCategory: (await this.getRelatedEntity(
+        createdTransactionCategory.id,
+        'parentCategory',
+      )) as ITransactionCategory,
     };
   }
 
@@ -73,19 +79,24 @@ export default class TransactionCategoryRepository
         queryData.where[key] = searchCriteria[key];
       });
     }
-    const result: TransactionCategory[] = await this.prisma.client.transactionCategories(
+    const transactionCategories: TransactionCategory[] = await this.prisma.client.transactionCategories(
       queryData,
     );
-    return result.map(
-      (tc: TransactionCategory): ITransactionCategory => ({
+    const result: ITransactionCategory[] = [];
+    for await (const tc of transactionCategories) {
+      result.push({
         id: tc.id,
         isOutcome: tc.isOutcome,
         isSystem: tc.isSystem,
         name: tc.name,
-        owner: null,
-        parentCategory: null,
-      }),
-    );
+        owner: await this.getRelatedEntity(tc.id, 'owner'),
+        parentCategory: (await this.getRelatedEntity(
+          tc.id,
+          'parentCategory',
+        )) as ITransactionCategory,
+      });
+    }
+    return result;
   }
 
   public async findById(id: string): Promise<ITransactionCategory> {
@@ -97,8 +108,11 @@ export default class TransactionCategoryRepository
       isOutcome: result.isOutcome,
       isSystem: result.isSystem,
       name: result.name,
-      owner: null,
-      parentCategory: null,
+      owner: await this.getRelatedEntity(result.id, 'owner'),
+      parentCategory: (await this.getRelatedEntity(
+        result.id,
+        'parentCategory',
+      )) as ITransactionCategory,
     };
   }
 
@@ -126,19 +140,24 @@ export default class TransactionCategoryRepository
       }
       queryData.where[key] = searchCriteria[key];
     });
-    const result: TransactionCategory[] = await this.prisma.client.transactionCategories(
+    const transactionCategories: TransactionCategory[] = await this.prisma.client.transactionCategories(
       queryData,
     );
-    return result.map(
-      (tc: TransactionCategory): ITransactionCategory => ({
+    const result: ITransactionCategory[] = [];
+    for await (const tc of transactionCategories) {
+      result.push({
         id: tc.id,
         isOutcome: tc.isOutcome,
         isSystem: tc.isSystem,
         name: tc.name,
-        owner: null,
-        parentCategory: null,
-      }),
-    );
+        owner: await this.getRelatedEntity(tc.id, 'owner'),
+        parentCategory: (await this.getRelatedEntity(
+          tc.id,
+          'parentCategory',
+        )) as ITransactionCategory,
+      });
+    }
+    return result;
   }
 
   public async findByOrCriteria(
@@ -162,19 +181,24 @@ export default class TransactionCategoryRepository
       },
       {},
     );
-    const result: TransactionCategory[] = await this.prisma.client.transactionCategories(
+    const transactionCategories: TransactionCategory[] = await this.prisma.client.transactionCategories(
       queryData,
     );
-    return result.map(
-      (tc: TransactionCategory): ITransactionCategory => ({
+    const result: ITransactionCategory[] = [];
+    for await (const tc of transactionCategories) {
+      result.push({
         id: tc.id,
         isOutcome: tc.isOutcome,
         isSystem: tc.isSystem,
         name: tc.name,
-        owner: null,
-        parentCategory: null,
-      }),
-    );
+        owner: await this.getRelatedEntity(tc.id, 'owner'),
+        parentCategory: (await this.getRelatedEntity(
+          tc.id,
+          'parentCategory',
+        )) as ITransactionCategory,
+      });
+    }
+    return result;
   }
 
   public async update(
@@ -212,21 +236,24 @@ export default class TransactionCategoryRepository
     const transactionCategoriesForDelete: ITransactionCategory[] = await this.findByAndCriteria(
       deleteCriteria,
     );
-    return Promise.all(
-      transactionCategoriesForDelete.map(
-        (tc: ITransactionCategory): Promise<ITransactionCategory> =>
-          this.prisma.client.deleteTransactionCategory({ id: tc.id }).then(
-            (result: TransactionCategory): ITransactionCategory => ({
-              id: result.id,
-              isOutcome: result.isOutcome,
-              isSystem: result.isSystem,
-              name: result.name,
-              owner: null,
-              parentCategory: null,
-            }),
-          ),
-      ),
-    );
+    const result: ITransactionCategory[] = [];
+    for await (const transaction of transactionCategoriesForDelete) {
+      const tc: TransactionCategory = await this.prisma.client.deleteTransactionCategory(
+        { id: transaction.id },
+      );
+      result.push({
+        id: tc.id,
+        isOutcome: tc.isOutcome,
+        isSystem: tc.isSystem,
+        name: tc.name,
+        owner: await this.getRelatedEntity(tc.id, 'owner'),
+        parentCategory: (await this.getRelatedEntity(
+          tc.id,
+          'parentCategory',
+        )) as ITransactionCategory,
+      });
+    }
+    return result;
   }
 
   public async getRelatedEntity(

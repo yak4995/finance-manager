@@ -190,13 +190,13 @@ export default class TransactionAnalyticService {
     let general: number = 0;
     const result: TransactionsComparisonDto = {};
     for (const childCategory of directChildren) {
-      const transactionsForProcessing = await this.getTransactionsByFilter({
-        dateStart,
-        dateEnd,
-        categories: await this.transactionCategoryService.getTransactionCategoryChildren(
-          childCategory,
-        ),
-      });
+      const transactionsForProcessing: ITransaction[] = await this.getTransactionsByFilter(
+        {
+          dateStart,
+          dateEnd,
+          category: childCategory,
+        },
+      );
       const tempResult: number = await processFunction(
         transactionsForProcessing,
       );

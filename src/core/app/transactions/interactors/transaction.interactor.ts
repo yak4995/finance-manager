@@ -15,11 +15,11 @@ import ISearchService from '../../search/searchService.interface';
 import TransactionCategoryService from '../../../domain/transactions/services/transactionCategoryService';
 import { TransactionsComparisonDto } from '../../../../core/domain/transactions/dto/transactionsComparison.dto';
 import TransactionAbstractFactory from '../../../domain/transactions/factories/transactionFactory';
+import { BadRequestException } from '@nestjs/common';
 
 export default class TransactionInteractor
   implements TransactionAnalyticInputPort, TransactionManagementInputPort {
   constructor(
-    private readonly user: IUser,
     private readonly transactionFactory: TransactionAbstractFactory,
     private readonly transactionCategoryService: TransactionCategoryService,
     private readonly transactionCategoryRepo: IRepository<ITransactionCategory>,
@@ -30,9 +30,15 @@ export default class TransactionInteractor
     private readonly transactionOutputPort: TransactionOutputPort,
   ) {}
 
-  public async getTransactionDetail(id: string): Promise<any> {
+  public setTransactions(transactions: ITransaction[]): void {
+    this.transactionAnalyticService.transactions = transactions;
+  }
+
+  public async getTransactionDetail(user: IUser, id: string): Promise<any> {
     try {
-      const transaction: ITransaction = await this.transactionRepo.findById(id);
+      const transaction: ITransaction = await this.transactionRepo.findOneByAndCriteria(
+        { id, owner: user },
+      );
       return this.transactionOutputPort.getTransactionDetail(transaction, null);
     } catch (e) {
       return this.transactionOutputPort.getTransactionDetail(null, e);
@@ -40,6 +46,7 @@ export default class TransactionInteractor
   }
 
   public async getTransactions(
+    user: IUser,
     page: number,
     perPage: number,
     order: OrderCriteria<ITransaction>,
@@ -49,7 +56,7 @@ export default class TransactionInteractor
         page,
         perPage,
         order,
-        { owner: this.user },
+        { owner: user },
       );
       return this.transactionOutputPort.getTransactions(transactions, null);
     } catch (e) {
@@ -58,6 +65,7 @@ export default class TransactionInteractor
   }
 
   public async getTransactionsByCategory(
+    user: IUser,
     dateStart: Date,
     dateEnd: Date,
     category: ITransactionCategory,
@@ -70,7 +78,7 @@ export default class TransactionInteractor
       ).map((c: ITransactionCategory): string => c.id);
       const transactions: ITransaction[] = (
         await this.transactionRepo.findByAndCriteria({
-          owner: this.user,
+          owner: user,
         })
       ).filter(
         (t: ITransaction): boolean =>
@@ -87,14 +95,14 @@ export default class TransactionInteractor
     }
   }
 
-  public async search(content: string): Promise<any> {
+  public async search(user: IUser, content: string): Promise<any> {
     try {
       const transactions: ITransaction[] = await this.searchService.search(
         content,
         'description',
       );
       return this.transactionOutputPort.search(
-        transactions.filter(t => t.owner.id === this.user.id),
+        transactions.filter(t => t.owner.id === user.id),
         null,
       );
     } catch (e) {
@@ -102,7 +110,10 @@ export default class TransactionInteractor
     }
   }
 
-  public async addTransaction(payload: ITransactionDto): Promise<any> {
+  public async addTransaction(
+    user: IUser,
+    payload: ITransactionDto,
+  ): Promise<any> {
     try {
       const [transactionCategory, currency]: [
         ITransactionCategory,
@@ -114,7 +125,7 @@ export default class TransactionInteractor
       const createdTransaction: ITransaction = this.transactionFactory.createTransaction(
         {
           datetime: payload.datetime,
-          owner: this.user,
+          owner: user,
           transactionCategory,
           amount: payload.amount,
           currency,
@@ -131,6 +142,7 @@ export default class TransactionInteractor
   }
 
   public async updateTransaction(
+    user: IUser,
     transaction: ITransaction,
     payload: ITransactionDto,
   ): Promise<any> {
@@ -142,6 +154,11 @@ export default class TransactionInteractor
         this.transactionCategoryRepo.findById(payload.transactionCategoryId),
         this.currencyRepo.findById(payload.currencyId),
       ]);
+      if (transaction.owner.id !== user.id) {
+        throw new BadRequestException(
+          'This user is not owner of this transaction',
+        );
+      }
       await this.transactionRepo.update(
         {
           datetime: payload.datetime,
@@ -161,9 +178,12 @@ export default class TransactionInteractor
     }
   }
 
-  public async deleteTransaction(transaction: ITransaction): Promise<any> {
+  public async deleteTransaction(
+    user: IUser,
+    transaction: ITransaction,
+  ): Promise<any> {
     try {
-      await this.transactionRepo.delete({ id: transaction.id });
+      await this.transactionRepo.delete({ id: transaction.id, owner: user });
       return this.transactionOutputPort.deleteTransaction(transaction, null);
     } catch (e) {
       return this.transactionOutputPort.deleteTransaction(null, e);

@@ -1,8 +1,8 @@
-This project is my pet-project, that provided HTTP API for personal finance management and analysis. It implemented from Robert Martin "clear architecture" principles for more scalability and independent extensionsiability.
+This project is my pet-project, that provided HTTP REST/GraphQL API for personal finance management and analysis. It implemented from Robert Martin "clear architecture" principles for more scalability and independent extensionsiability.
 
-For user interfaces uses HTTP protocol, for data storage - cloud Prisma solution (MySQL with GraphQL interface), for asyncronyous task executing and queueing - Redis, for unit and e2e tests - jest library. Base programming language is TypeScript.
+For user interfaces uses HTTPS protocol, for data storage - cloud Prisma solution (MySQL with GraphQL interface), for asyncronyous task executing and queueing - Redis, for unit and e2e tests - jest library. Base programming language is TypeScript.
 
-In future, I plan to transfer asyncronyous task executing and queueing to Kafka, logging and full-text search to ELK stack, authorization - to passwordless, infrastructure and CI/CD - to Docker, docker-compose, Jenkins. Also, the project architecture will be scaled to microservices accross GRPC protocol.
+In future, I plan to transfer asyncronyous task executing and queueing to Kafka, logging and full-text search to ELK stack, authorization - to passwordless, infrastructure and CI/CD - to Docker and docker-compose. Also, the project architecture will be scaled to microservices accross GRPC protocol.
 
 In future, the project will be extended with localization (by languages, default currencies and timezones), taxes management, inventory management, budget and cost-estimate management.
 

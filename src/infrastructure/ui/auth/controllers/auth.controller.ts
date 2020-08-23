@@ -104,10 +104,7 @@ export default class AuthController {
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      examples: [
-        'This user has not been found',
-        'Password is invalid!',
-      ],
+      examples: ['This user has not been found', 'Password is invalid!'],
     },
   })
   @ApiCreatedResponse({

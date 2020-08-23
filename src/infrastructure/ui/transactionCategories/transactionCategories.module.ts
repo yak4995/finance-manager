@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import TransactionCategoriesResolver from './resolvers/transactionCategories.resolver';
 import TransactionCategoryAbstractFactory from '../../../core/domain/transactions/factories/transactionCategoryFactory';
 import TransactionCategoryFactory from '../../persistance/factories/transactionCategory.factory';
@@ -8,12 +8,12 @@ import TransactionCategoryRepository from '../../persistance/repositories/transa
 import PrismaService from '../../persistance/prisma/prisma.service';
 import AuthModule from '../auth/auth.module';
 import TransactionCategoriesController from './controllers/transactionCategories.controller';
-import TransactionCategoryInteractor from 'core/app/transactions/interactors/transactionCategory.interactor';
+import TransactionCategoryInteractor from '../../../core/app/transactions/interactors/transactionCategory.interactor';
 import DefTransactionCategoryOutputPort from './ports/defTransactionCategoryOutput.port';
 import { TransactionCategorySearchService } from './services/transactionCategorySearch.service';
 
 @Module({
-  imports: [forwardRef(() => AuthModule), PrismaModule],
+  imports: [AuthModule, PrismaModule],
   controllers: [TransactionCategoriesController],
   providers: [
     TransactionCategoriesResolver,

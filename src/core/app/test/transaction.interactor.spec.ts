@@ -116,7 +116,6 @@ describe('TransactionInteractor tests', () => {
   >(generateTransactionsForSearch(now));
   const fakeTransactionOutputPort: TransactionOutputPort = new FakeTransactionOutputPort();
   const service: TransactionInteractor = new TransactionInteractor(
-    { id: 'fakeId' },
     fakeTransactionFactory,
     transactionCategoryService,
     fakeTransactionCategoryRepo,
@@ -147,14 +146,16 @@ describe('TransactionInteractor tests', () => {
 
   it('check getTransactionDetail method: Such entity has not been found error', async () => {
     try {
-      await service.getTransactionDetail('fakeId');
+      await service.getTransactionDetail({ id: 'fakeId' }, 'fakeId');
     } catch (e) {
       expect(e.message).toBe('Such entity has not been found!');
     }
   });
 
   it('check getTransactionDetail method', async () => {
-    expect(await service.getTransactionDetail('1')).toEqual(transactionSet[0]);
+    expect(await service.getTransactionDetail({ id: 'fakeId' }, '1')).toEqual(
+      transactionSet[0],
+    );
   });
 
   it('check getTransactions method: smth error', async () => {
@@ -162,7 +163,7 @@ describe('TransactionInteractor tests', () => {
       .spyOn(fakeTransactionRepo, 'findAll')
       .mockReturnValueOnce(Promise.reject(new Error('findAll exception')));
     try {
-      await service.getTransactions(1, 2, { id: 'ASC' });
+      await service.getTransactions({ id: 'fakeId' }, 1, 2, { id: 'ASC' });
     } catch (e) {
       expect(e.message).toBe('findAll exception');
     }
@@ -170,10 +171,9 @@ describe('TransactionInteractor tests', () => {
   });
 
   it('check getTransactions method', async () => {
-    expect(await service.getTransactions(1, 2, { id: 'ASC' })).toEqual([
-      transactionSet[0],
-      transactionSet[9],
-    ]);
+    expect(
+      await service.getTransactions({ id: 'fakeId' }, 1, 2, { id: 'ASC' }),
+    ).toEqual([transactionSet[0], transactionSet[9]]);
   });
 
   it('check getTransactionsByCategory method', async () => {
@@ -184,6 +184,7 @@ describe('TransactionInteractor tests', () => {
       );
     try {
       await service.getTransactionsByCategory(
+        { id: 'fakeId' },
         new Date('2017-10-01 00:00:00'),
         new Date('2018-01-01 00:00:00'),
         firstCategory,
@@ -199,6 +200,7 @@ describe('TransactionInteractor tests', () => {
   it('check getTransactionsByCategory method', async () => {
     expect(
       await service.getTransactionsByCategory(
+        { id: 'fakeId' },
         new Date('2017-10-01 00:00:00'),
         new Date('2018-01-01 00:00:00'),
         firstCategory,
@@ -208,14 +210,14 @@ describe('TransactionInteractor tests', () => {
 
   it('check search method: search error', async () => {
     try {
-      await service.search('wrong');
+      await service.search({ id: 'fakeId' }, 'wrong');
     } catch (e) {
       expect(e.message).toBe('Incorrect content');
     }
   });
 
   it('check search method', async () => {
-    expect(await service.search('smth')).toEqual([
+    expect(await service.search({ id: 'fakeId' }, 'smth')).toEqual([
       {
         id: 'abc',
         amount: 0,
@@ -230,13 +232,16 @@ describe('TransactionInteractor tests', () => {
 
   it('check addTransaction method: unexisting category error', async () => {
     try {
-      await service.addTransaction({
-        datetime: new Date(),
-        amount: 1_00,
-        transactionCategoryId: 'fakeId',
-        currencyId: fakeBaseCurrency.id,
-        description: '',
-      });
+      await service.addTransaction(
+        { id: 'fakeId' },
+        {
+          datetime: new Date(),
+          amount: 1_00,
+          transactionCategoryId: 'fakeId',
+          currencyId: fakeBaseCurrency.id,
+          description: '',
+        },
+      );
     } catch (e) {
       expect(e.message).toBe('Such entity has not been found!');
     }
@@ -244,13 +249,16 @@ describe('TransactionInteractor tests', () => {
 
   it('check addTransaction method: unexisting currency error', async () => {
     try {
-      await service.addTransaction({
-        datetime: new Date(),
-        amount: 1_00,
-        transactionCategoryId: firstCategory.id,
-        currencyId: 'fakeId',
-        description: '',
-      });
+      await service.addTransaction(
+        { id: 'fakeId' },
+        {
+          datetime: new Date(),
+          amount: 1_00,
+          transactionCategoryId: firstCategory.id,
+          currencyId: 'fakeId',
+          description: '',
+        },
+      );
     } catch (e) {
       expect(e.message).toBe('Such entity has not been found!');
     }
@@ -258,13 +266,16 @@ describe('TransactionInteractor tests', () => {
 
   it('check addTransaction method', async () => {
     expect(
-      await service.addTransaction({
-        datetime: now,
-        amount: 1_00,
-        transactionCategoryId: firstCategory.id,
-        currencyId: fakeBaseCurrency.id,
-        description: '',
-      }),
+      await service.addTransaction(
+        { id: 'fakeId' },
+        {
+          datetime: now,
+          amount: 1_00,
+          transactionCategoryId: firstCategory.id,
+          currencyId: fakeBaseCurrency.id,
+          description: '',
+        },
+      ),
     ).toEqual({
       amount: 100,
       currency: {
@@ -292,6 +303,7 @@ describe('TransactionInteractor tests', () => {
   it('check updateTransaction method: unexisting category error', async () => {
     try {
       await service.updateTransaction(
+        { id: 'fakeId' },
         {
           amount: 100,
           currency: {
@@ -330,6 +342,7 @@ describe('TransactionInteractor tests', () => {
   it('check updateTransaction method: unexisting currency error', async () => {
     try {
       await service.updateTransaction(
+        { id: 'fakeId' },
         {
           amount: 100,
           currency: {
@@ -368,6 +381,7 @@ describe('TransactionInteractor tests', () => {
   it('check updateTransaction method', async () => {
     expect(
       await service.updateTransaction(
+        { id: 'fakeId' },
         {
           amount: 100,
           currency: {
@@ -427,28 +441,31 @@ describe('TransactionInteractor tests', () => {
       .spyOn(fakeTransactionRepo, 'delete')
       .mockReturnValueOnce(Promise.reject(new Error('Deletion error')));
     try {
-      await service.deleteTransaction({
-        amount: 100_00,
-        currency: {
-          code: 'EUR',
-          id: '2',
-          name: 'EUR',
-        },
-        datetime: now,
-        description: '',
-        id: 'fakeId',
-        owner: {
+      await service.deleteTransaction(
+        { id: 'fakeId' },
+        {
+          amount: 100_00,
+          currency: {
+            code: 'EUR',
+            id: '2',
+            name: 'EUR',
+          },
+          datetime: now,
+          description: '',
           id: 'fakeId',
+          owner: {
+            id: 'fakeId',
+          },
+          transactionCategory: {
+            id: '1',
+            isOutcome: true,
+            isSystem: true,
+            name: '',
+            owner: null,
+            parentCategory: null,
+          },
         },
-        transactionCategory: {
-          id: '1',
-          isOutcome: true,
-          isSystem: true,
-          name: '',
-          owner: null,
-          parentCategory: null,
-        },
-      });
+      );
     } catch (e) {
       expect(e.message).toBe('Deletion error');
     }
@@ -457,28 +474,31 @@ describe('TransactionInteractor tests', () => {
 
   it('check deleteTransaction method', async () => {
     expect(
-      await service.deleteTransaction({
-        amount: 100_00,
-        currency: {
-          code: 'EUR',
-          id: '2',
-          name: 'EUR',
-        },
-        datetime: now,
-        description: '',
-        id: 'fakeId',
-        owner: {
+      await service.deleteTransaction(
+        { id: 'fakeId' },
+        {
+          amount: 100_00,
+          currency: {
+            code: 'EUR',
+            id: '2',
+            name: 'EUR',
+          },
+          datetime: now,
+          description: '',
           id: 'fakeId',
+          owner: {
+            id: 'fakeId',
+          },
+          transactionCategory: {
+            id: '1',
+            isOutcome: true,
+            isSystem: true,
+            name: '',
+            owner: null,
+            parentCategory: null,
+          },
         },
-        transactionCategory: {
-          id: '1',
-          isOutcome: true,
-          isSystem: true,
-          name: '',
-          owner: null,
-          parentCategory: null,
-        },
-      }),
+      ),
     ).toEqual({
       amount: 100_00,
       currency: {

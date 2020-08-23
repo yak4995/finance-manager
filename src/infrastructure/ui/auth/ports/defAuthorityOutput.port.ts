@@ -87,7 +87,9 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
       throw new BadRequestException(e.message);
     }
     if (!deletingResult) {
-      throw new BadRequestException('task for user deletion has not been added to queue');
+      throw new BadRequestException(
+        'task for user deletion has not been added to queue',
+      );
     }
     return deletingResult;
   }

@@ -9,7 +9,11 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::getTopCategories');
+      Logger.error(
+        e.message,
+        e.stack,
+        'DefTransactionCategoryOutputPort::getTopCategories',
+      );
       throw e;
     }
     return result.map((tc: ITransactionCategory) => {
@@ -23,7 +27,11 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::getCategoryDirectChildren');
+      Logger.error(
+        e.message,
+        e.stack,
+        'DefTransactionCategoryOutputPort::getCategoryDirectChildren',
+      );
       throw e;
     }
     return result.map((tc: ITransactionCategory) => {
@@ -37,7 +45,11 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::getOwnCategories');
+      Logger.error(
+        e.message,
+        e.stack,
+        'DefTransactionCategoryOutputPort::getOwnCategories',
+      );
       throw e;
     }
     return result.map((tc: ITransactionCategory) => {
@@ -51,7 +63,11 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::search');
+      Logger.error(
+        e.message,
+        e.stack,
+        'DefTransactionCategoryOutputPort::search',
+      );
       throw e;
     }
     return result.map((tc: ITransactionCategory) => {
@@ -65,8 +81,12 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::addCategory');
-      throw e; // TODO: есть одна конкретная ошибка, которую бы обернуть
+      Logger.error(
+        e.message,
+        e.stack,
+        'DefTransactionCategoryOutputPort::addCategory',
+      );
+      throw e;
     }
     return result;
   }
@@ -76,8 +96,12 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::updateCategory');
-      throw e; // TODO: есть одна конкретная ошибка, которую бы обернуть
+      Logger.error(
+        e.message,
+        e.stack,
+        'DefTransactionCategoryOutputPort::updateCategory',
+      );
+      throw e;
     }
     return result;
   }
@@ -87,7 +111,11 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<boolean> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefTransactionCategoryOutputPort::deleteCategory');
+      Logger.error(
+        e.message,
+        e.stack,
+        'DefTransactionCategoryOutputPort::deleteCategory',
+      );
       throw e;
     }
     return true;

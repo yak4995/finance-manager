@@ -1,9 +1,17 @@
 import IPersistantEntity from './persistantEntity';
 
+export interface Range<T> {
+  field: keyof T;
+  from?: any;
+  to?: any;
+}
+
 // we use public data fields instead of
 // private data fields and public get/set-methods in domain entities
 // for possibility of using criterias
-export type Criteria<T> = { [P in keyof T]?: any };
+export type Criteria<T> = {
+  [P in keyof T]?: any;
+} & { range?: Partial<Range<T>> };
 
 export type OrderCriteria<T> = { [P in keyof T]?: 'ASC' | 'DESC' };
 
