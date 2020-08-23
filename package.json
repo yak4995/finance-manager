@@ -34,7 +34,7 @@
     "@nestjs/swagger": "^4.5.9",
     "@types/nodemailer": "^6.4.0",
     "apollo-server-express": "^2.9.16",
-    "bcrypt": "^4.0.1",
+    "bcrypt": "^5.0.0",
     "bull": "^3.13.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.1",
