@@ -1,4 +1,11 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  Mutation,
+  ResolveProperty,
+  Parent,
+} from '@nestjs/graphql';
 import { Inject, UseGuards } from '@nestjs/common';
 import IRepository from '../../../core/domain/repository.interface';
 import ICurrency from '../../../core/domain/transactions/entities/currency.interface';
@@ -10,13 +17,21 @@ import CurrencyAbstractFactory from '../../../core/domain/transactions/factories
 import GqlAuthGuard from '../auth/guards/gql-auth.guard';
 import { OnlyRoles } from '../../decorators/roles.decorator';
 import { Roles } from '../../../core/app/users/enums/roles.enum';
+import CurrencyShouldBeDeletedEvent from './events/currencyShouldBeDeleted.event';
+import IEventDispatchService from '../../../core/app/events/eventDispatchService.interface';
 
 @Resolver('Currency')
 @OnlyRoles(Roles.ADMINISTRATOR)
 export default class CurrenciesResolver {
   private readonly currencyRepo: IRepository<ICurrency>;
 
-  constructor(private readonly currencyFactory: CurrencyAbstractFactory) {
+  constructor(
+    @Inject('CurrencyShoulBeDeletedEventDispatcher')
+    private readonly currencyShoulBeDeletedEventDispatcher: IEventDispatchService<
+      CurrencyShouldBeDeletedEvent
+    >,
+    private readonly currencyFactory: CurrencyAbstractFactory,
+  ) {
     this.currencyRepo = currencyFactory.createCurrencyRepo();
   }
 
@@ -46,11 +61,14 @@ export default class CurrenciesResolver {
     return this.currencyRepo.update(preparedData, id);
   }
 
-  // TODO: make async
+  // TODO: check for correction
   @Mutation()
   @UseGuards(GqlAuthGuard)
   async deleteCurrency(@Args('id') id: string): Promise<ICurrency> {
-    const result: ICurrency[] = await this.currencyRepo.delete({ id });
-    return result[0];
+    const currency: ICurrency = await this.currencyRepo.findById(id);
+    await this.currencyShoulBeDeletedEventDispatcher.emit(
+      new CurrencyShouldBeDeletedEvent(currency),
+    );
+    return currency;
   }
 }

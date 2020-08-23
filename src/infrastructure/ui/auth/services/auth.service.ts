@@ -35,7 +35,7 @@ export default class AuthService implements IAuthorityService {
         payload.authorityData,
         Number(this.configService.get<number>('PASSWORD_HASH_ROUNDS_COUNT')),
       ),
-    } as Criteria<ISecuredUserCredential>);
+    } as Criteria<IUserCredential>);
   }
 
   public async signIn(payload: IUserLoginDto): Promise<IUserCredential> {

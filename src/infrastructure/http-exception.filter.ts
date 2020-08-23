@@ -1,4 +1,10 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, Logger } from '@nestjs/common';
+import {
+  ExceptionFilter,
+  Catch,
+  ArgumentsHost,
+  HttpException,
+  Logger,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 
 @Catch(HttpException)
@@ -12,7 +18,6 @@ export default class HttpExceptionFilter implements ExceptionFilter {
     if (!message && status === 401) {
       message = 'Incorrect token';
     }
-    
 
     const errorResponse = {
       statusCode: status,
@@ -24,8 +29,6 @@ export default class HttpExceptionFilter implements ExceptionFilter {
 
     Logger.error(errorResponse);
 
-    response
-      .status(status)
-      .json(errorResponse);
+    response.status(status).json(errorResponse);
   }
 }
