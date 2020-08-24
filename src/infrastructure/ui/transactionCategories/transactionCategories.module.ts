@@ -11,9 +11,30 @@ import TransactionCategoriesController from './controllers/transactionCategories
 import TransactionCategoryInteractor from '../../../core/app/transactions/interactors/transactionCategory.interactor';
 import DefTransactionCategoryOutputPort from './ports/defTransactionCategoryOutput.port';
 import { TransactionCategorySearchService } from './services/transactionCategorySearch.service';
+import { BullModule, BullModuleOptions } from '@nestjs/bull';
+import { ConfigService } from '@nestjs/config';
+import TransactionCategoryShoulBeDeletedEventDispatcher from './services/transactionCategoryShoulBeDeletedDispatcher';
+import TransactionCategoryShouldBeDeletedListener from './listeners/transactionCategoryShouldBeDeleted.listener';
 
 @Module({
-  imports: [AuthModule, PrismaModule],
+  imports: [
+    AuthModule,
+    PrismaModule,
+    // TODO: use Kafka instead of Redis
+    BullModule.registerQueueAsync({
+      name: 'categoryDeletion',
+      useFactory: async (
+        configService: ConfigService,
+      ): Promise<BullModuleOptions> => ({
+        redis: {
+          host: configService.get('QUEUE_HOST'),
+          port: configService.get('QUEUE_PORT'),
+          password: configService.get('QUEUE_PASSWORD'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
+  ],
   controllers: [TransactionCategoriesController],
   providers: [
     TransactionCategoriesResolver,
@@ -51,6 +72,21 @@ import { TransactionCategorySearchService } from './services/transactionCategory
         TransactionCategorySearchService,
         DefTransactionCategoryOutputPort,
       ],
+    },
+    {
+      provide: 'TransactionCategoryShoulBeDeletedEventDispatcher',
+      useClass: TransactionCategoryShoulBeDeletedEventDispatcher,
+    },
+    {
+      provide: 'TransactionCategoryShouldBeDeletedEventListeners',
+      useFactory: (
+        transactionCategoryFactory: TransactionCategoryAbstractFactory,
+      ) => [
+        new TransactionCategoryShouldBeDeletedListener(
+          transactionCategoryFactory,
+        ),
+      ],
+      inject: [TransactionCategoryAbstractFactory],
     },
   ],
 })

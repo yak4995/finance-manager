@@ -6,7 +6,7 @@ import {
   ResolveProperty,
   Parent,
 } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, Inject, BadRequestException } from '@nestjs/common';
 import IRepository from '../../../../core/domain/repository.interface';
 import TransactionCategoryAbstractFactory from '../../../../core/domain/transactions/factories/transactionCategoryFactory';
 import ITransactionCategory from '../../../../core/domain/transactions/entities/transactionCategory.interface';
@@ -18,6 +18,8 @@ import {
 import GqlAuthGuard from '../../auth/guards/gql-auth.guard';
 import { OnlyRoles } from '../../../decorators/roles.decorator';
 import { Roles } from '../../../../core/app/users/enums/roles.enum';
+import IEventDispatchService from '../../../../core/app/events/eventDispatchService.interface';
+import TransactionCategoryShouldBeDeletedEvent from '../events/transactionCategoryShouldBeDeleted.event';
 
 @Resolver('TransactionCategory')
 @OnlyRoles(Roles.ADMINISTRATOR)
@@ -25,6 +27,10 @@ export default class TransactionCategoriesResolver {
   private readonly transactionCategoryRepo: IRepository<ITransactionCategory>;
 
   constructor(
+    @Inject('TransactionCategoryShoulBeDeletedEventDispatcher')
+    private readonly transactionCategoryShoulBeDeletedEventDispatcher: IEventDispatchService<
+      TransactionCategoryShouldBeDeletedEvent
+    >,
     private readonly transactionCategoryFactory: TransactionCategoryAbstractFactory,
   ) {
     this.transactionCategoryRepo = transactionCategoryFactory.createTransactionCategoryRepo();
@@ -74,15 +80,21 @@ export default class TransactionCategoriesResolver {
     return this.transactionCategoryRepo.update(preparedData, id);
   }
 
-  // TODO: make async
+  // TODO: check for correction
   @Mutation()
   @UseGuards(GqlAuthGuard)
   async deleteTransactionCategory(
     @Args('id') id: string,
   ): Promise<ITransactionCategory> {
-    const result: ITransactionCategory[] = await this.transactionCategoryRepo.delete(
-      { id },
+    const category: ITransactionCategory = await this.transactionCategoryRepo.findById(
+      id,
     );
-    return result[0];
+    if (!category) {
+      throw new BadRequestException('Category doesn`t exist!');
+    }
+    await this.transactionCategoryShoulBeDeletedEventDispatcher.emit(
+      new TransactionCategoryShouldBeDeletedEvent(category),
+    );
+    return category;
   }
 }

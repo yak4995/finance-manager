@@ -13,6 +13,10 @@ export default class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    // in GraphQL case
+    if (!request) {
+      throw exception;
+    }
     const status = exception.getStatus();
     let message = exception.message.message;
     if (!message && status === 401) {

@@ -116,7 +116,9 @@ describe('TransactionCategoryInteractor tests', () => {
         },
       );
     } catch (e) {
-      expect(e.message).toBe('isOutcome field is common for all category tree');
+      expect(e.message.message).toBe(
+        'isOutcome field is common for all category tree',
+      );
     }
   });
 

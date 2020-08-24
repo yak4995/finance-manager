@@ -1,12 +1,5 @@
-import {
-  Resolver,
-  Query,
-  Args,
-  Mutation,
-  ResolveProperty,
-  Parent,
-} from '@nestjs/graphql';
-import { Inject, UseGuards } from '@nestjs/common';
+import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import { Inject, UseGuards, BadRequestException } from '@nestjs/common';
 import IRepository from '../../../core/domain/repository.interface';
 import ICurrency from '../../../core/domain/transactions/entities/currency.interface';
 import {
@@ -66,6 +59,9 @@ export default class CurrenciesResolver {
   @UseGuards(GqlAuthGuard)
   async deleteCurrency(@Args('id') id: string): Promise<ICurrency> {
     const currency: ICurrency = await this.currencyRepo.findById(id);
+    if (!currency) {
+      throw new BadRequestException('Currency doesn`t exist!');
+    }
     await this.currencyShoulBeDeletedEventDispatcher.emit(
       new CurrencyShouldBeDeletedEvent(currency),
     );

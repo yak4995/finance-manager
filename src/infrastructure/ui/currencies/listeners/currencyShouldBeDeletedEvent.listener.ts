@@ -13,7 +13,6 @@ export default class CurrencyShouldBeDeletedEventListener
 
   // TODO: magic literals to configs/enum with templates
   async process(event: CurrencyShouldBeDeletedEvent): Promise<ICurrency> {
-    console.log(event);
     const result: ICurrency[] = await this.currencyRepo.delete({
       id: event.currency.id,
     });
