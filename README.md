@@ -11,7 +11,7 @@ Copy .graphqlconfig.yml.example to .graphqlconfig.yml with own endpoint (you can
 "prisma init" command will allow you create or use existing prisma server and will create for you default datamodel.prisma/datamodel.graphql (but replace it with datamodel.graphql from code repo) and prisma.yml (there you have replace "datamodel: datamodel.prisma" to "datamodel: datamodel.graphql").
 "prisma deploy --force" will migrate DB schema from datamodel.graphql to prisma server and generate/update client typescript code to generated/prisma-client.
 "prisma generate" just generate/update client typescript code to generated/prisma-client.
-"npm install -g graphql-cli" will allow you to execute commands below (for NestJS PrismaModule), that also uses .graphqlconfig.yml:
+"npm install -g graphql-cli@3.0.14" will allow you to execute commands below (for NestJS PrismaModule), that also uses .graphqlconfig.yml:
 "graphql get-schema --project database" will download Prisma GraphQL schema to src/infrastructure/persistance/prisma/prisma-types.graphql.
 "graphql codegen --project database" will create Prisma client under src/infrastructure/persistance/prisma/prisma.binding.ts.
 

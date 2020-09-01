@@ -7,7 +7,7 @@ import PrismaModule from './infrastructure/persistance/prisma/prisma.module';
 import GraphqlOptions from './graphql.options';
 import CurrenciesModule from './infrastructure/ui/currencies/currencies.module';
 import TransactionCategoriesModule from './infrastructure/ui/transactionCategories/transactionCategories.module';
-import TransactionsModule from 'infrastructure/ui/transactions/transactions.module';
+import TransactionsModule from './infrastructure/ui/transactions/transactions.module';
 
 /* TODO: анализ логики на соответствие GRASP:
 1. Information Expert - данные должны обрабатываться где они хранятся,
