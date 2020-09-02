@@ -20,6 +20,24 @@ PrismaService for PrismaModule has to extend (and instantiate it with super(...)
 
 In resolvers, that import GQL types, we import them from src/infrastructure/graphql.schema.generated.ts, that will be created by NestJS GraphQLModule from src/infrastructure/ui/schema.graphql (graphql types for UI) when you start the app.
 
+Generate ssl certificate in terminal:
+1. openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out server.key
+2. openssl req -x509 -new -nodes -key server.key -sha256 -days 825 -out server.pem
+3. NAME=localhost
+4. openssl genrsa -out $NAME.key 2048
+5. openssl req -new -key $NAME.key -out $NAME.csr
+6. >$NAME.ext cat <<-EOF
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = $NAME
+EOF
+7. openssl x509 -req -in $NAME.csr -CA server.pem -CAkey server.key -CAcreateserial \
+-out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
+8. Add .pem file as trusted certificatein your GoogleChrome
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
