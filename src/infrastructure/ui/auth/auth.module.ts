@@ -5,8 +5,8 @@ import { BullModule, BullModuleOptions } from '@nestjs/bull';
 import {
   MailerService,
   MailerModule,
-  PugAdapter,
 } from '@nestjs-modules/mailer';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';

@@ -19,6 +19,7 @@ PrismaModule uses modules from "generated" path, so you should execute "npm run 
 PrismaService for PrismaModule has to extend (and instantiate it with super(...)) Prisma class from prisma.binding.ts, that has been created by "graphql codegen --project database" command.
 
 In resolvers, that import GQL types, we import them from src/infrastructure/graphql.schema.generated.ts, that will be created by NestJS GraphQLModule from src/infrastructure/ui/schema.graphql (graphql types for UI) when you start the app.
+But so if current code already import classes from unexisting folder, before first bootstrap you have to comment all code in the projects, that used imported classed from graphql.schema.generated.ts, and after app will be run, you should uncomment that lines back (this workaround will be fixed soon!).
 
 Generate ssl certificate in terminal:
 1. openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out server.key

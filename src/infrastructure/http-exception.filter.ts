@@ -18,7 +18,7 @@ export default class HttpExceptionFilter implements ExceptionFilter {
       throw exception;
     }
     const status = exception.getStatus();
-    let message = exception.message.message;
+    let message = exception.message;
     if (!message && status === 401) {
       message = 'Incorrect token';
     }
