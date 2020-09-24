@@ -13,8 +13,12 @@ import DefTransactionCategoryOutputPort from './ports/defTransactionCategoryOutp
 import { TransactionCategorySearchService } from './services/transactionCategorySearch.service';
 import { BullModule, BullModuleOptions } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
-import TransactionCategoryShoulBeDeletedEventDispatcher from './services/transactionCategoryShoulBeDeletedDispatcher';
 import TransactionCategoryShouldBeDeletedListener from './listeners/transactionCategoryShouldBeDeleted.listener';
+import * as redis from 'redis';
+import { CacheService } from '../../cache.service';
+import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
+import { RedisCacheService } from '../../redisCache.service';
+import TransactionCategoryShoulBeDeletedEventDispatcher from './services/transactionCategoryShoulBeDeletedDispatcher';
 
 @Module({
   imports: [
@@ -46,13 +50,29 @@ import TransactionCategoryShouldBeDeletedListener from './listeners/transactionC
     },
     {
       provide: 'TransactionCategoryRepositoryForFactory',
-      useFactory: (prisma: PrismaService) =>
-        new TransactionCategoryRepository(prisma),
-      inject: [PrismaService],
+      useFactory: (
+        prisma: PrismaService,
+        cacheService: CacheService<ITransactionCategory>,
+      ) => {
+        return new TransactionCategoryRepository(prisma, cacheService);
+      },
+      inject: [PrismaService, 'CategoryCacheService'],
     },
     {
       provide: TransactionCategoryAbstractFactory,
       useClass: TransactionCategoryFactory,
+    },
+    {
+      provide: 'CategoryCacheService',
+      useFactory: (configService: ConfigService) =>
+        new RedisCacheService(
+          redis.createClient({
+            host: configService.get('QUEUE_HOST'),
+            port: configService.get('QUEUE_PORT'),
+            password: configService.get('QUEUE_PASSWORD'),
+          }),
+        ),
+      inject: [ConfigService],
     },
     {
       provide: 'TransactionCategoryInputPort',

@@ -11,7 +11,7 @@ export default abstract class CurrencyAbstractFactory {
     private readonly currencyCreator: EntityCreator<ICurrency>,
   ) {}
 
-  public static setInstance(instance: CurrencyAbstractFactory) {
+  public static setInstance(instance: CurrencyAbstractFactory): void {
     this.instance = instance;
   }
 

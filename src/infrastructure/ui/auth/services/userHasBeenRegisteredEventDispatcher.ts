@@ -6,7 +6,6 @@ import UserHasBeenCreatedEvent from '../../../../core/app/users/events/userHasBe
 import IEventListener from '../../../../core/app/events/eventListener.interface';
 import { EventStatus } from '../../../../core/app/events/eventStatus.enum';
 
-// TODO: to transport?
 @Processor('mailing')
 export default class UserHasBeenRegisteredEventDispatcher extends IEventDispatchService<
   UserHasBeenCreatedEvent

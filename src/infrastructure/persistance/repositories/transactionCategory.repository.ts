@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import IRepository from '../../../core/domain/repository.interface';
 import {
   Criteria,
@@ -14,11 +14,16 @@ import {
 } from '../../../../generated/prisma-client';
 import { TransactionCategory } from '../../graphql.schema.generated';
 import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
+import { CacheService } from '../../cache.service';
 
 @Injectable()
 export default class TransactionCategoryRepository
   implements IRepository<ITransactionCategory> {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject('CategoryCacheService')
+    private readonly cacheService: CacheService<ITransactionCategory>,
+  ) {}
 
   public async insert(
     entity: ITransactionCategory,
@@ -263,9 +268,22 @@ export default class TransactionCategoryRepository
     if (!['parentCategory', 'owner'].includes(fieldName)) {
       throw new Error(`${fieldName} of class doesn't have object type`);
     }
-    return fieldName === 'owner'
-      ? await this.prisma.client.transactionCategory({ id }).owner()
-      : await this.prisma.client.transactionCategory({ id }).parentCategory();
+    if (fieldName === 'parentCategory') {
+      try {
+        const result: ITransactionCategory = await this.cacheService.get(
+          `categories_${id}_parent`,
+        );
+        return result;
+      } catch (e) {
+        const result: ITransactionCategory = await this.prisma.client
+          .transactionCategory({ id })
+          .parentCategory();
+        await this.cacheService.set(`categories_${id}_parent`, result);
+        return result;
+      }
+    } else {
+      return this.prisma.client.transactionCategory({ id }).owner();
+    }
   }
 
   public getRelatedEntities(

@@ -11,7 +11,7 @@ export interface Range<T> {
 // for possibility of using criterias
 export type Criteria<T> = {
   [P in keyof T]?: any;
-} & { range?: Partial<Range<T>> };
+} & { range?: Range<T> };
 
 export type OrderCriteria<T> = { [P in keyof T]?: 'ASC' | 'DESC' };
 

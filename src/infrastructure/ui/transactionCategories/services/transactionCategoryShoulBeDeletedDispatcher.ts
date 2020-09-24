@@ -6,7 +6,6 @@ import IEventListener from '../../../../core/app/events/eventListener.interface'
 import { EventStatus } from '../../../../core/app/events/eventStatus.enum';
 import TransactionCategoryShouldBeDeletedEvent from '../events/transactionCategoryShouldBeDeleted.event';
 
-// TODO: to transport?
 @Processor('categoryDeletion')
 export default class TransactionCategoryShoulBeDeletedEventDispatcher extends IEventDispatchService<
   TransactionCategoryShouldBeDeletedEvent

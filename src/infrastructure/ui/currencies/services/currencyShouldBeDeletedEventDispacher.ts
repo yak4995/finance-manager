@@ -6,7 +6,6 @@ import IEventListener from '../../../../core/app/events/eventListener.interface'
 import { EventStatus } from '../../../../core/app/events/eventStatus.enum';
 import CurrencyShouldBeDeletedEvent from '../events/currencyShouldBeDeleted.event';
 
-// TODO: to transport?
 @Processor('currencyDeletion')
 export default class CurrencyShouldBeDeletedEventDispatcher extends IEventDispatchService<
   CurrencyShouldBeDeletedEvent

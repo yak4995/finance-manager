@@ -13,6 +13,8 @@ import { TransactionsComparisonDto } from '../../../domain/transactions/dto/tran
 export default class ReportDistributionInteractor
   implements ReportDistributionInputPort {
   constructor(
+    // TODO: заменить на DistributingMetricItemAbstractFactory для увеличения связности и уменьшения зацепления
+    // (+ в диаграмме)
     private readonly distributionMetricItemRepo: IRepository<
       IDistributingMetricItem
     >,

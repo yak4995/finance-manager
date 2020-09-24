@@ -22,6 +22,11 @@ import TransactionRepository from '../../persistance/repositories/transaction.re
 import CurrencyRepository from '../../persistance/repositories/currency.repository';
 import CurrencyCreator from '../../persistance/creators/currency.creator';
 import CurrenciesModule from '../currencies/currencies.module';
+import * as redis from 'redis';
+import { CacheService } from '../../cache.service';
+import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
+import { ConfigService } from '@nestjs/config';
+import { RedisCacheService } from '../../redisCache.service';
 
 @Module({
   imports: [AuthModule, PrismaModule, CurrenciesModule],
@@ -44,9 +49,25 @@ import CurrenciesModule from '../currencies/currencies.module';
     },
     {
       provide: 'TransactionCategoryRepositoryForFactory',
-      useFactory: (prisma: PrismaService) =>
-        new TransactionCategoryRepository(prisma),
-      inject: [PrismaService],
+      useFactory: (
+        prisma: PrismaService,
+        cacheService: CacheService<ITransactionCategory>,
+      ) => {
+        return new TransactionCategoryRepository(prisma, cacheService);
+      },
+      inject: [PrismaService, 'CategoryCacheService'],
+    },
+    {
+      provide: 'CategoryCacheService',
+      useFactory: (configService: ConfigService) =>
+        new RedisCacheService(
+          redis.createClient({
+            host: configService.get('QUEUE_HOST'),
+            port: configService.get('QUEUE_PORT'),
+            password: configService.get('QUEUE_PASSWORD'),
+          }),
+        ),
+      inject: [ConfigService],
     },
     {
       provide: 'CurrencyCreator',

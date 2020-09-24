@@ -4,6 +4,7 @@ import ITransaction from '../../../../core/domain/transactions/entities/transact
 
 @Injectable()
 export class TransactionSearchService implements ISearchService<ITransaction> {
+  // TODO: implement ELK stack
   search(
     content: string,
     ...fields: (keyof ITransaction)[]

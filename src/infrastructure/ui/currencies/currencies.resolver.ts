@@ -19,7 +19,7 @@ export default class CurrenciesResolver {
   private readonly currencyRepo: IRepository<ICurrency>;
 
   constructor(
-    @Inject('CurrencyShoulBeDeletedEventDispatcher')
+    @Inject('CurrencyShouldBeDeletedEventDispatcher')
     private readonly currencyShoulBeDeletedEventDispatcher: IEventDispatchService<
       CurrencyShouldBeDeletedEvent
     >,

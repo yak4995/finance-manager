@@ -2,10 +2,7 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { BullModule, BullModuleOptions } from '@nestjs/bull';
-import {
-  MailerService,
-  MailerModule,
-} from '@nestjs-modules/mailer';
+import { MailerService, MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';

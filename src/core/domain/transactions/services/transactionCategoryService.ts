@@ -15,8 +15,7 @@ export default class TransactionCategoryService {
     let nextIterationCategories: ITransactionCategory[] = [];
     const result: ITransactionCategory[] = [];
     while (currentCategories.length > 0) {
-      for (let i = 0; i < currentCategories.length; i++) {
-        const currentCategory: ITransactionCategory = currentCategories[i];
+      for (let currentCategory of currentCategories) {
         const currentCategoryChildren: ITransactionCategory[] = await this.transactionCategoryRepository.findByAndCriteria(
           {
             parentCategory: currentCategory,

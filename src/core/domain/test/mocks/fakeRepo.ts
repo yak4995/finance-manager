@@ -13,7 +13,25 @@ export default class FakeRepo<T extends IPersistantEntity>
     entity: T,
     searchCriteria: Criteria<T>,
   ): boolean {
-    for (const fieldName in searchCriteria) {
+    const { range, ...others } = searchCriteria;
+    if (
+      range &&
+      searchCriteria.range &&
+      searchCriteria?.range?.field === 'datetime' &&
+      ((searchCriteria?.range?.from &&
+        searchCriteria?.range?.to &&
+        (entity[searchCriteria?.range?.field] < searchCriteria?.range?.from ||
+          entity[searchCriteria?.range?.field] > searchCriteria?.range?.to)) ||
+        (searchCriteria?.range?.from &&
+          !searchCriteria?.range?.to &&
+          entity[searchCriteria?.range?.field] < searchCriteria?.range?.from) ||
+        (!searchCriteria?.range?.from &&
+          searchCriteria?.range?.to &&
+          entity[searchCriteria?.range?.field] > searchCriteria?.range?.to))
+    ) {
+      return false;
+    }
+    for (const fieldName in others) {
       if (
         (typeof entity[fieldName] === 'object' &&
           ((searchCriteria[fieldName] !== null &&

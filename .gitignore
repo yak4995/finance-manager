@@ -11,3 +11,4 @@ src/infrastructure/persistance/prisma/prisma-types.graphql
 src/infrastructure/persistance/prisma/prisma.binding.ts
 src/infrastructure/graphql.schema.generated.ts
 ssl/
+.DS_Store

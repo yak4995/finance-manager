@@ -11,7 +11,7 @@ export default abstract class TransactionAbstractFactory {
     private readonly transactionCreator: EntityCreator<ITransaction>,
   ) {}
 
-  public static setInstance(instance: TransactionAbstractFactory) {
+  public static setInstance(instance: TransactionAbstractFactory): void {
     this.instance = instance;
   }
 

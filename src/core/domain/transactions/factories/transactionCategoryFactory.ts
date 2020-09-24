@@ -13,7 +13,9 @@ export default abstract class TransactionCategoryAbstractFactory {
     >,
   ) {}
 
-  public static setInstance(instance: TransactionCategoryAbstractFactory) {
+  public static setInstance(
+    instance: TransactionCategoryAbstractFactory,
+  ): void {
     this.instance = instance;
   }
 

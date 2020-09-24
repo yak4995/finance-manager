@@ -23,6 +23,8 @@ export default class TransactionInteractor
     private readonly transactionFactory: TransactionAbstractFactory,
     private readonly transactionCategoryService: TransactionCategoryService,
     private readonly transactionCategoryRepo: IRepository<ITransactionCategory>,
+    // TODO: получать из фабрики для увеличения связности и уменьшения зацепления
+    // (+ в диаграмме)
     private readonly transactionRepo: IRepository<ITransaction>,
     private readonly currencyRepo: IRepository<ICurrency>,
     private readonly transactionAnalyticService: TransactionAnalyticService,
@@ -79,12 +81,14 @@ export default class TransactionInteractor
       const transactions: ITransaction[] = (
         await this.transactionRepo.findByAndCriteria({
           owner: user,
+          range: {
+            from: dateStart,
+            to: dateEnd,
+            field: 'datetime',
+          },
         })
-      ).filter(
-        (t: ITransaction): boolean =>
-          t.datetime >= dateStart &&
-          t.datetime <= dateEnd &&
-          categoryIds.includes(t.transactionCategory.id),
+      ).filter((t: ITransaction): boolean =>
+        categoryIds.includes(t.transactionCategory.id),
       );
       return this.transactionOutputPort.getTransactionsByCategory(
         transactions,

@@ -6,7 +6,6 @@ import { EventStatus } from '../../../../core/app/events/eventStatus.enum';
 import { Processor, InjectQueue } from '@nestjs/bull';
 import { Queue, Job } from 'bull';
 
-// TODO: to transport?
 @Processor('sheduledUsersForDelete')
 export default class UserShouldBeDeletedEventDispatcher extends IEventDispatchService<
   UserShouldBeDeletedEvent

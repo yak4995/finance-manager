@@ -6,12 +6,13 @@ import ITransactionCategoryDto from '../dto/iTransactionCategory.dto';
 import TransactionCategoryOutputPort from '../ports/transactionCategoryOutput.port';
 import ISearchService from '../../search/searchService.interface';
 import TransactionCategoryAbstractFactory from '../../../domain/transactions/factories/transactionCategoryFactory';
-import { BadRequestException } from '@nestjs/common';
 
 export default class TransactionCategoryInteractor
   implements TransactionCategoryInputPort {
   constructor(
     private readonly transactionCategoryFactory: TransactionCategoryAbstractFactory,
+    // TODO: получать из фабрики для увеличения связности и уменьшения зацепления
+    // (+ в диаграмме)
     private readonly transactionCategoryRepo: IRepository<ITransactionCategory>,
     private readonly searchService: ISearchService<ITransactionCategory>,
     private readonly transactionCategoryOutputPort: TransactionCategoryOutputPort,
@@ -111,9 +112,7 @@ export default class TransactionCategoryInteractor
           payload.parentCategoryId,
         );
         if (parentCategory.isOutcome !== payload.isOutcome) {
-          throw new BadRequestException(
-            'isOutcome field is common for all category tree',
-          );
+          throw new Error('isOutcome field is common for all category tree');
         }
       }
       const createdCategory: ITransactionCategory = this.transactionCategoryFactory.createTransactionCategory(

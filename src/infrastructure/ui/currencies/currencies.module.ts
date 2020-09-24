@@ -50,7 +50,7 @@ import CurrencyShouldBeDeletedEventListener from './listeners/currencyShouldBeDe
       useClass: CurrencyFactory,
     },
     {
-      provide: 'CurrencyShoulBeDeletedEventDispatcher',
+      provide: 'CurrencyShouldBeDeletedEventDispatcher',
       useClass: CurrencyShouldBeDeletedEventDispatcher,
     },
     {
