@@ -11,7 +11,6 @@ export default class CurrencyShouldBeDeletedEventListener
     this.currencyRepo = currencyFactory.createCurrencyRepo();
   }
 
-  // TODO: magic literals to configs/enum with templates
   async process(event: CurrencyShouldBeDeletedEvent): Promise<ICurrency> {
     const result: ICurrency[] = await this.currencyRepo.delete({
       id: event.currency.id,

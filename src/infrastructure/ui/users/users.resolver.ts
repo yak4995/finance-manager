@@ -7,7 +7,7 @@ import {
   Parent,
   Mutation,
 } from '@nestjs/graphql';
-import PrismaService from '../../persistance/prisma/prisma.service';
+import { PrismaService } from '../../persistance/prisma/prisma.service';
 import {
   UpdateUserCredentialInput,
   Role,
@@ -47,7 +47,7 @@ export default class UsersResolver {
   @Query()
   @UseGuards(GqlAuthGuard)
   async roles(): Promise<Role[]> {
-    return this.prisma.client.roles();
+    return this.prisma.roles.findMany();
   }
 
   @Mutation()

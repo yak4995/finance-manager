@@ -5,7 +5,7 @@ import TransactionCategoryFactory from '../../persistance/factories/transactionC
 import TransactionCategoryCreator from '../../persistance/creators/transactionCategory.creator';
 import PrismaModule from '../../persistance/prisma/prisma.module';
 import TransactionCategoryRepository from '../../persistance/repositories/transactionCategory.repository';
-import PrismaService from '../../persistance/prisma/prisma.service';
+import { PrismaService } from '../../persistance/prisma/prisma.service';
 import AuthModule from '../auth/auth.module';
 import TransactionCategoriesController from './controllers/transactionCategories.controller';
 import TransactionCategoryInteractor from '../../../core/app/transactions/interactors/transactionCategory.interactor';

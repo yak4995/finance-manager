@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import TransactionCategoryAbstractFactory from '../../../core/domain/transactions/factories/transactionCategoryFactory';
 import TransactionCategoryFactory from '../../persistance/factories/transactionCategory.factory';
 import TransactionCategoryRepository from '../../persistance/repositories/transactionCategory.repository';
-import PrismaService from '../../persistance/prisma/prisma.service';
+import { PrismaService } from '../../persistance/prisma/prisma.service';
 import AuthModule from '../auth/auth.module';
 import TransactionController from './controllers/transaction.controller';
 import { TransactionSearchService } from './services/transactionSearch.service';

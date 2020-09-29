@@ -6,6 +6,7 @@ import { EventStatus } from '../../../../core/app/events/eventStatus.enum';
 import { Processor, InjectQueue } from '@nestjs/bull';
 import { Queue, Job } from 'bull';
 
+// TODO: check because don`t work (but create user/tc delete/currency delete works)
 @Processor('sheduledUsersForDelete')
 export default class UserShouldBeDeletedEventDispatcher extends IEventDispatchService<
   UserShouldBeDeletedEvent

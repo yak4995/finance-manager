@@ -17,6 +17,7 @@ import {
   Patch,
   Delete,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import JwtAuthGuard from '../../../ui/auth/guards/jwt-auth.guard';
 import { OnlyRoles } from '../../../decorators/roles.decorator';
@@ -200,20 +201,20 @@ export default class TransactionController {
     @Query() payload: TransactionsCategoryRangeDto,
   ): Promise<any> {
     try {
-      const category: ITransactionCategory = await this.transactionCategoryRepo.findById(
-        payload.categoryId,
-      );
-      const transactions: ITransaction[] = await this.transactionsRepo.findByAndCriteria(
-        {
+      const [category, transactions]: [
+        ITransactionCategory,
+        ITransaction[],
+      ] = await Promise.all([
+        this.transactionCategoryRepo.findById(payload.categoryId),
+        this.transactionsRepo.findByAndCriteria({
           owner: user,
-          transactionCategory: category,
           range: {
             field: 'datetime',
             from: payload.dateStart,
             to: payload.dateEnd,
           },
-        },
-      );
+        }),
+      ]);
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionsCountBy(
         category,
@@ -222,8 +223,6 @@ export default class TransactionController {
       );
     } catch (e) {
       throw new BadRequestException('Transaction category id is invalid');
-    } finally {
-      this.transactionInputPort.setTransactions([]);
     }
   }
 
@@ -239,23 +238,24 @@ export default class TransactionController {
     @Query() payload: TransactionsCategoryRangeDto,
   ): Promise<any> {
     try {
-      const [baseCurrency, category] = await Promise.all([
+      const [baseCurrency, category, transactions]: [
+        ICurrency,
+        ITransactionCategory,
+        ITransaction[],
+      ] = await Promise.all([
         this.currencyRepo.findOneByAndCriteria({
           code: 'UAH',
         }),
         this.transactionCategoryRepo.findById(payload.categoryId),
-      ]);
-      const transactions: ITransaction[] = await this.transactionsRepo.findByAndCriteria(
-        {
+        this.transactionsRepo.findByAndCriteria({
           owner: user,
-          transactionCategory: category,
           range: {
             field: 'datetime',
             from: payload.dateStart,
             to: payload.dateEnd,
           },
-        },
-      );
+        }),
+      ]);
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionsSumBy(
         category,
@@ -265,8 +265,6 @@ export default class TransactionController {
       );
     } catch (e) {
       throw new BadRequestException('Transaction category id is invalid');
-    } finally {
-      this.transactionInputPort.setTransactions([]);
     }
   }
 
@@ -330,20 +328,20 @@ export default class TransactionController {
     @Query() payload: TransactionsCategoryRangeDto,
   ): Promise<any> {
     try {
-      const baseCategory: ITransactionCategory = await this.transactionCategoryRepo.findById(
-        payload.categoryId,
-      );
-      const transactions: ITransaction[] = await this.transactionsRepo.findByAndCriteria(
-        {
+      const [baseCategory, transactions]: [
+        ITransactionCategory,
+        ITransaction[],
+      ] = await Promise.all([
+        this.transactionCategoryRepo.findById(payload.categoryId),
+        this.transactionsRepo.findByAndCriteria({
           owner: user,
-          transactionCategory: baseCategory,
           range: {
             field: 'datetime',
             from: payload.dateStart,
             to: payload.dateEnd,
           },
-        },
-      );
+        }),
+      ]);
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionCountRatioByCategories(
         baseCategory,
@@ -352,8 +350,6 @@ export default class TransactionController {
       );
     } catch (e) {
       throw new BadRequestException('Transaction category id is invalid');
-    } finally {
-      this.transactionInputPort.setTransactions([]);
     }
   }
 
@@ -369,23 +365,24 @@ export default class TransactionController {
     @Query() payload: TransactionsCategoryRangeDto,
   ): Promise<any> {
     try {
-      const [baseCurrency, baseCategory] = await Promise.all([
+      const [baseCurrency, baseCategory, transactions]: [
+        ICurrency,
+        ITransactionCategory,
+        ITransaction[],
+      ] = await Promise.all([
         this.currencyRepo.findOneByAndCriteria({
           code: 'UAH',
         }),
         this.transactionCategoryRepo.findById(payload.categoryId),
-      ]);
-      const transactions: ITransaction[] = await this.transactionsRepo.findByAndCriteria(
-        {
+        this.transactionsRepo.findByAndCriteria({
           owner: user,
-          transactionCategory: baseCategory,
           range: {
             field: 'datetime',
             from: payload.dateStart,
             to: payload.dateEnd,
           },
-        },
-      );
+        }),
+      ]);
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionSumRatioByCategories(
         baseCategory,
@@ -395,8 +392,6 @@ export default class TransactionController {
       );
     } catch (e) {
       throw new BadRequestException('Transaction category id is invalid');
-    } finally {
-      this.transactionInputPort.setTransactions([]);
     }
   }
 
@@ -412,20 +407,20 @@ export default class TransactionController {
     @Query() payload: TransactionsRangeDto,
   ): Promise<any> {
     try {
-      const baseCategory: ITransactionCategory = await this.transactionCategoryRepo.findById(
-        payload.categoryId,
-      );
-      const transactions: ITransaction[] = await this.transactionsRepo.findByAndCriteria(
-        {
+      const [baseCategory, transactions]: [
+        ITransactionCategory,
+        ITransaction[],
+      ] = await Promise.all([
+        this.transactionCategoryRepo.findById(payload.categoryId),
+        this.transactionsRepo.findByAndCriteria({
           owner: user,
-          transactionCategory: baseCategory,
           range: {
             field: 'datetime',
             from: payload.dateStart,
             to: payload.dateEnd,
           },
-        },
-      );
+        }),
+      ]);
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionCountChangeByPeriod(
         baseCategory,
@@ -435,8 +430,6 @@ export default class TransactionController {
       );
     } catch (e) {
       throw new BadRequestException('Transaction category id is invalid');
-    } finally {
-      this.transactionInputPort.setTransactions([]);
     }
   }
 
@@ -452,23 +445,24 @@ export default class TransactionController {
     @Query() payload: TransactionsRangeDto,
   ): Promise<any> {
     try {
-      const [baseCurrency, baseCategory] = await Promise.all([
+      const [baseCurrency, baseCategory, transactions]: [
+        ICurrency,
+        ITransactionCategory,
+        ITransaction[],
+      ] = await Promise.all([
         this.currencyRepo.findOneByAndCriteria({
           code: 'UAH',
         }),
         this.transactionCategoryRepo.findById(payload.categoryId),
-      ]);
-      const transactions: ITransaction[] = await this.transactionsRepo.findByAndCriteria(
-        {
+        this.transactionsRepo.findByAndCriteria({
           owner: user,
-          transactionCategory: baseCategory,
           range: {
             field: 'datetime',
             from: payload.dateStart,
             to: payload.dateEnd,
           },
-        },
-      );
+        }),
+      ]);
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionSumChangeByPeriod(
         baseCategory,
@@ -479,8 +473,6 @@ export default class TransactionController {
       );
     } catch (e) {
       throw new BadRequestException('Transaction category id is invalid');
-    } finally {
-      this.transactionInputPort.setTransactions([]);
     }
   }
 

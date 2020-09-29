@@ -12,7 +12,7 @@ import AuthService from './services/auth.service';
 import JwtStrategy from './services/jwt.strategy';
 import AuthController from './controllers/auth.controller';
 import UserCredentialAbstractFactory from '../../../core/app/users/factories/userCredentialFactory';
-import PrismaService from '../../persistance/prisma/prisma.service';
+import { PrismaService } from '../../persistance/prisma/prisma.service';
 import UserCredentialRepository from '../../persistance/repositories/userCredential.repository';
 import UserCredentialCreator from '../../persistance/creators/userCredential.creator';
 import UserCredentialFactory from '../../persistance/factories/userCredential.factory';

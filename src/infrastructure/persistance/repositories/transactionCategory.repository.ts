@@ -4,17 +4,15 @@ import {
   Criteria,
   OrderCriteria,
 } from '../../../core/domain/repository.interface';
-import PrismaService from '../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
-import {
-  TransactionCategoryWhereInput,
-  TransactionCategoryOrderByInput,
-  TransactionCategoryCreateOneWithoutChildCategoriesInput,
-  UserCredentialCreateOneWithoutTransactionCategoriesInput,
-} from '../../../../generated/prisma-client';
-import { TransactionCategory } from '../../graphql.schema.generated';
 import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
 import { CacheService } from '../../cache.service';
+import {
+  FindManytransaction_categoriesArgs,
+  transaction_categoriesOrderByInput,
+  transaction_categoriesWhereInput,
+} from '@prisma/client';
 
 @Injectable()
 export default class TransactionCategoryRepository
@@ -28,17 +26,25 @@ export default class TransactionCategoryRepository
   public async insert(
     entity: ITransactionCategory,
   ): Promise<ITransactionCategory> {
-    const { id, ...preparedData } = entity;
-    let parentCategory: TransactionCategoryCreateOneWithoutChildCategoriesInput = null;
-    let owner: UserCredentialCreateOneWithoutTransactionCategoriesInput = null;
-    if (preparedData.parentCategory !== null) {
-      parentCategory = { connect: { id: preparedData.parentCategory.id } };
+    const { id, owner, parentCategory, ...preparedData } = entity;
+    let parentCategoryToConnect = null;
+    let ownerToConnect = null;
+    if (parentCategory !== null) {
+      parentCategoryToConnect = { connect: { id: parentCategory.id } };
     }
-    if (preparedData.owner !== null) {
-      owner = { connect: { id: preparedData.owner.id } };
+    if (owner !== null) {
+      ownerToConnect = { connect: { id: owner.id } };
     }
-    const createdTransactionCategory: TransactionCategory = await this.prisma.client.createTransactionCategory(
-      Object.assign(preparedData, { parentCategory, owner }),
+    const createdTransactionCategory = await this.prisma.transaction_categories.create(
+      {
+        data: Object.assign(
+          preparedData,
+          parentCategoryToConnect
+            ? { transaction_categories: parentCategoryToConnect }
+            : {},
+          ownerToConnect ? { user_credentials: ownerToConnect } : {},
+        ),
+      },
     );
     return {
       id: createdTransactionCategory.id,
@@ -62,29 +68,28 @@ export default class TransactionCategoryRepository
     orderBy: OrderCriteria<ITransactionCategory>,
     searchCriteria: Criteria<ITransactionCategory>,
   ): Promise<ITransactionCategory[]> {
-    const queryData: {
-      where?: TransactionCategoryWhereInput;
-      orderBy?: TransactionCategoryOrderByInput;
-      skip?: number;
-      after?: string;
-      before?: string;
-      first?: number;
-      last?: number;
-    } = {
-      first: perPage,
+    const queryData: FindManytransaction_categoriesArgs = {
+      take: perPage,
       skip: (page - 1) * perPage,
+      orderBy: [],
     };
     if (Object.keys(orderBy).length > 0) {
-      queryData.orderBy = `${Object.keys(orderBy)[0]}_${
-        orderBy[Object.keys(orderBy)[0]]
-      }` as TransactionCategoryOrderByInput;
+      (queryData.orderBy as transaction_categoriesOrderByInput[]).push(
+        ...Object.keys(orderBy).map(
+          (orderKey: string): transaction_categoriesOrderByInput => ({
+            [`${orderKey}`]: (orderBy[`${orderKey}`] as
+              | 'ASC'
+              | 'DESC').toLowerCase(),
+          }),
+        ),
+      );
     }
     if (Object.keys(searchCriteria).length > 0) {
       Object.keys(searchCriteria).forEach((key: string) => {
         queryData.where[key] = searchCriteria[key];
       });
     }
-    const transactionCategories: TransactionCategory[] = await this.prisma.client.transactionCategories(
+    const transactionCategories = await this.prisma.transaction_categories.findMany(
       queryData,
     );
     const result: ITransactionCategory[] = [];
@@ -105,9 +110,9 @@ export default class TransactionCategoryRepository
   }
 
   public async findById(id: string): Promise<ITransactionCategory> {
-    const result: TransactionCategory = await this.prisma.client.transactionCategory(
-      { id },
-    );
+    const result = await this.prisma.transaction_categories.findOne({
+      where: { id },
+    });
     return {
       id: result.id,
       isOutcome: result.isOutcome,
@@ -134,18 +139,28 @@ export default class TransactionCategoryRepository
     searchCriteria: Criteria<ITransactionCategory>,
   ): Promise<ITransactionCategory[]> {
     const queryData: {
-      where?: TransactionCategoryWhereInput;
+      where?: transaction_categoriesWhereInput;
     } = { where: {} };
     Object.keys(searchCriteria).forEach((key: string): void => {
-      if (key === 'owner') {
-        if (searchCriteria[key]) {
-          queryData.where[key] = { id: searchCriteria[key].id };
-        }
-        return;
+      switch (key) {
+        case 'owner':
+          if (searchCriteria[key]) {
+            queryData.where.ownerId = searchCriteria[key]
+              ? searchCriteria[key].id
+              : null;
+          }
+          break;
+        case 'parentCategory':
+          queryData.where.parentCategoryId = searchCriteria[key]
+            ? searchCriteria[key].id
+            : null;
+          break;
+        default:
+          queryData.where[key] = searchCriteria[key];
+          break;
       }
-      queryData.where[key] = searchCriteria[key];
     });
-    const transactionCategories: TransactionCategory[] = await this.prisma.client.transactionCategories(
+    const transactionCategories = await this.prisma.transaction_categories.findMany(
       queryData,
     );
     const result: ITransactionCategory[] = [];
@@ -169,24 +184,21 @@ export default class TransactionCategoryRepository
     searchCriteria: Criteria<ITransactionCategory>,
   ): Promise<ITransactionCategory[]> {
     const queryData: {
-      where?: TransactionCategoryWhereInput;
-    } = {};
+      where?: transaction_categoriesWhereInput;
+    } = { where: { OR: [] } };
     Object.keys(searchCriteria).reduce(
       (
-        acc: TransactionCategoryWhereInput,
+        acc: transaction_categoriesWhereInput,
         key: string,
-      ): TransactionCategoryWhereInput => {
-        let temp: TransactionCategoryWhereInput = acc;
-        while (temp.OR !== undefined) {
-          temp = temp.OR as TransactionCategoryWhereInput;
-        }
-        temp.OR = {};
-        temp.OR[key] = searchCriteria[key];
+      ): transaction_categoriesWhereInput => {
+        acc.OR.push({
+          [`${key}`]: searchCriteria[key],
+        });
         return acc;
       },
       {},
     );
-    const transactionCategories: TransactionCategory[] = await this.prisma.client.transactionCategories(
+    const transactionCategories = await this.prisma.transaction_categories.findMany(
       queryData,
     );
     const result: ITransactionCategory[] = [];
@@ -210,21 +222,23 @@ export default class TransactionCategoryRepository
     updateData: Criteria<ITransactionCategory>,
     id: string,
   ): Promise<ITransactionCategory> {
-    if (updateData.parentCategory !== null) {
-      await this.prisma.client.updateTransactionCategory({
-        data: { parentCategory: { disconnect: true } },
-        where: { id },
-      });
-      updateData.parentCategory = {
-        connect: { id: updateData.parentCategory.id },
+    const transactionCategory = await this.findById(id);
+    const { parentCategory, ...preparedUpdateData } = updateData;
+    if (parentCategory !== null) {
+      if (transactionCategory.parentCategory) {
+        await this.prisma.transaction_categories.update({
+          data: { transaction_categories: { disconnect: true } },
+          where: { id },
+        });
+      }
+      (preparedUpdateData as any).transaction_categories = {
+        connect: { id: parentCategory.id },
       };
     }
-    const result: TransactionCategory = await this.prisma.client.updateTransactionCategory(
-      {
-        data: updateData,
-        where: { id },
-      },
-    );
+    const result = await this.prisma.transaction_categories.update({
+      data: preparedUpdateData,
+      where: { id },
+    });
     return {
       ...result,
       parentCategory: (await this.getRelatedEntity(
@@ -241,24 +255,9 @@ export default class TransactionCategoryRepository
     const transactionCategoriesForDelete: ITransactionCategory[] = await this.findByAndCriteria(
       deleteCriteria,
     );
-    const result: ITransactionCategory[] = [];
-    for await (const transaction of transactionCategoriesForDelete) {
-      const tc: TransactionCategory = await this.prisma.client.deleteTransactionCategory(
-        { id: transaction.id },
-      );
-      result.push({
-        id: tc.id,
-        isOutcome: tc.isOutcome,
-        isSystem: tc.isSystem,
-        name: tc.name,
-        owner: await this.getRelatedEntity(tc.id, 'owner'),
-        parentCategory: (await this.getRelatedEntity(
-          tc.id,
-          'parentCategory',
-        )) as ITransactionCategory,
-      });
-    }
-    return result;
+    const { range, ...criteria } = deleteCriteria;
+    await this.prisma.transaction_categories.deleteMany({ where: criteria });
+    return transactionCategoriesForDelete;
   }
 
   public async getRelatedEntity(
@@ -269,20 +268,23 @@ export default class TransactionCategoryRepository
       throw new Error(`${fieldName} of class doesn't have object type`);
     }
     if (fieldName === 'parentCategory') {
-      try {
+      // TODO: return after cache invalidation in repo.update with parent category
+      /*try {
         const result: ITransactionCategory = await this.cacheService.get(
           `categories_${id}_parent`,
         );
         return result;
-      } catch (e) {
-        const result: ITransactionCategory = await this.prisma.client
-          .transactionCategory({ id })
-          .parentCategory();
-        await this.cacheService.set(`categories_${id}_parent`, result);
-        return result;
-      }
+      } catch (e) {*/
+      const result: ITransactionCategory = ((await this.prisma.transaction_categories
+        .findOne({ where: { id } })
+        .transaction_categories()) as unknown) as ITransactionCategory;
+      await this.cacheService.set(`categories_${id}_parent`, result);
+      return result;
+      // }
     } else {
-      return this.prisma.client.transactionCategory({ id }).owner();
+      return (this.prisma.transaction_categories
+        .findOne({ where: { id } })
+        .user_credentials() as unknown) as IUserCredential;
     }
   }
 

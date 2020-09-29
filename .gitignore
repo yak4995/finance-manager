@@ -2,13 +2,10 @@ dist/
 node_modules/
 coverage/
 .vscode/
-generated/
 documentation/
-.env
-prisma.yml
-.graphqlconfig.yml
-src/infrastructure/persistance/prisma/prisma-types.graphql
-src/infrastructure/persistance/prisma/prisma.binding.ts
-src/infrastructure/graphql.schema.generated.ts
 ssl/
+prisma/
+dbdata/*
+.env
+src/infrastructure/graphql.schema.generated.ts
 .DS_Store

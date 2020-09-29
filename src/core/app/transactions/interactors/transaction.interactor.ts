@@ -23,8 +23,8 @@ export default class TransactionInteractor
     private readonly transactionFactory: TransactionAbstractFactory,
     private readonly transactionCategoryService: TransactionCategoryService,
     private readonly transactionCategoryRepo: IRepository<ITransactionCategory>,
-    // TODO: получать из фабрики для увеличения связности и уменьшения зацепления
-    // (+ в диаграмме)
+    // TODO: get from factory for cohesion increase and coupling reduction
+    // (see diagram)
     private readonly transactionRepo: IRepository<ITransaction>,
     private readonly currencyRepo: IRepository<ICurrency>,
     private readonly transactionAnalyticService: TransactionAnalyticService,
@@ -187,7 +187,7 @@ export default class TransactionInteractor
     transaction: ITransaction,
   ): Promise<any> {
     try {
-      await this.transactionRepo.delete({ id: transaction.id, owner: user });
+      await this.transactionRepo.delete({ id: transaction.id });
       return this.transactionOutputPort.deleteTransaction(transaction, null);
     } catch (e) {
       return this.transactionOutputPort.deleteTransaction(null, e);

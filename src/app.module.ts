@@ -8,13 +8,12 @@ import CurrenciesModule from './infrastructure/ui/currencies/currencies.module';
 import TransactionCategoriesModule from './infrastructure/ui/transactionCategories/transactionCategories.module';
 import TransactionsModule from './infrastructure/ui/transactions/transactions.module';
 
-// TODO: Соответствие GRASP: фасад и посредник (mediator) - реализация
-// TODO: создать docker-compose, положить туда:
-//       - PGSQL (и мигрировать на Prisma2 c миграциями,
-//       который уже не поддерживает Prisma облако + переоформить скрипты запуска на докер),
-//       - Redis/Kafka,
-//       - ELK stack,
+// TODO: GRASP: create Singleton Facade-s and Mediator?
+// TODO: put into docker-compose:
+//       - Redis
+//       - Kafka
 //       - SMTP-сервер
+// TODO: create shell file for installing nvm\node\npm\npx\jest\nest\docker+docker-compose
 @Module({
   imports: [
     AuthModule,

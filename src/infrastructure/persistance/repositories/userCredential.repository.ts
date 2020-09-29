@@ -5,15 +5,17 @@ import {
   Criteria,
   OrderCriteria,
 } from '../../../core/domain/repository.interface';
-import PrismaService from '../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Role } from '../../graphql.schema.generated';
-import {
-  UserCredential,
-  UserCredentialWhereInput,
-  UserCredentialOrderByInput,
-} from '../../../../generated/prisma-client';
 import ISecuredUserCredential from '../entities/securedUserCredential';
 import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
+import {
+  FindManyuser_credentialsArgs,
+  users_to_roles,
+  users_to_rolesCreateWithoutUser_credentialsInput,
+  user_credentialsOrderByInput,
+  user_credentialsWhereInput,
+} from '@prisma/client';
 
 @Injectable()
 export default class UserCredentialRepository
@@ -23,20 +25,22 @@ export default class UserCredentialRepository
   public async insert(
     entity: ISecuredUserCredential,
   ): Promise<ISecuredUserCredential> {
-    const allRoles: Role[] = await this.prisma.client.roles();
-    const roles: Array<{ id: string }> = [];
+    const allRoles: Role[] = await this.prisma.roles.findMany();
+    const rolesToConnect: Array<users_to_rolesCreateWithoutUser_credentialsInput> = [];
     entity.roles.forEach((role: string): void => {
       const neededRoles: Role[] = allRoles.filter(
         (dbRole: Role): boolean => dbRole.name === role,
       );
       if (neededRoles.length > 0) {
-        roles.push({ id: neededRoles[0].id });
+        rolesToConnect.push({ roles: { connect: { id: neededRoles[0].id } } });
       }
     });
-    const { id, ...preparedEntity } = entity;
-    const result: UserCredential = await this.prisma.client.createUserCredential(
-      Object.assign({}, preparedEntity, { roles: { connect: roles } }),
-    );
+    const { id, roles, ...preparedEntity } = entity;
+    const result = await this.prisma.user_credentials.create({
+      data: Object.assign({}, preparedEntity, {
+        users_to_roles: { create: rolesToConnect },
+      }),
+    });
     return {
       id: result.id,
       email: result.email,
@@ -53,31 +57,28 @@ export default class UserCredentialRepository
     orderBy: OrderCriteria<ISecuredUserCredential>,
     searchCriteria: Criteria<ISecuredUserCredential>,
   ): Promise<ISecuredUserCredential[]> {
-    const queryData: {
-      where?: UserCredentialWhereInput;
-      orderBy?: UserCredentialOrderByInput;
-      skip?: number;
-      after?: string;
-      before?: string;
-      first?: number;
-      last?: number;
-    } = {
-      first: perPage,
+    const queryData: FindManyuser_credentialsArgs = {
+      take: perPage,
       skip: (page - 1) * perPage,
+      orderBy: [],
     };
     if (Object.keys(orderBy).length > 0) {
-      queryData.orderBy = `${Object.keys(orderBy)[0]}_${
-        orderBy[Object.keys(orderBy)[0]]
-      }` as UserCredentialOrderByInput;
+      (queryData.orderBy as user_credentialsOrderByInput[]).push(
+        ...Object.keys(orderBy).map(
+          (orderKey: string): user_credentialsOrderByInput => ({
+            [`${orderKey}`]: (orderBy[`${orderKey}`] as
+              | 'ASC'
+              | 'DESC').toLowerCase(),
+          }),
+        ),
+      );
     }
     if (Object.keys(searchCriteria).length > 0) {
       Object.keys(searchCriteria).forEach((key: string): void => {
         queryData.where[key] = searchCriteria[key];
       });
     }
-    const users: UserCredential[] = await this.prisma.client.userCredentials(
-      queryData,
-    );
+    const users = await this.prisma.user_credentials.findMany(queryData);
     const result: ISecuredUserCredential[] = [];
     for await (const user of users) {
       result.push({
@@ -95,8 +96,8 @@ export default class UserCredentialRepository
   }
 
   public async findById(id: string): Promise<ISecuredUserCredential> {
-    const result: UserCredential = await this.prisma.client.userCredential({
-      id,
+    const result = await this.prisma.user_credentials.findOne({
+      where: { id },
     });
     return {
       id: result.id,
@@ -113,9 +114,7 @@ export default class UserCredentialRepository
   public async findOneByAndCriteria(
     searchCriteria: Criteria<ISecuredUserCredential>,
   ): Promise<ISecuredUserCredential> {
-    const result: UserCredential[] = await this.findByAndCriteria(
-      searchCriteria,
-    );
+    const result = await this.findByAndCriteria(searchCriteria);
     if (result.length > 0) {
       return {
         id: result[0].id,
@@ -136,14 +135,12 @@ export default class UserCredentialRepository
     searchCriteria: Criteria<ISecuredUserCredential>,
   ): Promise<ISecuredUserCredential[]> {
     const queryData: {
-      where: UserCredentialWhereInput;
+      where: user_credentialsWhereInput;
     } = { where: {} };
     Object.keys(searchCriteria).forEach((key: string): void => {
       queryData.where[key] = searchCriteria[key];
     });
-    const users: UserCredential[] = await this.prisma.client.userCredentials(
-      queryData,
-    );
+    const users = await this.prisma.user_credentials.findMany(queryData);
     const result: ISecuredUserCredential[] = [];
     for await (const user of users) {
       result.push({
@@ -164,26 +161,21 @@ export default class UserCredentialRepository
     searchCriteria: Criteria<ISecuredUserCredential>,
   ): Promise<ISecuredUserCredential[]> {
     const queryData: {
-      where?: UserCredentialWhereInput;
-    } = {};
+      where?: user_credentialsWhereInput;
+    } = { where: { OR: [] } };
     Object.keys(searchCriteria).reduce(
       (
-        acc: UserCredentialWhereInput,
+        acc: user_credentialsWhereInput,
         key: string,
-      ): UserCredentialWhereInput => {
-        let temp: UserCredentialWhereInput = acc;
-        while (temp.OR !== undefined) {
-          temp = temp.OR as UserCredentialWhereInput;
-        }
-        temp.OR = {};
-        temp.OR[key] = searchCriteria[key];
+      ): user_credentialsWhereInput => {
+        acc.OR.push({
+          [`${key}`]: searchCriteria[key],
+        });
         return acc;
       },
       {},
     );
-    const users: UserCredential[] = await this.prisma.client.userCredentials(
-      queryData,
-    );
+    const users = await this.prisma.user_credentials.findMany(queryData);
     const result: ISecuredUserCredential[] = [];
     for await (const user of users) {
       result.push({
@@ -204,12 +196,11 @@ export default class UserCredentialRepository
     updateData: Criteria<ISecuredUserCredential>,
     id: string,
   ): Promise<IUserCredential> {
-    const result: UserCredential = await this.prisma.client.updateUserCredential(
-      {
-        data: updateData,
-        where: { id },
-      },
-    );
+    const { roles, ...preparedUpdateData } = updateData;
+    const result = await this.prisma.user_credentials.update({
+      data: preparedUpdateData,
+      where: { id },
+    });
     return {
       ...result,
       profileImageUrl: result.profileImageUrl ?? null,
@@ -225,20 +216,9 @@ export default class UserCredentialRepository
     const usersForDelete: ISecuredUserCredential[] = await this.findByAndCriteria(
       deleteCriteria,
     );
-    const result: IUserCredential[] = [];
-    for await (const userForDeletion of usersForDelete) {
-      const user: UserCredential = await this.prisma.client.deleteUserCredential(
-        { id: userForDeletion.id },
-      );
-      result.push({
-        ...user,
-        profileImageUrl: user.profileImageUrl ?? null,
-        roles: (await this.getRelatedEntities(user.id, 'roles')).map(
-          (role: Role): Roles => role.name as Roles,
-        ),
-      });
-    }
-    return result;
+    const { range, ...criteria } = deleteCriteria;
+    await this.prisma.user_credentials.deleteMany({ where: criteria });
+    return usersForDelete;
   }
 
   public getRelatedEntity(
@@ -248,13 +228,21 @@ export default class UserCredentialRepository
     throw new Error(`${fieldName} of class doesn't have object type`);
   }
 
-  public getRelatedEntities(
+  public async getRelatedEntities(
     id: string,
     fieldName: keyof ISecuredUserCredential,
   ): Promise<Role[]> {
     if (fieldName !== 'roles') {
       throw new Error(`${fieldName} of class doesn't have array type`);
     }
-    return this.prisma.client.userCredential({ id }).roles();
+    const allRoles = await this.prisma.roles.findMany();
+    return (
+      await this.prisma.user_credentials
+        .findOne({ where: { id } })
+        .users_to_roles()
+    ).map(
+      (relation: users_to_roles): Role =>
+        allRoles.filter(role => role.id === relation.roleId)[0],
+    );
   }
 }

@@ -12,13 +12,13 @@ export default class CurrencyConverterService
   implements ICurrencyConverterService {
   constructor(private readonly httpService: HttpService) {}
 
-  async getRateFor(_from: string, to: string, forDate: Date): Promise<number> {
-    if (to === 'UAH') {
+  async getRateFor(from: string, to: string, forDate: Date): Promise<number> {
+    if (from === 'UAH') {
       return 1;
     }
     const result = await this.httpService
       .get(
-        `https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?valcode=${to}&date=${moment(
+        `https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?valcode=${from}&date=${moment(
           forDate,
         ).format('YYYYMMDD')}`,
       )

@@ -11,8 +11,8 @@ export default class TransactionCategoryInteractor
   implements TransactionCategoryInputPort {
   constructor(
     private readonly transactionCategoryFactory: TransactionCategoryAbstractFactory,
-    // TODO: получать из фабрики для увеличения связности и уменьшения зацепления
-    // (+ в диаграмме)
+    // TODO: get from factory for cohesion increase and coupling reduction
+    // (see diagram)
     private readonly transactionCategoryRepo: IRepository<ITransactionCategory>,
     private readonly searchService: ISearchService<ITransactionCategory>,
     private readonly transactionCategoryOutputPort: TransactionCategoryOutputPort,

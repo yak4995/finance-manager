@@ -3,7 +3,7 @@ import CurrencyAbstractFactory from '../../../core/domain/transactions/factories
 import CurrenciesResolver from './currencies.resolver';
 import CurrencyCreator from '../../persistance/creators/currency.creator';
 import CurrencyFactory from '../../persistance/factories/currency.factory';
-import PrismaService from '../../persistance/prisma/prisma.service';
+import { PrismaService } from '../../persistance/prisma/prisma.service';
 import CurrencyRepository from '../../persistance/repositories/currency.repository';
 import PrismaModule from '../../persistance/prisma/prisma.module';
 import AuthModule from '../auth/auth.module';

@@ -80,7 +80,7 @@ export default class TransactionCategoriesResolver {
     return this.transactionCategoryRepo.update(preparedData, id);
   }
 
-  // TODO: check for correction
+  // TODO: check
   @Mutation()
   @UseGuards(GqlAuthGuard)
   async deleteTransactionCategory(

@@ -4,19 +4,20 @@ import {
   Criteria,
   OrderCriteria,
 } from '../../../core/domain/repository.interface';
-import PrismaService from '../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import ICurrency from '../../../core/domain/transactions/entities/currency.interface';
 import {
-  CurrencyWhereInput,
-  CurrencyOrderByInput,
-} from '../../../../generated/prisma-client';
+  currenciesOrderByInput,
+  currenciesWhereInput,
+  FindManycurrenciesArgs,
+} from '@prisma/client';
 
 @Injectable()
 export default class CurrencyRepository implements IRepository<ICurrency> {
   constructor(private readonly prisma: PrismaService) {}
 
   public async insert(entity: ICurrency): Promise<ICurrency> {
-    return this.prisma.client.createCurrency(entity);
+    return this.prisma.currencies.create({ data: entity });
   }
 
   public findAll(
@@ -25,33 +26,32 @@ export default class CurrencyRepository implements IRepository<ICurrency> {
     orderBy: OrderCriteria<ICurrency>,
     searchCriteria: Criteria<ICurrency>,
   ): Promise<ICurrency[]> {
-    const queryData: {
-      where?: CurrencyWhereInput;
-      orderBy?: CurrencyOrderByInput;
-      skip?: number;
-      after?: string;
-      before?: string;
-      first?: number;
-      last?: number;
-    } = {
-      first: perPage,
+    const queryData: FindManycurrenciesArgs = {
+      take: perPage,
       skip: (page - 1) * perPage,
+      orderBy: [],
     };
     if (Object.keys(orderBy).length > 0) {
-      queryData.orderBy = `${Object.keys(orderBy)[0]}_${
-        orderBy[Object.keys(orderBy)[0]]
-      }` as CurrencyOrderByInput;
+      (queryData.orderBy as currenciesOrderByInput[]).push(
+        ...Object.keys(orderBy).map(
+          (orderKey: string): currenciesOrderByInput => ({
+            [`${orderKey}`]: (orderBy[`${orderKey}`] as
+              | 'ASC'
+              | 'DESC').toLowerCase(),
+          }),
+        ),
+      );
     }
     if (Object.keys(searchCriteria).length > 0) {
       Object.keys(searchCriteria).forEach((key: string) => {
         queryData.where[key] = searchCriteria[key];
       });
     }
-    return this.prisma.client.currencies(queryData);
+    return this.prisma.currencies.findMany(queryData);
   }
 
   public findById(id: string): Promise<ICurrency> {
-    return this.prisma.client.currency({ id });
+    return this.prisma.currencies.findOne({ where: { id } });
   }
 
   async findOneByAndCriteria(
@@ -65,40 +65,37 @@ export default class CurrencyRepository implements IRepository<ICurrency> {
     searchCriteria: Criteria<ICurrency>,
   ): Promise<ICurrency[]> {
     const queryData: {
-      where?: CurrencyWhereInput;
+      where?: currenciesWhereInput;
     } = { where: {} };
     Object.keys(searchCriteria).forEach((key: string): void => {
       queryData.where[key] = searchCriteria[key];
     });
-    return this.prisma.client.currencies(queryData);
+    return this.prisma.currencies.findMany(queryData);
   }
 
   public findByOrCriteria(
     searchCriteria: Criteria<ICurrency>,
   ): Promise<ICurrency[]> {
     const queryData: {
-      where?: CurrencyWhereInput;
-    } = {};
+      where?: currenciesWhereInput;
+    } = { where: { OR: [] } };
     Object.keys(searchCriteria).reduce(
-      (acc: CurrencyWhereInput, key: string): CurrencyWhereInput => {
-        let temp: CurrencyWhereInput = acc;
-        while (temp.OR !== undefined) {
-          temp = temp.OR as CurrencyWhereInput;
-        }
-        temp.OR = {};
-        temp.OR[key] = searchCriteria[key];
+      (acc: currenciesWhereInput, key: string): currenciesWhereInput => {
+        acc.OR.push({
+          [`${key}`]: searchCriteria[key],
+        });
         return acc;
       },
       {},
     );
-    return this.prisma.client.currencies(queryData);
+    return this.prisma.currencies.findMany(queryData);
   }
 
   public update(
     updateData: Criteria<ICurrency>,
     id: string,
   ): Promise<ICurrency> {
-    return this.prisma.client.updateCurrency({
+    return this.prisma.currencies.update({
       data: updateData,
       where: { id },
     });
@@ -110,12 +107,9 @@ export default class CurrencyRepository implements IRepository<ICurrency> {
     const currenciesForDelete: ICurrency[] = await this.findByAndCriteria(
       deleteCriteria,
     );
-    return Promise.all(
-      currenciesForDelete.map(
-        (currency: ICurrency): Promise<ICurrency> =>
-          this.prisma.client.deleteCurrency({ id: currency.id }),
-      ),
-    );
+    const { range, ...criteria } = deleteCriteria;
+    await this.prisma.currencies.deleteMany({ where: criteria });
+    return currenciesForDelete;
   }
 
   public async getRelatedEntity(

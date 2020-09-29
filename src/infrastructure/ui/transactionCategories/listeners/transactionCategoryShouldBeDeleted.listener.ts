@@ -13,7 +13,6 @@ export default class TransactionCategoryShouldBeDeletedListener
     this.transactionCategoryRepo = transactionCategoryFactory.createTransactionCategoryRepo();
   }
 
-  // TODO: magic literals to configs/enum with templates
   async process(
     event: TransactionCategoryShouldBeDeletedEvent,
   ): Promise<ITransactionCategory> {

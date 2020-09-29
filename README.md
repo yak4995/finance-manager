@@ -2,48 +2,68 @@ This project is my pet-project, that provided HTTP REST/GraphQL API for personal
 
 For user interfaces uses HTTPS protocol, for data storage - Prisma ORM, for asyncronyous task executing and queueing - Redis, for unit and e2e tests - jest library. Base programming language is TypeScript.
 
-In future, I plan to transfer asyncronyous task executing and queueing to Kafka, logging and full-text search to ELK stack, authorization - to passwordless, deployment - to Docker and docker-compose. Also, the project architecture will be scaled to microservices in monorepo, that will communicate with each other by GRPC protocol.
+In future, I plan to transfer asyncronyous task executing and queueing to Kafka, logging and full-text search to ELK stack, authorization - to passwordless. Also, the project architecture will be scaled to microservices in monorepo, that will communicate with each other by GRPC protocol (or CQRS).
 
 In future, the project will be extended with localization (by languages, default currencies and timezones), taxes management, inventory management, budget and cost-estimate management.
 
 Project setup:
-1. Execute "npm i" from project dir and setup a prisma instance in dialog which you will see.
-2. Copy .env.example to .env and replace there values with yours. Copy .graphqlconfig.yml.example to .graphqlconfig.yml with own Prisma endpoint (you could get it on prev step). Then you should remove generated datamodel.prisma file and replace "datamodel: datamodel.prisma" to "datamodel: datamodel.graphql" line in generated prisma.yml.
-3. Execute "npm run migrate".
+1. Execute "npm i" from project dir. Then replace the content of the prisma/schema.prisma file to
+```
+  generator client {
+    provider = "prisma-client-js"
+  }
+
+  datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+  }
+```
+and the content of prisma/.env file to
+```
+  DATABASE_URL="postgresql://postgres:<make password that you put into POSTGRES_PASSWORD in the .env on the next step>@localhost:5432/<make db name that you put into POSTGRES_DB in the .env on the next step>?schema=public"
+```
+2. Copy .env.example to .env and replace there values with yours.
+3. Execute "docker-compose up -d", then "npm run migrate".
 4. Create SSL-certificates (instructions see below) or put in its paths to .env file if you already have it.
+5. Interactive documentation by endpoints locates here: https://{URL with deployed app}/api/docs
+6. Migrations in SQL format locates here: dbscripts/init_migration.sql
 
 Generate ssl certificate for localhost in terminal:
-1. openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out server.key
-2. openssl req -x509 -new -nodes -key server.key -sha256 -days 825 -out server.pem
-3. NAME=localhost
-4. openssl genrsa -out $NAME.key 2048
-5. openssl req -new -key $NAME.key -out $NAME.csr
-6. >$NAME.ext cat <<-EOF
-authorityKeyIdentifier=keyid,issuer
-basicConstraints=CA:FALSE
-keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-subjectAltName = @alt_names
-[alt_names]
-DNS.1 = $NAME
-EOF
-7. openssl x509 -req -in $NAME.csr -CA server.pem -CAkey server.key -CAcreateserial \
--out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
+1. ```
+  openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out server.key
+```
+2. ```
+  openssl req -x509 -new -nodes -key server.key -sha256 -days 825 -out server.pem
+```
+3. ```
+  NAME=localhost
+```
+4. ```
+  openssl genrsa -out $NAME.key 2048
+```
+5. ```
+  openssl req -new -key $NAME.key -out $NAME.csr
+```
+6. ```
+  >$NAME.ext cat <<-EOF
+  authorityKeyIdentifier=keyid,issuer
+  basicConstraints=CA:FALSE
+  keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+  subjectAltName = @alt_names
+  [alt_names]
+  DNS.1 = $NAME
+  EOF
+```
+7. ```
+  openssl x509 -req -in $NAME.csr -CA server.pem -CAkey server.key -CAcreateserial \
+  -out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
+```
+
 8. Add .pem file as trusted certificatein your GoogleChrome and paths to certifaicates to .env file.
 
 GraphQL explanations:
 
 In resolvers, that import GQL types, we import them from src/infrastructure/graphql.schema.generated.ts, that will be created by NestJS GraphQLModule from src/infrastructure/ui/schema.graphql (graphql types for UI) when you run "npm i".
-
-DB setup explanations:
-
-"prisma init" command will allow you create or use existing prisma server and will create for you default datamodel.prisma and prisma.yml files.
-"prisma deploy --force" will migrate DB schema from datamodel.graphql to prisma server and generate/update client typescript code to generated/prisma-client.
-"prisma generate" just generate/update client typescript code to generated/prisma-client.
-"npm install -g graphql-cli@3.0.14" will allow you to execute commands below (for NestJS PrismaModule), that also uses .graphqlconfig.yml:
-"graphql get-schema --project database" will download Prisma GraphQL schema to src/infrastructure/persistance/prisma/prisma-types.graphql.
-"graphql codegen --project database" will create Prisma client under src/infrastructure/persistance/prisma/prisma.binding.ts.
-PrismaModule uses modules from "generated" path.
-PrismaService for PrismaModule has to extend (and instantiate it with super(...)) Prisma class from prisma.binding.ts, that has been created by "graphql codegen --project database" command.
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
@@ -77,9 +97,7 @@ PrismaService for PrismaModule has to extend (and instantiate it with super(...)
 
 ## Installation
 
-```bash
-$ npm install
-```
+Look instructions above.
 
 ## Running the app
 
@@ -98,6 +116,12 @@ $ npm run start:hmr
 $ npm run start:prod
 ```
 
+## Debugging
+
+```bash
+$ npm run start:debug
+```
+
 ## Test
 
 ```bash
@@ -111,16 +135,26 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Code formatting
+## Code formatting and linting
 
 ```bash
+# formatting
 $ npm run format
+
+#linting
+$ npm run lint
 ```
 
 ## DB migrations execution
 
 ```bash
 $ npm run migrate
+```
+
+## Generate documentation in compodoc format and serve it
+
+```bash
+$ npm run document
 ```
 
 ## Support

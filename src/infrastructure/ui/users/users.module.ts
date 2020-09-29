@@ -4,7 +4,7 @@ import UsersResolver from './users.resolver';
 import UserCredentialFactory from '../../persistance/factories/userCredential.factory';
 import UserCredentialAbstractFactory from '../../../core/app/users/factories/userCredentialFactory';
 import UserCredentialCreator from '../../persistance/creators/userCredential.creator';
-import PrismaService from '../../persistance/prisma/prisma.service';
+import { PrismaService } from '../../persistance/prisma/prisma.service';
 import UserCredentialRepository from '../../persistance/repositories/userCredential.repository';
 import AuthModule from '../auth/auth.module';
 

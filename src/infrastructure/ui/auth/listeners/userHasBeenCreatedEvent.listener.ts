@@ -7,7 +7,6 @@ export default class UserHasBeenCreatedEventListener
   implements IEventListener<UserHasBeenCreatedEvent> {
   constructor(private readonly mailService: MailerService) {}
 
-  // TODO: magic literals to configs/enum with templates
   async process(event: UserHasBeenCreatedEvent): Promise<SentMessageInfo> {
     return this.mailService.sendMail({
       to: (event as any).user.email,
