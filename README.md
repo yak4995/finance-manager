@@ -23,28 +23,35 @@ and the content of prisma/.env file to
   DATABASE_URL="postgresql://postgres:<make password that you put into POSTGRES_PASSWORD in the .env on the next step>@localhost:5432/<make db name that you put into POSTGRES_DB in the .env on the next step>?schema=public"
 ```
 2. Copy .env.example to .env and replace there values with yours.
-3. Execute "docker-compose up -d", then "npm run migrate".
+3. Create empty "dbdata" dir in the project root, then execute "docker-compose up -d", then "npm run migrate".
 4. Create SSL-certificates (instructions see below) or put in its paths to .env file if you already have it.
 5. Interactive documentation by endpoints locates here: https://{URL with deployed app}/api/docs
 6. Migrations in SQL format locates here: dbscripts/init_migration.sql
 
 Generate ssl certificate for localhost in terminal:
-1. ```
+
+1.
+```
   openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out server.key
 ```
-2. ```
+2.
+```
   openssl req -x509 -new -nodes -key server.key -sha256 -days 825 -out server.pem
 ```
-3. ```
+3.
+```
   NAME=localhost
 ```
-4. ```
+4.
+```
   openssl genrsa -out $NAME.key 2048
 ```
-5. ```
+5.
+```
   openssl req -new -key $NAME.key -out $NAME.csr
 ```
-6. ```
+6.
+```
   >$NAME.ext cat <<-EOF
   authorityKeyIdentifier=keyid,issuer
   basicConstraints=CA:FALSE
@@ -54,7 +61,8 @@ Generate ssl certificate for localhost in terminal:
   DNS.1 = $NAME
   EOF
 ```
-7. ```
+7.
+```
   openssl x509 -req -in $NAME.csr -CA server.pem -CAkey server.key -CAcreateserial \
   -out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
 ```
