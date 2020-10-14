@@ -217,6 +217,13 @@ export default class UserCredentialRepository
       deleteCriteria,
     );
     const { range, ...criteria } = deleteCriteria;
+    await this.prisma.users_to_roles.deleteMany({
+      where: {
+        userId: {
+          in: usersForDelete.map(u => u.id),
+        },
+      },
+    });
     await this.prisma.user_credentials.deleteMany({ where: criteria });
     return usersForDelete;
   }

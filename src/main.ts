@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import AppModule from './app.module';
 import HttpExceptionFilter from './infrastructure/http-exception.filter';
+import { FileLoggerService } from './infrastructure/transport/logger/fileLogger.service';
 
 async function bootstrap() {
   const keyFile: Buffer = fs.readFileSync(
@@ -18,7 +19,9 @@ async function bootstrap() {
       key: keyFile,
       cert: certFile,
     },
+    logger: false,
   });
+  app.useLogger(app.get(FileLoggerService));
 
   const options = new DocumentBuilder()
     .setTitle('Finance manager')

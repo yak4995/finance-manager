@@ -7,12 +7,12 @@ import PrismaModule from './infrastructure/persistance/prisma/prisma.module';
 import CurrenciesModule from './infrastructure/ui/currencies/currencies.module';
 import TransactionCategoriesModule from './infrastructure/ui/transactionCategories/transactionCategories.module';
 import TransactionsModule from './infrastructure/ui/transactions/transactions.module';
+import { LoggerModule } from './infrastructure/transport/logger/logger.module';
 
-// TODO: GRASP: create Singleton Facade-s and Mediator?
+// TODO: GRASP: create Singleton Facade-s
 // TODO: put into docker-compose:
-//       - Redis
-//       - Kafka
 //       - SMTP-сервер
+//       - Kafka
 // TODO: create shell file for installing nvm\node\npm\npx\jest\nest\docker+docker-compose
 @Module({
   imports: [
@@ -36,6 +36,7 @@ import TransactionsModule from './infrastructure/ui/transactions/transactions.mo
     CurrenciesModule,
     TransactionCategoriesModule,
     TransactionsModule,
+    LoggerModule,
     PrismaModule,
     ConfigModule.forRoot({
       isGlobal: true,

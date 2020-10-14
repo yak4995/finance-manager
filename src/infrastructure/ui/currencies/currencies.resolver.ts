@@ -54,7 +54,6 @@ export default class CurrenciesResolver {
     return this.currencyRepo.update(preparedData, id);
   }
 
-  // TODO: check
   @Mutation()
   @UseGuards(GqlAuthGuard)
   async deleteCurrency(@Args('id') id: string): Promise<ICurrency> {

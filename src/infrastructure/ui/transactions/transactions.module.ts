@@ -25,11 +25,23 @@ import CurrenciesModule from '../currencies/currencies.module';
 import * as redis from 'redis';
 import { CacheService } from '../../cache.service';
 import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisCacheService } from '../../redisCache.service';
+import { ElasticsearchModule } from '@nestjs/elasticsearch';
 
 @Module({
-  imports: [AuthModule, PrismaModule, CurrenciesModule],
+  imports: [
+    AuthModule,
+    PrismaModule,
+    CurrenciesModule,
+    ElasticsearchModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        node: configService.get('ELASTICSEARCH_NODE'),
+      }),
+      inject: [ConfigService],
+    }),
+  ],
   controllers: [TransactionController],
   providers: [
     TransactionSearchService,

@@ -1,10 +1,11 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { InjectQueue, Processor, Process } from '@nestjs/bull';
 import { Queue, Job } from 'bull';
 import IEventDispatchService from '../../../../core/app/events/eventDispatchService.interface';
 import UserHasBeenCreatedEvent from '../../../../core/app/users/events/userHasBeenCreated.event';
 import IEventListener from '../../../../core/app/events/eventListener.interface';
 import { EventStatus } from '../../../../core/app/events/eventStatus.enum';
+import { FileLoggerService } from '../../../transport/logger/fileLogger.service';
 
 @Processor('mailing')
 export default class UserHasBeenRegisteredEventDispatcher extends IEventDispatchService<
@@ -24,7 +25,7 @@ export default class UserHasBeenRegisteredEventDispatcher extends IEventDispatch
       await this.mailingQueue.add(event);
       event.state = EventStatus.WAITING;
     } catch (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'UserHasBeenRegisteredEventDispatcher::emit',

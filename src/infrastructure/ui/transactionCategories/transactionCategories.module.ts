@@ -12,13 +12,14 @@ import TransactionCategoryInteractor from '../../../core/app/transactions/intera
 import DefTransactionCategoryOutputPort from './ports/defTransactionCategoryOutput.port';
 import { TransactionCategorySearchService } from './services/transactionCategorySearch.service';
 import { BullModule, BullModuleOptions } from '@nestjs/bull';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import TransactionCategoryShouldBeDeletedListener from './listeners/transactionCategoryShouldBeDeleted.listener';
 import * as redis from 'redis';
 import { CacheService } from '../../cache.service';
 import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
 import { RedisCacheService } from '../../redisCache.service';
 import TransactionCategoryShoulBeDeletedEventDispatcher from './services/transactionCategoryShoulBeDeletedDispatcher';
+import { ElasticsearchModule } from '@nestjs/elasticsearch';
 
 @Module({
   imports: [
@@ -35,6 +36,13 @@ import TransactionCategoryShoulBeDeletedEventDispatcher from './services/transac
           port: configService.get('QUEUE_PORT'),
           password: configService.get('QUEUE_PASSWORD'),
         },
+      }),
+      inject: [ConfigService],
+    }),
+    ElasticsearchModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        node: configService.get('ELASTICSEARCH_NODE'),
       }),
       inject: [ConfigService],
     }),

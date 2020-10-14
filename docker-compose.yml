@@ -22,6 +22,8 @@ services:
     networks:
       - elastic
 
+  # all of this require a lot of RAM, that I don`t have on my laptop
+
   #es02:
   #  image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
   #  container_name: es02
@@ -74,6 +76,15 @@ services:
       ELASTICSEARCH_HOSTS: http://es01:9200
     networks:
       - elastic
+    depends_on:
+      - es01
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
 
   postgres:
     image: 'postgres:latest'
@@ -95,10 +106,7 @@ services:
       timeout: 5s
       retries: 50
 
-
 volumes:
-  #db-data:
-  #  driver: local
   data01:
     driver: local
   #data02:

@@ -3,9 +3,9 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
-  Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { FileLoggerService } from './transport/logger/fileLogger.service';
 
 @Catch(HttpException)
 export default class HttpExceptionFilter implements ExceptionFilter {
@@ -31,7 +31,9 @@ export default class HttpExceptionFilter implements ExceptionFilter {
       stack: exception.stack,
     };
 
-    Logger.error(errorResponse);
+    const { stack, ...restMessage } = errorResponse;
+
+    FileLoggerService.error(JSON.stringify(restMessage), stack);
 
     response.status(status).json(errorResponse);
   }

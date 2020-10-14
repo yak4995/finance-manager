@@ -46,6 +46,7 @@ export default class TransactionCategoryRepository
         ),
       },
     );
+    await this.cacheService.set(`categories_${id}_parent`, parentCategory);
     return {
       id: createdTransactionCategory.id,
       isOutcome: createdTransactionCategory.isOutcome,
@@ -226,10 +227,13 @@ export default class TransactionCategoryRepository
     const { parentCategory, ...preparedUpdateData } = updateData;
     if (parentCategory !== null) {
       if (transactionCategory.parentCategory) {
-        await this.prisma.transaction_categories.update({
-          data: { transaction_categories: { disconnect: true } },
-          where: { id },
-        });
+        await Promise.all([
+          this.prisma.transaction_categories.update({
+            data: { transaction_categories: { disconnect: true } },
+            where: { id },
+          }),
+          this.cacheService.set(`categories_${id}_parent`, parentCategory),
+        ]);
       }
       (preparedUpdateData as any).transaction_categories = {
         connect: { id: parentCategory.id },
@@ -256,7 +260,10 @@ export default class TransactionCategoryRepository
       deleteCriteria,
     );
     const { range, ...criteria } = deleteCriteria;
-    await this.prisma.transaction_categories.deleteMany({ where: criteria });
+    await Promise.all([
+      this.prisma.transaction_categories.deleteMany({ where: criteria }),
+      this.cacheService.delete(`categories_${criteria?.id}_parent`),
+    ]);
     return transactionCategoriesForDelete;
   }
 
@@ -268,19 +275,18 @@ export default class TransactionCategoryRepository
       throw new Error(`${fieldName} of class doesn't have object type`);
     }
     if (fieldName === 'parentCategory') {
-      // TODO: return after cache invalidation in repo.update with parent category
-      /*try {
+      try {
         const result: ITransactionCategory = await this.cacheService.get(
           `categories_${id}_parent`,
         );
         return result;
-      } catch (e) {*/
-      const result: ITransactionCategory = ((await this.prisma.transaction_categories
-        .findOne({ where: { id } })
-        .transaction_categories()) as unknown) as ITransactionCategory;
-      await this.cacheService.set(`categories_${id}_parent`, result);
-      return result;
-      // }
+      } catch (e) {
+        const result: ITransactionCategory = ((await this.prisma.transaction_categories
+          .findOne({ where: { id } })
+          .transaction_categories()) as unknown) as ITransactionCategory;
+        await this.cacheService.set(`categories_${id}_parent`, result);
+        return result;
+      }
     } else {
       return (this.prisma.transaction_categories
         .findOne({ where: { id } })

@@ -5,7 +5,7 @@ import IUser from '../../../domain/users/entities/user.interface';
 export default class UserShouldBeDeletedEvent implements IEvent {
   private eventState: EventStatus = EventStatus.WAITING;
 
-  constructor(private readonly user: IUser) {}
+  constructor(public readonly user: IUser) {}
 
   get state(): EventStatus {
     return this.eventState;
@@ -13,9 +13,5 @@ export default class UserShouldBeDeletedEvent implements IEvent {
 
   set state(state: EventStatus) {
     this.eventState = state;
-  }
-
-  get userForDeleting(): IUser {
-    return this.user;
   }
 }

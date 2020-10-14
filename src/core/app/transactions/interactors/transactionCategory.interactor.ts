@@ -94,7 +94,7 @@ export default class TransactionCategoryInteractor
     try {
       const result: ITransactionCategory[] = (
         await this.searchService.search(content, 'name')
-      ).filter((c: ITransactionCategory): boolean => c.owner.id !== user.id);
+      ).filter((c: ITransactionCategory): boolean => c.owner.id === user.id);
       return this.transactionCategoryOutputPort.search(result, null);
     } catch (e) {
       return this.transactionCategoryOutputPort.search(null, e);
@@ -127,6 +127,7 @@ export default class TransactionCategoryInteractor
       const result: ITransactionCategory = await this.transactionCategoryRepo.insert(
         createdCategory,
       );
+      await this.searchService.insert(result);
       return this.transactionCategoryOutputPort.addCategory(result, null);
     } catch (e) {
       return this.transactionCategoryOutputPort.addCategory(null, e);
@@ -147,14 +148,24 @@ export default class TransactionCategoryInteractor
           throw new Error('isOutcome field is common for all category tree');
         }
       }
-      await this.transactionCategoryRepo.update(
-        {
-          name: payload.name,
-          isOutcome: payload.isOutcome,
-          parentCategory,
-        },
-        category.id,
-      );
+      await this.searchService.remove(category);
+      await Promise.all([
+        this.transactionCategoryRepo.update(
+          {
+            name: payload.name,
+            isOutcome: payload.isOutcome,
+            parentCategory,
+          },
+          category.id,
+        ),
+        this.searchService.insert(
+          Object.assign({}, category, {
+            name: payload.name,
+            isOutcome: payload.isOutcome,
+            parentCategory,
+          }),
+        ),
+      ]);
       return this.transactionCategoryOutputPort.updateCategory(
         Object.assign({}, category, {
           name: payload.name,
@@ -169,7 +180,10 @@ export default class TransactionCategoryInteractor
 
   async deleteCategory(category: ITransactionCategory): Promise<any> {
     try {
-      await this.transactionCategoryRepo.delete({ id: category.id });
+      await Promise.all([
+        this.transactionCategoryRepo.delete({ id: category.id }),
+        this.searchService.remove(category),
+      ]);
       return this.transactionCategoryOutputPort.deleteCategory(category, null);
     } catch (e) {
       return this.transactionCategoryOutputPort.deleteCategory(null, e);

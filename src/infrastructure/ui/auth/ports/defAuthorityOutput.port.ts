@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import AuthorityOutputPort from '../../../../core/app/users/ports/authorityOutput.port';
 import IUserCredential from '../../../../core/app/users/entities/userCredential.interface';
 import IUser from '../../../../core/domain/users/entities/user.interface';
 import ISecuredUserCredential from '../../../persistance/entities/securedUserCredential';
 import AuthService from '../services/auth.service';
+import { FileLoggerService } from '../../../transport/logger/fileLogger.service';
 
 @Injectable()
 export default class DefAuthorityOutputPort implements AuthorityOutputPort {
@@ -14,7 +15,11 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
     e: Error,
   ): Promise<{ accessToken: string }> {
     if (e) {
-      Logger.error(e.message, e.stack, 'DefAuthorityOutputPort::processLogin');
+      FileLoggerService.error(
+        e.message,
+        e.stack,
+        'DefAuthorityOutputPort::processLogin',
+      );
       throw new BadRequestException(e.message);
     }
     return this.authService.createToken({
@@ -31,7 +36,7 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
     e: Error,
   ): Promise<IUserCredential> {
     if (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'DefAuthorityOutputPort::processRegistration',
@@ -39,7 +44,7 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
       throw new BadRequestException(e.message);
     }
     if (!mailingResult) {
-      Logger.error(
+      FileLoggerService.error(
         'Mail has not been sent!',
         null,
         'DefAuthorityOutputPort::processRegistration',
@@ -62,7 +67,7 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
     e: Error,
   ): Promise<IUser> {
     if (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'DefAuthorityOutputPort::processAccountProfileImageChanging',
@@ -79,7 +84,7 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
     e: Error,
   ): Promise<boolean> {
     if (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'DefAuthorityOutputPort::processAccountDeleting',

@@ -4,6 +4,7 @@ coverage/
 .vscode/
 documentation/
 ssl/
+logs/
 prisma/
 dbdata/*
 .env

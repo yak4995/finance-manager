@@ -9,6 +9,6 @@ export default class UserShouldBeDeletedEventListener
   constructor(private readonly authService: AuthService) {}
 
   async process(event: UserShouldBeDeletedEvent): Promise<boolean> {
-    return this.authService.deleteAccount(event.userForDeleting);
+    return this.authService.deleteAccount(event.user);
   }
 }

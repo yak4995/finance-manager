@@ -2,7 +2,7 @@ This project is my pet-project, that provided HTTP REST/GraphQL API for personal
 
 For user interfaces uses HTTPS protocol, for data storage - Prisma ORM, for asyncronyous task executing and queueing - Redis, for unit and e2e tests - jest library. Base programming language is TypeScript.
 
-In future, I plan to transfer asyncronyous task executing and queueing to Kafka, logging and full-text search to ELK stack, authorization - to passwordless. Also, the project architecture will be scaled to microservices in monorepo, that will communicate with each other by GRPC protocol (or CQRS).
+In future, I plan to transfer asyncronyous task executing and queueing to Kafka, authorization - to passwordless. Also, the project architecture will be scaled to microservices in monorepo, that will communicate with each other by GRPC protocol.
 
 In future, the project will be extended with localization (by languages, default currencies and timezones), taxes management, inventory management, budget and cost-estimate management.
 

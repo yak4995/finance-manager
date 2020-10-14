@@ -102,7 +102,7 @@ describe('TransactionCategoryInteractor tests', () => {
       (await service.search({ id: 'fakeId' }, 'smth')).map(
         (r: ITransactionCategory): string => r.id,
       ),
-    ).toEqual([]);
+    ).toEqual(['abc']);
   });
 
   it('check addCategory method: isOutcome error', async () => {

@@ -1,10 +1,11 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { InjectQueue, Processor, Process } from '@nestjs/bull';
 import { Queue, Job } from 'bull';
 import IEventDispatchService from '../../../../core/app/events/eventDispatchService.interface';
 import IEventListener from '../../../../core/app/events/eventListener.interface';
 import { EventStatus } from '../../../../core/app/events/eventStatus.enum';
 import TransactionCategoryShouldBeDeletedEvent from '../events/transactionCategoryShouldBeDeleted.event';
+import { FileLoggerService } from '../../../transport/logger/fileLogger.service';
 
 @Processor('categoryDeletion')
 export default class TransactionCategoryShoulBeDeletedEventDispatcher extends IEventDispatchService<
@@ -28,7 +29,7 @@ export default class TransactionCategoryShoulBeDeletedEventDispatcher extends IE
       await this.categoryDeletionQueue.add(event);
       event.state = EventStatus.WAITING;
     } catch (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'TransactionCategoryShoulBeDeletedEventDispatcher::emit',

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -13,6 +13,7 @@ import IRepository, {
 import JwtPayloadInterface from '../interfaces/jwt-payload.interface';
 import ISecuredUserCredential from '../../../persistance/entities/securedUserCredential';
 import IUser from '../../../../core/domain/users/entities/user.interface';
+import { FileLoggerService } from '../../../transport/logger/fileLogger.service';
 
 @Injectable()
 export default class AuthService implements IAuthorityService {
@@ -63,7 +64,7 @@ export default class AuthService implements IAuthorityService {
       await this.userCredentialRepo.delete({ id: user.id });
       return true;
     } catch (e) {
-      Logger.error(e.message, e.stack, 'AuthService::deleteAccount');
+      FileLoggerService.error(e.message, e.stack, 'AuthService::deleteAccount');
       return false;
     }
   }

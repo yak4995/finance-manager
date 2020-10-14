@@ -136,6 +136,7 @@ export default class TransactionInteractor
           description: payload.description,
         },
       );
+      await this.searchService.insert(createdTransaction);
       const result: ITransaction = await this.transactionRepo.insert(
         createdTransaction,
       );
@@ -163,16 +164,28 @@ export default class TransactionInteractor
           'This user is not owner of this transaction',
         );
       }
-      await this.transactionRepo.update(
-        {
-          datetime: payload.datetime,
-          transactionCategory,
-          amount: payload.amount,
-          currency,
-          description: payload.description,
-        },
-        transaction.id,
-      );
+      await this.searchService.remove(transaction);
+      await Promise.all([
+        this.transactionRepo.update(
+          {
+            datetime: payload.datetime,
+            transactionCategory,
+            amount: payload.amount,
+            currency,
+            description: payload.description,
+          },
+          transaction.id,
+        ),
+        this.searchService.insert(
+          Object.assign({}, transaction, {
+            datetime: payload.datetime,
+            transactionCategory,
+            amount: payload.amount,
+            currency,
+            description: payload.description,
+          }),
+        ),
+      ]);
       return this.transactionOutputPort.updateTransaction(
         await this.transactionRepo.findById(transaction.id),
         null,
@@ -187,7 +200,10 @@ export default class TransactionInteractor
     transaction: ITransaction,
   ): Promise<any> {
     try {
-      await this.transactionRepo.delete({ id: transaction.id });
+      await Promise.all([
+        this.transactionRepo.delete({ id: transaction.id }),
+        this.searchService.remove(transaction),
+      ]);
       return this.transactionOutputPort.deleteTransaction(transaction, null);
     } catch (e) {
       return this.transactionOutputPort.deleteTransaction(null, e);

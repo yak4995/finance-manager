@@ -10,7 +10,7 @@ export default class FakeUserShouldBeDeletedEventListener
 
   async process(event: UserShouldBeDeletedEvent): Promise<void> {
     event.state = EventStatus.PROCESSING;
-    await this.authorityService.deleteAccount(event.userForDeleting);
+    await this.authorityService.deleteAccount(event.user);
     event.state = EventStatus.SUCCEED;
     return;
   }

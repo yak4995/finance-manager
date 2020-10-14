@@ -12,7 +12,7 @@ export class RedisCacheService<T> extends CacheService<T> {
     return new Promise<T>((resolve, reject) => {
       this.client.get(key, (err: Error, reply: string) => {
         if (err) {
-          reject(err);
+          return reject(err);
         }
         if (!reply) {
           reject(new Error('Value is absent in the cache'));
@@ -27,7 +27,7 @@ export class RedisCacheService<T> extends CacheService<T> {
     return new Promise<boolean>((resolve, reject) => {
       this.client.set(key, JSON.stringify(value), (err: Error, reply: 'OK') => {
         if (err) {
-          reject(err);
+          return reject(err);
         }
         if (reply !== 'OK') {
           resolve(false);
@@ -35,6 +35,12 @@ export class RedisCacheService<T> extends CacheService<T> {
           resolve(true);
         }
       });
+    });
+  }
+
+  delete(key: string): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      this.client.del(key, err => resolve(!err));
     });
   }
 }

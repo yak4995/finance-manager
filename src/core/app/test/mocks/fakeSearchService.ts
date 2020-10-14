@@ -6,6 +6,14 @@ export default class FakeSearchService<T extends IPersistantEntity>
   implements ISearchService<T> {
   constructor(public readonly repoArr: T[]) {}
 
+  async insert(entity: T): Promise<boolean> {
+    return true;
+  }
+
+  async remove(entity: T): Promise<boolean> {
+    return true;
+  }
+
   async search(content: string, ...fields: Array<keyof T>): Promise<T[]> {
     if (content === 'wrong') {
       throw new Error('Incorrect content');

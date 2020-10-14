@@ -1,6 +1,6 @@
+import { FileLoggerService } from '../../../transport/logger/fileLogger.service';
 import TransactionCategoryOutputPort from '../../../../core/app/transactions/ports/transactionCategoryOutput.port';
 import ITransactionCategory from '../../../../core/domain/transactions/entities/transactionCategory.interface';
-import { Logger } from '@nestjs/common';
 
 export default class DefTransactionCategoryOutputPort
   implements TransactionCategoryOutputPort {
@@ -9,7 +9,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'DefTransactionCategoryOutputPort::getTopCategories',
@@ -27,7 +27,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'DefTransactionCategoryOutputPort::getCategoryDirectChildren',
@@ -45,7 +45,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'DefTransactionCategoryOutputPort::getOwnCategories',
@@ -63,7 +63,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory[]> {
     if (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'DefTransactionCategoryOutputPort::search',
@@ -81,7 +81,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory> {
     if (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'DefTransactionCategoryOutputPort::addCategory',
@@ -96,7 +96,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<ITransactionCategory> {
     if (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'DefTransactionCategoryOutputPort::updateCategory',
@@ -111,7 +111,7 @@ export default class DefTransactionCategoryOutputPort
     e: Error,
   ): Promise<boolean> {
     if (e) {
-      Logger.error(
+      FileLoggerService.error(
         e.message,
         e.stack,
         'DefTransactionCategoryOutputPort::deleteCategory',
