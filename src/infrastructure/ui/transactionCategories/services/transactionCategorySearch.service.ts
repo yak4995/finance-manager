@@ -1,7 +1,7 @@
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { Injectable } from '@nestjs/common';
 import ISearchService from '../../../../core/app/search/searchService.interface';
-import ITransactionCategory from '../../../../core/domain/transactions/entities/transactionCategory.interface';
+import ITransactionCategory from '../../../../core/domain/transactionCategories/entities/transactionCategory.interface';
 
 @Injectable()
 export class TransactionCategorySearchService

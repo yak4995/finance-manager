@@ -1,6 +1,6 @@
 import IEventListener from '../../../../core/app/events/eventListener.interface';
-import ICurrency from '../../../../core/domain/transactions/entities/currency.interface';
-import CurrencyAbstractFactory from '../../../../core/domain/transactions/factories/currencyFactory';
+import ICurrency from '../../../../core/domain/currencies/entities/currency.interface';
+import CurrencyAbstractFactory from '../../../../core/domain/currencies/factories/currencyFactory';
 import IRepository from '../../../../core/domain/repository.interface';
 import CurrencyShouldBeDeletedEvent from '../events/currencyShouldBeDeleted.event';
 

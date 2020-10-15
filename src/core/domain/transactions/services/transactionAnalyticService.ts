@@ -1,26 +1,26 @@
 import * as moment from 'moment';
 import ITransaction from '../entities/transaction.interface';
-import ITransactionCategory from '../entities/transactionCategory.interface';
-import ICurrency from '../entities/currency.interface';
-import ICurrencyConverterService from './currencyConverterService.interface';
+import ITransactionCategory from '../../transactionCategories/entities/transactionCategory.interface';
+import ICurrency from '../../currencies/entities/currency.interface';
+import ICurrencyConverterService from '../../currencies/services/currencyConverterService.interface';
 import { Period } from '../../period/enums/period.enum';
 import { TransactionsComparisonDto } from '../dto/transactionsComparison.dto';
-import TransactionCategoryService from './transactionCategoryService';
 import { InvalidDateRangeException } from '../exceptions/invalidDateRange.exception';
+import ITransactionCategoriesFacade from '../../../app/transactionCategories/transactionCategories.facade';
 
 export default class TransactionAnalyticService {
   constructor(
     private _transactions: ITransaction[],
     private readonly converter: ICurrencyConverterService,
-    private readonly transactionCategoryService: TransactionCategoryService,
+    private readonly transactionCategoriesFacade: ITransactionCategoriesFacade,
   ) {}
 
   get transactions(): ITransaction[] {
     return this._transactions;
   }
 
-  set transactions(transactionsArray: ITransaction[]) {
-    this._transactions = transactionsArray;
+  set transactions(transactions: ITransaction[]) {
+    this._transactions = transactions;
   }
 
   public async getTransactionsCountBy(
@@ -141,7 +141,7 @@ export default class TransactionAnalyticService {
     );
     if (filter.category) {
       const categoryChildrenIds: string[] = (
-        await this.transactionCategoryService.getTransactionCategoryChildren(
+        await this.transactionCategoriesFacade.getTransactionCategoryChildren(
           filter.category,
         )
       ).map((childCategory: ITransactionCategory): string => childCategory.id);
@@ -184,7 +184,7 @@ export default class TransactionAnalyticService {
     dateEnd: Date,
     processFunction: (transactions: ITransaction[]) => Promise<number>,
   ): Promise<TransactionsComparisonDto> {
-    const directChildren: ITransactionCategory[] = await this.transactionCategoryService.getTransactionCategoryDirectChildren(
+    const directChildren: ITransactionCategory[] = await this.transactionCategoriesFacade.getTransactionCategoryDirectChildren(
       baseCategory,
     );
     let general: number = 0;
@@ -247,7 +247,7 @@ export default class TransactionAnalyticService {
       {
         dateStart,
         dateEnd,
-        categories: await this.transactionCategoryService.getTransactionCategoryChildren(
+        categories: await this.transactionCategoriesFacade.getTransactionCategoryChildren(
           category,
         ),
       },

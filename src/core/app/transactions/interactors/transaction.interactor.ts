@@ -5,32 +5,33 @@ import IRepository, {
   OrderCriteria,
 } from '../../../domain/repository.interface';
 import ITransactionDto from '../dto/iTransaction.dto';
-import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
-import ICurrency from '../../../domain/transactions/entities/currency.interface';
+import ITransactionCategory from '../../../domain/transactionCategories/entities/transactionCategory.interface';
+import ICurrency from '../../../domain/currencies/entities/currency.interface';
 import IUser from '../../../domain/users/entities/user.interface';
 import { Period } from '../../../domain/period/enums/period.enum';
 import TransactionAnalyticService from '../../../domain/transactions/services/transactionAnalyticService';
 import TransactionOutputPort from '../ports/transactionOutput.port';
 import ISearchService from '../../search/searchService.interface';
-import TransactionCategoryService from '../../../domain/transactions/services/transactionCategoryService';
 import { TransactionsComparisonDto } from '../../../../core/domain/transactions/dto/transactionsComparison.dto';
 import TransactionAbstractFactory from '../../../domain/transactions/factories/transactionFactory';
 import { BadRequestException } from '@nestjs/common';
+import ITransactionCategoriesFacade from '../../../app/transactionCategories/transactionCategories.facade';
+import ICurrenciesFacade from '../../../app/currencies/currencies.facade';
 
 export default class TransactionInteractor
   implements TransactionAnalyticInputPort, TransactionManagementInputPort {
+  private readonly transactionRepo: IRepository<ITransaction>;
+
   constructor(
     private readonly transactionFactory: TransactionAbstractFactory,
-    private readonly transactionCategoryService: TransactionCategoryService,
-    private readonly transactionCategoryRepo: IRepository<ITransactionCategory>,
-    // TODO: get from factory for cohesion increase and coupling reduction
-    // (see diagram)
-    private readonly transactionRepo: IRepository<ITransaction>,
-    private readonly currencyRepo: IRepository<ICurrency>,
+    private readonly transactionCategoriesFacade: ITransactionCategoriesFacade,
+    private readonly currenciesFacade: ICurrenciesFacade,
     private readonly transactionAnalyticService: TransactionAnalyticService,
     private readonly searchService: ISearchService<ITransaction>,
     private readonly transactionOutputPort: TransactionOutputPort,
-  ) {}
+  ) {
+    this.transactionRepo = this.transactionFactory.createTransactionRepo();
+  }
 
   public setTransactions(transactions: ITransaction[]): void {
     this.transactionAnalyticService.transactions = transactions;
@@ -74,7 +75,7 @@ export default class TransactionInteractor
   ): Promise<any> {
     try {
       const categoryIds: string[] = (
-        await this.transactionCategoryService.getTransactionCategoryChildren(
+        await this.transactionCategoriesFacade.getTransactionCategoryChildren(
           category,
         )
       ).map((c: ITransactionCategory): string => c.id);
@@ -123,8 +124,10 @@ export default class TransactionInteractor
         ITransactionCategory,
         ICurrency,
       ] = await Promise.all([
-        this.transactionCategoryRepo.findById(payload.transactionCategoryId),
-        this.currencyRepo.findById(payload.currencyId),
+        this.transactionCategoriesFacade.findById(
+          payload.transactionCategoryId,
+        ),
+        this.currenciesFacade.findById(payload.currencyId),
       ]);
       const createdTransaction: ITransaction = this.transactionFactory.createTransaction(
         {
@@ -156,8 +159,10 @@ export default class TransactionInteractor
         ITransactionCategory,
         ICurrency,
       ] = await Promise.all([
-        this.transactionCategoryRepo.findById(payload.transactionCategoryId),
-        this.currencyRepo.findById(payload.currencyId),
+        this.transactionCategoriesFacade.findById(
+          payload.transactionCategoryId,
+        ),
+        this.currenciesFacade.findById(payload.currencyId),
       ]);
       if (transaction.owner.id !== user.id) {
         throw new BadRequestException(

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import EntityCreator from '../../../core/domain/entityCreator.interface';
-import ICurrency from '../../../core/domain/transactions/entities/currency.interface';
+import ICurrency from '../../../core/domain/currencies/entities/currency.interface';
 import { Criteria } from '../../../core/domain/repository.interface';
 
 @Injectable()

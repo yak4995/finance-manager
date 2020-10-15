@@ -1,4 +1,4 @@
-import ICurrencyConverterService from '../../../../core/domain/transactions/services/currencyConverterService.interface';
+import ICurrencyConverterService from '../../../../core/domain/currencies/services/currencyConverterService.interface';
 import {
   Injectable,
   HttpService,

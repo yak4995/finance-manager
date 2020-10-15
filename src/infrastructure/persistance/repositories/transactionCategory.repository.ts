@@ -5,7 +5,7 @@ import {
   OrderCriteria,
 } from '../../../core/domain/repository.interface';
 import { PrismaService } from '../prisma/prisma.service';
-import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
+import ITransactionCategory from '../../../core/domain/transactionCategories/entities/transactionCategory.interface';
 import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
 import { CacheService } from '../../cache.service';
 import {

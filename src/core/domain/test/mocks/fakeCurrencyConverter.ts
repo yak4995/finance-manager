@@ -1,4 +1,4 @@
-import ICurrencyConverterService from '../../transactions/services/currencyConverterService.interface';
+import ICurrencyConverterService from '../../currencies/services/currencyConverterService.interface';
 
 /* istanbul ignore next */
 export default class FakeCurrencyConverter

@@ -1,6 +1,6 @@
 import IUser from '../../users/entities/user.interface';
-import ITransactionCategory from './transactionCategory.interface';
-import ICurrency from './currency.interface';
+import ITransactionCategory from '../../transactionCategories/entities/transactionCategory.interface';
+import ICurrency from '../../currencies/entities/currency.interface';
 import IPersistantEntity from '../../persistantEntity';
 
 // Probably children: TypeOrmTransactionEntity, MongooseTransactionSchema, XMLTransactionEntity

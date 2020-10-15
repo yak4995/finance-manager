@@ -1,7 +1,7 @@
 import ITransaction from '../../../domain/transactions/entities/transaction.interface';
 import ITransactionDto from '../dto/iTransaction.dto';
 import { OrderCriteria } from '../../../domain/repository.interface';
-import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
+import ITransactionCategory from '../../../domain/transactionCategories/entities/transactionCategory.interface';
 import IUser from '../../../domain/users/entities/user.interface';
 
 export default interface TransactionManagementInputPort {

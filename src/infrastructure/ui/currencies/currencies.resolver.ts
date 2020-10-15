@@ -1,12 +1,12 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { Inject, UseGuards, BadRequestException } from '@nestjs/common';
 import IRepository from '../../../core/domain/repository.interface';
-import ICurrency from '../../../core/domain/transactions/entities/currency.interface';
+import ICurrency from '../../../core/domain/currencies/entities/currency.interface';
 import {
   CreateCurrencyInput,
   UpdateCurrencyInput,
 } from '../../graphql.schema.generated';
-import CurrencyAbstractFactory from '../../../core/domain/transactions/factories/currencyFactory';
+import CurrencyAbstractFactory from '../../../core/domain/currencies/factories/currencyFactory';
 import GqlAuthGuard from '../auth/guards/gql-auth.guard';
 import { OnlyRoles } from '../../decorators/roles.decorator';
 import { Roles } from '../../../core/app/users/enums/roles.enum';

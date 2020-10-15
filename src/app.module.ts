@@ -9,7 +9,6 @@ import TransactionCategoriesModule from './infrastructure/ui/transactionCategori
 import TransactionsModule from './infrastructure/ui/transactions/transactions.module';
 import { LoggerModule } from './infrastructure/transport/logger/logger.module';
 
-// TODO: GRASP: create Singleton Facade-s
 // TODO: put into docker-compose:
 //       - SMTP-сервер
 //       - Kafka

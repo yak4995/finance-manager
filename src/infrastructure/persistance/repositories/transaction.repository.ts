@@ -6,9 +6,9 @@ import {
 } from '../../../core/domain/repository.interface';
 import { PrismaService } from '../prisma/prisma.service';
 import ITransaction from '../../../core/domain/transactions/entities/transaction.interface';
-import ICurrency from '../../../core/domain/transactions/entities/currency.interface';
+import ICurrency from '../../../core/domain/currencies/entities/currency.interface';
 import IUserCredential from '../../../core/app/users/entities/userCredential.interface';
-import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
+import ITransactionCategory from '../../../core/domain/transactionCategories/entities/transactionCategory.interface';
 import {
   FindManytransactionsArgs,
   transactionsOrderByInput,

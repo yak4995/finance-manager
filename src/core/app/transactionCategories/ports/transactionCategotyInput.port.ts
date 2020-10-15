@@ -1,5 +1,5 @@
-import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
-import ITransactionCategoryDto from '../dto/iTransactionCategory.dto';
+import ITransactionCategory from '../../../domain/transactionCategories/entities/transactionCategory.interface';
+import ITransactionCategoryDto from '../../transactionCategories/dto/iTransactionCategory.dto';
 import IUser from '../../../domain/users/entities/user.interface';
 
 export default interface TransactionCategoryInputPort {

@@ -1,5 +1,5 @@
-import TransactionCategoryOutputPort from '../../transactions/ports/transactionCategoryOutput.port';
-import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
+import TransactionCategoryOutputPort from '../../transactionCategories/ports/transactionCategoryOutput.port';
+import ITransactionCategory from '../../../domain/transactionCategories/entities/transactionCategory.interface';
 
 /* istanbul ignore next */
 export default class FakeTransactionCategoryOutputPort

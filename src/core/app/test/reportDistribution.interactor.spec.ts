@@ -3,18 +3,18 @@ import 'ts-jest';
 import IRepository, { Criteria } from '../../domain/repository.interface';
 import IDistributingMetricItem from '../transactions/entities/distributingMetricItem.interface';
 import ITransaction from '../../domain/transactions/entities/transaction.interface';
-import ITransactionCategory from '../../domain/transactions/entities/transactionCategory.interface';
-import TransactionCategoryAbstractFactory from '../../domain/transactions/factories/transactionCategoryFactory';
+import ITransactionCategory from '../../domain/transactionCategories/entities/transactionCategory.interface';
+import TransactionCategoryAbstractFactory from '../../domain/transactionCategories/factories/transactionCategoryFactory';
 import DistributingMetricItemAbstractFactory from '../transactions/factories/distributingMetricItemFactory';
 import TransactionAbstractFactory from '../../domain/transactions/factories/transactionFactory';
 import { AvailableAnalyticMetric } from '../../domain/transactions/enums/availableAnalyticMetric.enum';
 import { Period } from '../../domain/period/enums/period.enum';
 import TransactionAnalyticService from '../../domain/transactions/services/transactionAnalyticService';
-import TransactionCategoryService from '../../domain/transactions/services/transactionCategoryService';
+import TransactionCategoryService from '../../domain/transactionCategories/services/transactionCategoryService';
 import ReportHasBeenGeneratedEvent from '../transactions/events/reportHasBeenGenerated.event';
 import { EventStatus } from '../events/eventStatus.enum';
 import IEventDispatchService from '../events/eventDispatchService.interface';
-import ICurrencyConverterService from '../../domain/transactions/services/currencyConverterService.interface';
+import ICurrencyConverterService from '../../domain/currencies/services/currencyConverterService.interface';
 import ReportDistributionInteractor from '../transactions/interactors/reportDistribution.interactor';
 import ReportDistributionOutputPort from '../transactions/ports/reportDistributionOutput.port';
 
@@ -101,7 +101,7 @@ describe('TransactionCategoryInteractor tests', () => {
   const eventDispatcher: IEventDispatchService<ReportHasBeenGeneratedEvent> = new FakeEventDispatchGeneratedReportService();
   const outputPort: ReportDistributionOutputPort = new FakeReportDistributionOutputPort();
   const service: ReportDistributionInteractor = new ReportDistributionInteractor(
-    fakeDistributingMetricItemRepo,
+    fakeDistributingMetricItemFactory,
     fakeTransactionRepo,
     transactionAnalyticService,
     eventDispatcher,

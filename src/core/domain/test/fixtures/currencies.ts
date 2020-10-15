@@ -1,4 +1,4 @@
-import ICurrency from '../../transactions/entities/currency.interface';
+import ICurrency from '../../currencies/entities/currency.interface';
 
 /* istanbul ignore next */
 export const fakeCurrency: ICurrency = {

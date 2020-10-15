@@ -1,4 +1,4 @@
-import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
+import ITransactionCategory from '../../../domain/transactionCategories/entities/transactionCategory.interface';
 
 export default interface TransactionCategoryOutputPort {
   getTopCategories(result: ITransactionCategory[], e: Error): Promise<any>;

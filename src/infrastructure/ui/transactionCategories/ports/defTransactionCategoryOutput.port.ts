@@ -1,6 +1,6 @@
 import { FileLoggerService } from '../../../transport/logger/fileLogger.service';
-import TransactionCategoryOutputPort from '../../../../core/app/transactions/ports/transactionCategoryOutput.port';
-import ITransactionCategory from '../../../../core/domain/transactions/entities/transactionCategory.interface';
+import TransactionCategoryOutputPort from '../../../../core/app/transactionCategories/ports/transactionCategoryOutput.port';
+import ITransactionCategory from '../../../../core/domain/transactionCategories/entities/transactionCategory.interface';
 
 export default class DefTransactionCategoryOutputPort
   implements TransactionCategoryOutputPort {

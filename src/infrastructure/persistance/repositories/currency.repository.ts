@@ -5,7 +5,7 @@ import {
   OrderCriteria,
 } from '../../../core/domain/repository.interface';
 import { PrismaService } from '../prisma/prisma.service';
-import ICurrency from '../../../core/domain/transactions/entities/currency.interface';
+import ICurrency from '../../../core/domain/currencies/entities/currency.interface';
 import {
   currenciesOrderByInput,
   currenciesWhereInput,

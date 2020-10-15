@@ -8,8 +8,8 @@ import {
 } from '@nestjs/graphql';
 import { UseGuards, Inject, BadRequestException } from '@nestjs/common';
 import IRepository from '../../../../core/domain/repository.interface';
-import TransactionCategoryAbstractFactory from '../../../../core/domain/transactions/factories/transactionCategoryFactory';
-import ITransactionCategory from '../../../../core/domain/transactions/entities/transactionCategory.interface';
+import TransactionCategoryAbstractFactory from '../../../../core/domain/transactionCategories/factories/transactionCategoryFactory';
+import ITransactionCategory from '../../../../core/domain/transactionCategories/entities/transactionCategory.interface';
 import {
   CreateTransactionCategoryInput,
   UpdateTransactionCategoryInput,

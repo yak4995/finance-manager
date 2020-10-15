@@ -37,12 +37,4 @@ export default class TransactionCategoryService {
       parentCategory,
     });
   }
-
-  public getTransactionCategorySiblings(
-    category: ITransactionCategory,
-  ): Promise<ITransactionCategory[]> {
-    return this.transactionCategoryRepository.findByAndCriteria({
-      parentCategory: category.parentCategory,
-    });
-  }
 }

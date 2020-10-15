@@ -21,14 +21,14 @@ import {
   ApiForbiddenResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import TransactionCategoryInputPort from '../../../../core/app/transactions/ports/transactionCategotyInput.port';
+import TransactionCategoryInputPort from '../../../../core/app/transactionCategories/ports/transactionCategotyInput.port';
 import IUser from '../../../../core/domain/users/entities/user.interface';
-import ITransactionCategory from '../../../../core/domain/transactions/entities/transactionCategory.interface';
+import ITransactionCategory from '../../../../core/domain/transactionCategories/entities/transactionCategory.interface';
 import IRepository from '../../../../core/domain/repository.interface';
 import { User } from '../../../decorators/user.decorator';
 import UpdateTransactionCategoryDto from '../dtos/updateTransactionCategory.dto';
 import AddTransationCategoryDto from '../dtos/addTransationCategory.dto';
-import TransactionCategoryAbstractFactory from '../../../../core/domain/transactions/factories/transactionCategoryFactory';
+import TransactionCategoryAbstractFactory from '../../../../core/domain/transactionCategories/factories/transactionCategoryFactory';
 import { OnlyRoles } from '../../../decorators/roles.decorator';
 import { Roles } from '../../../../core/app/users/enums/roles.enum';
 import JwtAuthGuard from '../../auth/guards/jwt-auth.guard';

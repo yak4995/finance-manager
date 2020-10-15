@@ -1,9 +1,9 @@
 import 'ts-jest';
 
 import IRepository from '../repository.interface';
-import ITransactionCategory from '../transactions/entities/transactionCategory.interface';
-import ICurrencyConverterService from '../transactions/services/currencyConverterService.interface';
-import TransactionCategoryService from '../transactions/services/transactionCategoryService';
+import ITransactionCategory from '../transactionCategories/entities/transactionCategory.interface';
+import ICurrencyConverterService from '../currencies/services/currencyConverterService.interface';
+import TransactionCategoryService from '../transactionCategories/services/transactionCategoryService';
 import TransactionAnalyticService from '../transactions/services/transactionAnalyticService';
 
 import { Period } from '../period/enums/period.enum';

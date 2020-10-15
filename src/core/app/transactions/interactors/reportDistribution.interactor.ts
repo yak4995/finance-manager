@@ -9,22 +9,25 @@ import IEventDispatchService from '../../events/eventDispatchService.interface';
 import ReportHasBeenGeneratedEvent from '../events/reportHasBeenGenerated.event';
 import { Period } from '../../../domain/period/enums/period.enum';
 import { TransactionsComparisonDto } from '../../../domain/transactions/dto/transactionsComparison.dto';
+import DistributingMetricItemAbstractFactory from '../factories/distributingMetricItemFactory';
 
 export default class ReportDistributionInteractor
   implements ReportDistributionInputPort {
+  private readonly distributionMetricItemRepo: IRepository<
+    IDistributingMetricItem
+  >;
+
   constructor(
-    // TODO: replace to DistributingMetricItemAbstractFactory for cohesion increase and coupling reduction
-    // (see diagram)
-    private readonly distributionMetricItemRepo: IRepository<
-      IDistributingMetricItem
-    >,
+    private readonly distributionMetricItemFactory: DistributingMetricItemAbstractFactory,
     private readonly transactionsRepo: IRepository<ITransaction>,
     private readonly transactionAnalyticService: TransactionAnalyticService,
     private readonly eventDispatcher: IEventDispatchService<
       ReportHasBeenGeneratedEvent
     >,
     private readonly outputPort: ReportDistributionOutputPort,
-  ) {}
+  ) {
+    this.distributionMetricItemRepo = this.distributionMetricItemFactory.createDistributingMetricItemRepo();
+  }
 
   public async subscribe(items: IDistributingMetricItem[]): Promise<any> {
     try {

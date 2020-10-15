@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import TransactionCategoriesResolver from './resolvers/transactionCategories.resolver';
-import TransactionCategoryAbstractFactory from '../../../core/domain/transactions/factories/transactionCategoryFactory';
+import TransactionCategoryAbstractFactory from '../../../core/domain/transactionCategories/factories/transactionCategoryFactory';
 import TransactionCategoryFactory from '../../persistance/factories/transactionCategory.factory';
 import TransactionCategoryCreator from '../../persistance/creators/transactionCategory.creator';
 import PrismaModule from '../../persistance/prisma/prisma.module';
@@ -8,7 +8,7 @@ import TransactionCategoryRepository from '../../persistance/repositories/transa
 import { PrismaService } from '../../persistance/prisma/prisma.service';
 import AuthModule from '../auth/auth.module';
 import TransactionCategoriesController from './controllers/transactionCategories.controller';
-import TransactionCategoryInteractor from '../../../core/app/transactions/interactors/transactionCategory.interactor';
+import TransactionCategoryInteractor from '../../../core/app/transactionCategories/interactors/transactionCategory.interactor';
 import DefTransactionCategoryOutputPort from './ports/defTransactionCategoryOutput.port';
 import { TransactionCategorySearchService } from './services/transactionCategorySearch.service';
 import { BullModule, BullModuleOptions } from '@nestjs/bull';
@@ -16,10 +16,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import TransactionCategoryShouldBeDeletedListener from './listeners/transactionCategoryShouldBeDeleted.listener';
 import * as redis from 'redis';
 import { CacheService } from '../../cache.service';
-import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
+import ITransactionCategory from '../../../core/domain/transactionCategories/entities/transactionCategory.interface';
 import { RedisCacheService } from '../../redisCache.service';
 import TransactionCategoryShoulBeDeletedEventDispatcher from './services/transactionCategoryShoulBeDeletedDispatcher';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import { TransactionCategoriesFacade } from './transactionCategories.facade';
+import TransactionCategoryService from '../../../core/domain/transactionCategories/services/transactionCategoryService';
 
 @Module({
   imports: [
@@ -71,6 +73,16 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
       useClass: TransactionCategoryFactory,
     },
     {
+      provide: TransactionCategoryService,
+      useFactory: (
+        transactionCategoryFactory: TransactionCategoryAbstractFactory,
+      ) =>
+        new TransactionCategoryService(
+          transactionCategoryFactory.createTransactionCategoryRepo(),
+        ),
+      inject: [TransactionCategoryAbstractFactory],
+    },
+    {
       provide: 'CategoryCacheService',
       useFactory: (configService: ConfigService) =>
         new RedisCacheService(
@@ -89,12 +101,7 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
         searchService: TransactionCategorySearchService,
         outputPort: DefTransactionCategoryOutputPort,
       ) =>
-        new TransactionCategoryInteractor(
-          factory,
-          factory.createTransactionCategoryRepo(),
-          searchService,
-          outputPort,
-        ),
+        new TransactionCategoryInteractor(factory, searchService, outputPort),
       inject: [
         TransactionCategoryAbstractFactory,
         TransactionCategorySearchService,
@@ -116,6 +123,8 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
       ],
       inject: [TransactionCategoryAbstractFactory],
     },
+    TransactionCategoriesFacade,
   ],
+  exports: [TransactionCategoriesFacade],
 })
 export default class TransactionCategoriesModule {}

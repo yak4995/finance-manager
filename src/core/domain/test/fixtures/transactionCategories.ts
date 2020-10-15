@@ -1,4 +1,4 @@
-import ITransactionCategory from '../../transactions/entities/transactionCategory.interface';
+import ITransactionCategory from '../../transactionCategories/entities/transactionCategory.interface';
 
 /* istanbul ignore next */
 export const firstCategory: ITransactionCategory = {
@@ -78,16 +78,6 @@ export const testCategoriesChildrenMap: Array<[
 ]> = [
   [firstCategory.id, firstCategory, ['1', '2', '3', '4', '5', '6', '7']],
   [thirdCategory.id, thirdCategory, ['3', '6', '7']],
-];
-
-/* istanbul ignore next */
-export const testCategoriesSiblingsMap: Array<[
-  string,
-  ITransactionCategory,
-  string[],
-]> = [
-  [firstCategory.id, firstCategory, ['1']],
-  [thirdCategory.id, thirdCategory, ['2', '3', '4']],
 ];
 
 /* istanbul ignore next */

@@ -1,29 +1,27 @@
 import 'ts-jest';
 
-import IRepository, {
-  OrderCriteria,
-  Criteria,
-} from '../../domain/repository.interface';
+import IRepository, { Criteria } from '../../domain/repository.interface';
 import ITransaction from '../../domain/transactions/entities/transaction.interface';
-import ITransactionCategory from '../../domain/transactions/entities/transactionCategory.interface';
-import ICurrency from '../../domain/transactions/entities/currency.interface';
-import TransactionCategoryAbstractFactory from '../../domain/transactions/factories/transactionCategoryFactory';
+import ITransactionCategory from '../../domain/transactionCategories/entities/transactionCategory.interface';
+import ICurrency from '../../domain/currencies/entities/currency.interface';
+import TransactionCategoryAbstractFactory from '../../domain/transactionCategories/factories/transactionCategoryFactory';
 import TransactionAbstractFactory from '../../domain/transactions/factories/transactionFactory';
-import CurrencyAbstractFactory from '../../domain/transactions/factories/currencyFactory';
+import CurrencyAbstractFactory from '../../domain/currencies/factories/currencyFactory';
 import { Period } from '../../domain/period/enums/period.enum';
 import ISearchService from '../search/searchService.interface';
-import ICurrencyConverterService from '../../domain/transactions/services/currencyConverterService.interface';
+import ICurrencyConverterService from '../../domain/currencies/services/currencyConverterService.interface';
 import TransactionAnalyticService from '../../domain/transactions/services/transactionAnalyticService';
-import TransactionCategoryService from '../../domain/transactions/services/transactionCategoryService';
+import TransactionCategoryService from '../../domain/transactionCategories/services/transactionCategoryService';
 import TransactionInteractor from '../transactions/interactors/transaction.interactor';
 import TransactionOutputPort from '../transactions/ports/transactionOutput.port';
-
 import FakeCurrencyConverter from '../../domain/test/mocks/fakeCurrencyConverter';
 import FakeTransactionFactory from './mocks/fakeTransactionFactory';
 import FakeTransactionCategoryFactory from './mocks/fakeTransactionCategoryFactory';
 import FakeCurrencyFactory from './mocks/fakeCurrencyFactory';
 import FakeSearchService from './mocks/FakeSearchService';
 import FakeTransactionOutputPort from './mocks/fakeTransactionOutputPort';
+import FakeCurrenciesFacade from './mocks/fakeCurrenciesFacade';
+import FakeTransactionCategoriesFacade from './mocks/fakeTransactionCategoriesFacade';
 
 import {
   fakeBaseCurrency,
@@ -46,6 +44,8 @@ import {
   dateStartForTransactionChangeMetrics,
   dateEndForTransactionChangeMetrics,
 } from '../../domain/test/fixtures/dateRanges';
+import ITransactionCategoriesFacade from '../transactionCategories/transactionCategories.facade';
+import ICurrenciesFacade from '../currencies/currencies.facade';
 
 describe('TransactionInteractor tests', () => {
   const now: Date = new Date();
@@ -72,6 +72,25 @@ describe('TransactionInteractor tests', () => {
       },
     ),
   );
+  CurrencyAbstractFactory.setInstance(
+    new FakeCurrencyFactory([fakeCurrency, fakeBaseCurrency], {
+      getInstance: (fields: Criteria<ICurrency>) => null,
+    }),
+  );
+  const fakeTransactionCategoryFactory: TransactionCategoryAbstractFactory = FakeTransactionCategoryFactory.getInstance();
+  const fakeTransactionCategoryRepo: IRepository<ITransactionCategory> = fakeTransactionCategoryFactory.createTransactionCategoryRepo();
+  const fakeCurrencyFactory: CurrencyAbstractFactory = FakeCurrencyFactory.getInstance();
+  const transactionCategoryService: TransactionCategoryService = new TransactionCategoryService(
+    fakeTransactionCategoryRepo,
+  );
+  const fakeTransactionCategoriesFacade: ITransactionCategoriesFacade = new FakeTransactionCategoriesFacade(
+    transactionCategoryService,
+    fakeTransactionCategoryFactory,
+  );
+  const fakeCurrenciesFacade: ICurrenciesFacade = new FakeCurrenciesFacade(
+    fakeCurrencyFactory,
+  );
+
   const transactionSet: ITransaction[] = transactionForTransactionChangeMetrics.map(
     (t: ITransaction): ITransaction => {
       t.owner = { id: 'fakeId' };
@@ -91,37 +110,23 @@ describe('TransactionInteractor tests', () => {
       }),
     }),
   );
-  CurrencyAbstractFactory.setInstance(
-    new FakeCurrencyFactory([fakeCurrency, fakeBaseCurrency], {
-      getInstance: (fields: Criteria<ICurrency>) => null,
-    }),
-  );
   const fakeTransactionFactory: TransactionAbstractFactory = FakeTransactionFactory.getInstance();
-  const fakeTransactionCategoryFactory: TransactionCategoryAbstractFactory = FakeTransactionCategoryFactory.getInstance();
-  const fakeCurrencyFactory: CurrencyAbstractFactory = FakeCurrencyFactory.getInstance();
-  const fakeTransactionCategoryRepo: IRepository<ITransactionCategory> = fakeTransactionCategoryFactory.createTransactionCategoryRepo();
-  const transactionCategoryService: TransactionCategoryService = new TransactionCategoryService(
-    fakeTransactionCategoryRepo,
-  );
   const fakeTransactionRepo: IRepository<ITransaction> = fakeTransactionFactory.createTransactionRepo();
   const fakeCurrencyConverter: ICurrencyConverterService = new FakeCurrencyConverter();
-  const transactionAnalyticservice: TransactionAnalyticService = new TransactionAnalyticService(
+  const transactionAnalyticService: TransactionAnalyticService = new TransactionAnalyticService(
     transactionSet,
     fakeCurrencyConverter,
-    transactionCategoryService,
+    fakeTransactionCategoriesFacade,
   );
-  const fakeCurrencyRepo: IRepository<ICurrency> = fakeCurrencyFactory.createCurrencyRepo();
   const fakeTransactionsSearchService: ISearchService<ITransaction> = new FakeSearchService<
     ITransaction
   >(generateTransactionsForSearch(now));
   const fakeTransactionOutputPort: TransactionOutputPort = new FakeTransactionOutputPort();
   const service: TransactionInteractor = new TransactionInteractor(
     fakeTransactionFactory,
-    transactionCategoryService,
-    fakeTransactionCategoryRepo,
-    fakeTransactionRepo,
-    fakeCurrencyRepo,
-    transactionAnalyticservice,
+    fakeTransactionCategoriesFacade,
+    fakeCurrenciesFacade,
+    transactionAnalyticService,
     fakeTransactionsSearchService,
     fakeTransactionOutputPort,
   );

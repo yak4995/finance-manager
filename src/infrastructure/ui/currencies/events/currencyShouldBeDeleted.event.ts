@@ -1,6 +1,6 @@
 import IEvent from '../../../../core/app/events/event.interface';
 import { EventStatus } from '../../../../core/app/events/eventStatus.enum';
-import ICurrency from '../../../../core/domain/transactions/entities/currency.interface';
+import ICurrency from '../../../../core/domain/currencies/entities/currency.interface';
 
 export default class CurrencyShouldBeDeletedEvent implements IEvent {
   private eventState: EventStatus = EventStatus.WAITING;

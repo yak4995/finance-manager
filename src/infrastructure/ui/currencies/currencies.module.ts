@@ -1,5 +1,5 @@
 import { Module, HttpModule } from '@nestjs/common';
-import CurrencyAbstractFactory from '../../../core/domain/transactions/factories/currencyFactory';
+import CurrencyAbstractFactory from '../../../core/domain/currencies/factories/currencyFactory';
 import CurrenciesResolver from './currencies.resolver';
 import CurrencyCreator from '../../persistance/creators/currency.creator';
 import CurrencyFactory from '../../persistance/factories/currency.factory';
@@ -12,6 +12,7 @@ import { BullModule, BullModuleOptions } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
 import CurrencyShouldBeDeletedEventDispatcher from './services/currencyShouldBeDeletedEventDispacher';
 import CurrencyShouldBeDeletedEventListener from './listeners/currencyShouldBeDeletedEvent.listener';
+import { CurrenciesFacade } from './currencies.facade';
 
 @Module({
   imports: [
@@ -60,7 +61,8 @@ import CurrencyShouldBeDeletedEventListener from './listeners/currencyShouldBeDe
       ],
       inject: [CurrencyAbstractFactory],
     },
+    CurrenciesFacade,
   ],
-  exports: [CurrencyConverterService],
+  exports: [CurrencyConverterService, CurrenciesFacade],
 })
 export default class CurrenciesModule {}

@@ -1,5 +1,5 @@
-import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
-import ICurrency from '../../../domain/transactions/entities/currency.interface';
+import ITransactionCategory from '../../../domain/transactionCategories/entities/transactionCategory.interface';
+import ICurrency from '../../../domain/currencies/entities/currency.interface';
 import { Period } from '../../../domain/period/enums/period.enum';
 import ITransaction from '../../../domain/transactions/entities/transaction.interface';
 

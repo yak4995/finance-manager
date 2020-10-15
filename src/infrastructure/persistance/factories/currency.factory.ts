@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
-import CurrencyAbstractFactory from '../../../core/domain/transactions/factories/currencyFactory';
+import CurrencyAbstractFactory from '../../../core/domain/currencies/factories/currencyFactory';
 import EntityCreator from '../../../core/domain/entityCreator.interface';
-import ICurrency from '../../../core/domain/transactions/entities/currency.interface';
+import ICurrency from '../../../core/domain/currencies/entities/currency.interface';
 import IRepository from '../../../core/domain/repository.interface';
 
 @Injectable()

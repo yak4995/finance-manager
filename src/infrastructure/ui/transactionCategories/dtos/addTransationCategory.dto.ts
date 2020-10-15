@@ -1,4 +1,4 @@
-import ITransactionCategoryDto from '../../../../core/app/transactions/dto/iTransactionCategory.dto';
+import ITransactionCategoryDto from '../../../../core/app/transactionCategories/dto/iTransactionCategory.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator';
 

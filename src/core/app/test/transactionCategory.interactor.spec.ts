@@ -1,9 +1,9 @@
 import 'ts-jest';
 
 import IRepository, { Criteria } from '../../domain/repository.interface';
-import ITransactionCategory from '../../domain/transactions/entities/transactionCategory.interface';
-import TransactionCategoryAbstractFactory from '../../domain/transactions/factories/transactionCategoryFactory';
-import TransactionCategoryInteractor from '../transactions/interactors/transactionCategory.interactor';
+import ITransactionCategory from '../../domain/transactionCategories/entities/transactionCategory.interface';
+import TransactionCategoryAbstractFactory from '../../domain/transactionCategories/factories/transactionCategoryFactory';
+import TransactionCategoryInteractor from '../transactionCategories/interactors/transactionCategory.interactor';
 
 import FakeSearchService from './mocks/FakeSearchService';
 import FakeTransactionCategoryOutputPort from './mocks/fakeTransactionCategoryOutputPort';
@@ -48,7 +48,6 @@ describe('TransactionCategoryInteractor tests', () => {
   const fakeTransactionCategoryRepo: IRepository<ITransactionCategory> = fakeTransactionCategoryFactory.createTransactionCategoryRepo();
   const service: TransactionCategoryInteractor = new TransactionCategoryInteractor(
     fakeTransactionCategoryFactory,
-    fakeTransactionCategoryRepo,
     new FakeSearchService<ITransactionCategory>(transactionCategoriesForSearch),
     new FakeTransactionCategoryOutputPort(),
   );

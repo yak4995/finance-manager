@@ -17,7 +17,6 @@ import {
   Patch,
   Delete,
   BadRequestException,
-  Logger,
 } from '@nestjs/common';
 import JwtAuthGuard from '../../../ui/auth/guards/jwt-auth.guard';
 import { OnlyRoles } from '../../../decorators/roles.decorator';
@@ -27,17 +26,17 @@ import ITransaction from '../../../../core/domain/transactions/entities/transact
 import TransactionManagementInputPort from '../../../../core/app/transactions/ports/transactionManagementInput.port';
 import TransactionAnalyticInputPort from '../../../../core/app/transactions/ports/transactionAnalyticInput.port';
 import TransactionAbstractFactory from '../../../../core/domain/transactions/factories/transactionFactory';
-import ITransactionCategory from '../../../../core/domain/transactions/entities/transactionCategory.interface';
-import ICurrency from '../../../../core/domain/transactions/entities/currency.interface';
+import ITransactionCategory from '../../../../core/domain/transactionCategories/entities/transactionCategory.interface';
+import ICurrency from '../../../../core/domain/currencies/entities/currency.interface';
 import IUser from '../../../../core/domain/users/entities/user.interface';
 import { User } from '../../../decorators/user.decorator';
 import { PaginationDto } from '../dtos/pagination.dto';
-import TransactionCategoryAbstractFactory from '../../../../core/domain/transactions/factories/transactionCategoryFactory';
 import { TransactionsCategoryRangeDto } from '../dtos/transactionsCategoryRange.dto';
 import { TransactionDto } from '../dtos/transaction.dto';
-import CurrencyAbstractFactory from '../../../../core/domain/transactions/factories/currencyFactory';
 import { TransactionsDateRangeDto } from '../dtos/transactionsDateRange.dto';
 import { TransactionsRangeDto } from '../dtos/transactionsRange.dto';
+import { CurrenciesFacade } from '../../../ui/currencies/currencies.facade';
+import { TransactionCategoriesFacade } from '../../../ui/transactionCategories/transactionCategories.facade';
 
 @ApiBearerAuth()
 @ApiTags('Transaction management')
@@ -63,20 +62,16 @@ import { TransactionsRangeDto } from '../dtos/transactionsRange.dto';
 @Controller('transactions')
 export default class TransactionController {
   private readonly transactionsRepo: IRepository<ITransaction>;
-  private readonly transactionCategoryRepo: IRepository<ITransactionCategory>;
-  private readonly currencyRepo: IRepository<ICurrency>;
 
   constructor(
     @Inject('TransactionManagementInputPort & TransactionAnalyticInputPort')
     private readonly transactionInputPort: TransactionManagementInputPort &
       TransactionAnalyticInputPort,
     private readonly transactionFactory: TransactionAbstractFactory,
-    private readonly transactionCategoryFactory: TransactionCategoryAbstractFactory,
-    private readonly currencyFactory: CurrencyAbstractFactory,
+    private readonly currenciesFacade: CurrenciesFacade,
+    private readonly transactionCategoriesFacade: TransactionCategoriesFacade,
   ) {
     this.transactionsRepo = this.transactionFactory.createTransactionRepo();
-    this.transactionCategoryRepo = this.transactionCategoryFactory.createTransactionCategoryRepo();
-    this.currencyRepo = this.currencyFactory.createCurrencyRepo();
   }
 
   @ApiBadRequestResponse({
@@ -115,7 +110,7 @@ export default class TransactionController {
     @Query() payload: TransactionsCategoryRangeDto,
   ): Promise<any> {
     try {
-      const category: ITransactionCategory = await this.transactionCategoryRepo.findById(
+      const category: ITransactionCategory = await this.transactionCategoriesFacade.findById(
         payload.categoryId,
       );
       return this.transactionInputPort.getTransactionsByCategory(
@@ -205,7 +200,7 @@ export default class TransactionController {
         ITransactionCategory,
         ITransaction[],
       ] = await Promise.all([
-        this.transactionCategoryRepo.findById(payload.categoryId),
+        this.transactionCategoriesFacade.findById(payload.categoryId),
         this.transactionsRepo.findByAndCriteria({
           owner: user,
           range: {
@@ -243,10 +238,8 @@ export default class TransactionController {
         ITransactionCategory,
         ITransaction[],
       ] = await Promise.all([
-        this.currencyRepo.findOneByAndCriteria({
-          code: 'UAH',
-        }),
-        this.transactionCategoryRepo.findById(payload.categoryId),
+        this.currenciesFacade.findByCode('UAH'),
+        this.transactionCategoriesFacade.findById(payload.categoryId),
         this.transactionsRepo.findByAndCriteria({
           owner: user,
           range: {
@@ -296,9 +289,7 @@ export default class TransactionController {
     @Query() payload: TransactionsDateRangeDto,
   ): Promise<any> {
     const [baseCurrency, transactions] = await Promise.all([
-      this.currencyRepo.findOneByAndCriteria({
-        code: 'UAH',
-      }),
+      this.currenciesFacade.findByCode('UAH'),
       this.transactionsRepo.findByAndCriteria({
         owner: user,
         range: {
@@ -332,7 +323,7 @@ export default class TransactionController {
         ITransactionCategory,
         ITransaction[],
       ] = await Promise.all([
-        this.transactionCategoryRepo.findById(payload.categoryId),
+        this.transactionCategoriesFacade.findById(payload.categoryId),
         this.transactionsRepo.findByAndCriteria({
           owner: user,
           range: {
@@ -370,10 +361,8 @@ export default class TransactionController {
         ITransactionCategory,
         ITransaction[],
       ] = await Promise.all([
-        this.currencyRepo.findOneByAndCriteria({
-          code: 'UAH',
-        }),
-        this.transactionCategoryRepo.findById(payload.categoryId),
+        this.currenciesFacade.findByCode('UAH'),
+        this.transactionCategoriesFacade.findById(payload.categoryId),
         this.transactionsRepo.findByAndCriteria({
           owner: user,
           range: {
@@ -411,7 +400,7 @@ export default class TransactionController {
         ITransactionCategory,
         ITransaction[],
       ] = await Promise.all([
-        this.transactionCategoryRepo.findById(payload.categoryId),
+        this.transactionCategoriesFacade.findById(payload.categoryId),
         this.transactionsRepo.findByAndCriteria({
           owner: user,
           range: {
@@ -450,10 +439,8 @@ export default class TransactionController {
         ITransactionCategory,
         ITransaction[],
       ] = await Promise.all([
-        this.currencyRepo.findOneByAndCriteria({
-          code: 'UAH',
-        }),
-        this.transactionCategoryRepo.findById(payload.categoryId),
+        this.currenciesFacade.findByCode('UAH'),
+        this.transactionCategoriesFacade.findById(payload.categoryId),
         this.transactionsRepo.findByAndCriteria({
           owner: user,
           range: {

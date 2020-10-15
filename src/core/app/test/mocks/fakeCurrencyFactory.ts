@@ -1,5 +1,5 @@
-import CurrencyAbstractFactory from '../../../domain/transactions/factories/currencyFactory';
-import ICurrency from '../../../domain/transactions/entities/currency.interface';
+import CurrencyAbstractFactory from '../../../domain/currencies/factories/currencyFactory';
+import ICurrency from '../../../domain/currencies/entities/currency.interface';
 import EntityCreator from '../../../domain/entityCreator.interface';
 import IRepository, { Criteria } from '../../../domain/repository.interface';
 import FakeRepo from '../../../domain/test/mocks/fakeRepo';

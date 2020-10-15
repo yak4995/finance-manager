@@ -1,7 +1,4 @@
 import { Module } from '@nestjs/common';
-import TransactionCategoryAbstractFactory from '../../../core/domain/transactions/factories/transactionCategoryFactory';
-import TransactionCategoryFactory from '../../persistance/factories/transactionCategory.factory';
-import TransactionCategoryRepository from '../../persistance/repositories/transactionCategory.repository';
 import { PrismaService } from '../../persistance/prisma/prisma.service';
 import AuthModule from '../auth/auth.module';
 import TransactionController from './controllers/transaction.controller';
@@ -12,28 +9,22 @@ import PrismaModule from '../../persistance/prisma/prisma.module';
 import TransactionAbstractFactory from '../../../core/domain/transactions/factories/transactionFactory';
 import TransactionFactory from '../../persistance/factories/transaction.factory';
 import TransactionInteractor from '../../../core/app/transactions/interactors/transaction.interactor';
-import CurrencyAbstractFactory from '../../../core/domain/transactions/factories/currencyFactory';
 import TransactionAnalyticService from '../../../core/domain/transactions/services/transactionAnalyticService';
 import CurrencyConverterService from '../currencies/services/currencyConverter.service';
-import TransactionCategoryService from '../../../core/domain/transactions/services/transactionCategoryService';
-import CurrencyFactory from '../../persistance/factories/currency.factory';
-import TransactionCategoryCreator from '../../persistance/creators/transactionCategory.creator';
 import TransactionRepository from '../../persistance/repositories/transaction.repository';
-import CurrencyRepository from '../../persistance/repositories/currency.repository';
-import CurrencyCreator from '../../persistance/creators/currency.creator';
 import CurrenciesModule from '../currencies/currencies.module';
-import * as redis from 'redis';
-import { CacheService } from '../../cache.service';
-import ITransactionCategory from '../../../core/domain/transactions/entities/transactionCategory.interface';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { RedisCacheService } from '../../redisCache.service';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import TransactionCategoriesModule from '../transactionCategories/transactionCategories.module';
+import { TransactionCategoriesFacade } from '../transactionCategories/transactionCategories.facade';
+import { CurrenciesFacade } from '../currencies/currencies.facade';
 
 @Module({
   imports: [
     AuthModule,
     PrismaModule,
     CurrenciesModule,
+    TransactionCategoriesModule,
     ElasticsearchModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -56,101 +47,44 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
       inject: [PrismaService],
     },
     {
-      provide: 'TransactionCategoryCreator',
-      useClass: TransactionCategoryCreator,
-    },
-    {
-      provide: 'TransactionCategoryRepositoryForFactory',
-      useFactory: (
-        prisma: PrismaService,
-        cacheService: CacheService<ITransactionCategory>,
-      ) => {
-        return new TransactionCategoryRepository(prisma, cacheService);
-      },
-      inject: [PrismaService, 'CategoryCacheService'],
-    },
-    {
-      provide: 'CategoryCacheService',
-      useFactory: (configService: ConfigService) =>
-        new RedisCacheService(
-          redis.createClient({
-            host: configService.get('QUEUE_HOST'),
-            port: configService.get('QUEUE_PORT'),
-            password: configService.get('QUEUE_PASSWORD'),
-          }),
-        ),
-      inject: [ConfigService],
-    },
-    {
-      provide: 'CurrencyCreator',
-      useClass: CurrencyCreator,
-    },
-    {
-      provide: 'CurrencyRepositoryForFactory',
-      useFactory: (prisma: PrismaService) => new CurrencyRepository(prisma),
-      inject: [PrismaService],
-    },
-    {
       provide: TransactionAbstractFactory,
       useClass: TransactionFactory,
-    },
-    {
-      provide: TransactionCategoryAbstractFactory,
-      useClass: TransactionCategoryFactory,
-    },
-    {
-      provide: CurrencyAbstractFactory,
-      useClass: CurrencyFactory,
-    },
-    {
-      provide: TransactionCategoryService,
-      useFactory: (
-        transactionCategoryFactory: TransactionCategoryAbstractFactory,
-      ) =>
-        new TransactionCategoryService(
-          transactionCategoryFactory.createTransactionCategoryRepo(),
-        ),
-      inject: [TransactionCategoryAbstractFactory],
     },
     {
       provide: TransactionAnalyticService,
       useFactory: (
         converter: CurrencyConverterService,
-        transactionCategoryService: TransactionCategoryService,
+        transactionCategoriesFacade: TransactionCategoriesFacade,
       ) =>
         new TransactionAnalyticService(
           [],
           converter,
-          transactionCategoryService,
+          transactionCategoriesFacade,
         ),
-      inject: [CurrencyConverterService, TransactionCategoryService],
+      inject: [CurrencyConverterService, TransactionCategoriesFacade],
     },
     {
       provide: 'TransactionManagementInputPort & TransactionAnalyticInputPort',
       useFactory: (
         transactionFactory: TransactionAbstractFactory,
-        transactionCategoryFactory: TransactionCategoryAbstractFactory,
-        currencyFactory: CurrencyAbstractFactory,
-        transactionCategoryService: TransactionCategoryService,
+        transactionCategoriesFacade: TransactionCategoriesFacade,
+        currenciesFacade: CurrenciesFacade,
         transactionAnalyticService: TransactionAnalyticService,
         searchService: TransactionSearchService,
         outputPort: DefTransactionOutputPort,
       ) =>
         new TransactionInteractor(
           transactionFactory,
-          transactionCategoryService,
-          transactionCategoryFactory.createTransactionCategoryRepo(),
-          transactionFactory.createTransactionRepo(),
-          currencyFactory.createCurrencyRepo(),
+          transactionCategoriesFacade,
+          currenciesFacade,
           transactionAnalyticService,
           searchService,
           outputPort,
         ),
       inject: [
         TransactionAbstractFactory,
-        TransactionCategoryAbstractFactory,
-        CurrencyAbstractFactory,
-        TransactionCategoryService,
+        TransactionCategoriesFacade,
+        CurrenciesFacade,
         TransactionAnalyticService,
         TransactionSearchService,
         DefTransactionOutputPort,

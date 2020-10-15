@@ -2,8 +2,8 @@ import IPersistantEntity from '../../../domain/persistantEntity';
 import IUserCredential from '../../users/entities/userCredential.interface';
 import { Period } from '../../../domain/period/enums/period.enum';
 import { AvailableAnalyticMetric } from '../../../domain/transactions/enums/availableAnalyticMetric.enum';
-import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
-import ICurrency from '../../../domain/transactions/entities/currency.interface';
+import ITransactionCategory from '../../../domain/transactionCategories/entities/transactionCategory.interface';
+import ICurrency from '../../../domain/currencies/entities/currency.interface';
 
 // Probably children: TypeOrmDistributingMetricItemEntity, MongooseDistributingMetricItemSchema, XMLDistributingMetricItemEntity
 export default interface IDistributingMetricItem extends IPersistantEntity {

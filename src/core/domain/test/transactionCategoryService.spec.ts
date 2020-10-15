@@ -1,8 +1,8 @@
 import 'ts-jest';
 
 import IRepository from '../repository.interface';
-import ITransactionCategory from '../transactions/entities/transactionCategory.interface';
-import TransactionCategoryService from '../transactions/services/transactionCategoryService';
+import ITransactionCategory from '../transactionCategories/entities/transactionCategory.interface';
+import TransactionCategoryService from '../transactionCategories/services/transactionCategoryService';
 
 import FakeRepo from './mocks/fakeRepo';
 
@@ -15,7 +15,6 @@ import {
   sixthCategory,
   seventhCategory,
   testCategoriesChildrenMap,
-  testCategoriesSiblingsMap,
 } from './fixtures/transactionCategories';
 
 describe('TransactionCategoryService tests', () => {
@@ -35,7 +34,6 @@ describe('TransactionCategoryService tests', () => {
   it('check methods existance', () => {
     expect(service.getTransactionCategoryChildren).toBeDefined();
     expect(service.getTransactionCategoryDirectChildren).toBeDefined();
-    expect(service.getTransactionCategorySiblings).toBeDefined();
   });
 
   it.each(testCategoriesChildrenMap)(
@@ -67,23 +65,4 @@ describe('TransactionCategoryService tests', () => {
       throw e;
     }
   });
-
-  it.each(testCategoriesSiblingsMap)(
-    'check getTransactionCategorySiblings method: for test category %s',
-    async (
-      categoryId: string,
-      category: ITransactionCategory,
-      categorySiblingsIds: string[],
-    ): Promise<void> => {
-      try {
-        expect(
-          (await service.getTransactionCategorySiblings(category)).map(
-            (r: ITransactionCategory): string => r.id,
-          ),
-        ).toEqual(categorySiblingsIds);
-      } catch (e) {
-        throw e;
-      }
-    },
-  );
 });

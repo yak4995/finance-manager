@@ -1,22 +1,23 @@
-import TransactionCategoryInputPort from '../ports/transactionCategotyInput.port';
 import IRepository from '../../../domain/repository.interface';
-import ITransactionCategory from '../../../domain/transactions/entities/transactionCategory.interface';
+import ITransactionCategory from '../../../domain/transactionCategories/entities/transactionCategory.interface';
 import IUser from '../../../domain/users/entities/user.interface';
 import ITransactionCategoryDto from '../dto/iTransactionCategory.dto';
 import TransactionCategoryOutputPort from '../ports/transactionCategoryOutput.port';
 import ISearchService from '../../search/searchService.interface';
-import TransactionCategoryAbstractFactory from '../../../domain/transactions/factories/transactionCategoryFactory';
+import TransactionCategoryAbstractFactory from '../../../domain/transactionCategories/factories/transactionCategoryFactory';
+import TransactionCategoryInputPort from '../ports/transactionCategotyInput.port';
 
 export default class TransactionCategoryInteractor
   implements TransactionCategoryInputPort {
+  private readonly transactionCategoryRepo: IRepository<ITransactionCategory>;
+
   constructor(
     private readonly transactionCategoryFactory: TransactionCategoryAbstractFactory,
-    // TODO: get from factory for cohesion increase and coupling reduction
-    // (see diagram)
-    private readonly transactionCategoryRepo: IRepository<ITransactionCategory>,
     private readonly searchService: ISearchService<ITransactionCategory>,
     private readonly transactionCategoryOutputPort: TransactionCategoryOutputPort,
-  ) {}
+  ) {
+    this.transactionCategoryRepo = this.transactionCategoryFactory.createTransactionCategoryRepo();
+  }
 
   async getTopCategories(user: IUser): Promise<any> {
     try {
