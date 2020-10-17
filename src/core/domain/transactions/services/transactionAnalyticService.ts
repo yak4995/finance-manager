@@ -6,7 +6,7 @@ import ICurrencyConverterService from '../../currencies/services/currencyConvert
 import { Period } from '../../period/enums/period.enum';
 import { TransactionsComparisonDto } from '../dto/transactionsComparison.dto';
 import { InvalidDateRangeException } from '../exceptions/invalidDateRange.exception';
-import ITransactionCategoriesFacade from '../../../app/transactionCategories/transactionCategories.facade';
+import ITransactionCategoriesFacade from '../../transactionCategories/transactionCategories.facade';
 
 export default class TransactionAnalyticService {
   constructor(

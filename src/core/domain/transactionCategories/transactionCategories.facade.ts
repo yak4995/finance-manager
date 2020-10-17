@@ -1,4 +1,4 @@
-import ITransactionCategory from '../../domain/transactionCategories/entities/transactionCategory.interface';
+import ITransactionCategory from './entities/transactionCategory.interface';
 
 export default interface ITransactionCategoriesFacade {
   getTransactionCategoryChildren(

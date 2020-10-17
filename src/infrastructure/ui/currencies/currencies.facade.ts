@@ -1,6 +1,6 @@
 import CurrencyAbstractFactory from '../../../core/domain/currencies/factories/currencyFactory';
 import IRepository from '../../../core/domain/repository.interface';
-import ICurrenciesFacade from '../../../core/app/currencies/currencies.facade';
+import ICurrenciesFacade from '../../../core/domain/currencies/currencies.facade';
 import ICurrency from '../../../core/domain/currencies/entities/currency.interface';
 import { Injectable } from '@nestjs/common';
 

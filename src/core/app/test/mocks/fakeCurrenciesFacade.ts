@@ -1,6 +1,6 @@
 import IRepository from '../../../domain/repository.interface';
 import ICurrency from '../../../domain/currencies/entities/currency.interface';
-import ICurrenciesFacade from '../../currencies/currencies.facade';
+import ICurrenciesFacade from '../../../domain/currencies/currencies.facade';
 import CurrencyAbstractFactory from '../../../domain/currencies/factories/currencyFactory';
 
 export default class FakeCurrenciesFacade implements ICurrenciesFacade {

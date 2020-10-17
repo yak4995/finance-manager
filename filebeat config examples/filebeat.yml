@@ -1,0 +1,7 @@
+filebeat.inputs:
+  - type: log
+    paths:
+      - /Users/jurijkryvokhyzha/finance-manager/logs/*.txt
+
+output.logstash:
+  hosts: ["localhost:5044"]

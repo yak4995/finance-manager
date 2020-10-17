@@ -15,8 +15,8 @@ import ISearchService from '../../search/searchService.interface';
 import { TransactionsComparisonDto } from '../../../../core/domain/transactions/dto/transactionsComparison.dto';
 import TransactionAbstractFactory from '../../../domain/transactions/factories/transactionFactory';
 import { BadRequestException } from '@nestjs/common';
-import ITransactionCategoriesFacade from '../../../app/transactionCategories/transactionCategories.facade';
-import ICurrenciesFacade from '../../../app/currencies/currencies.facade';
+import ITransactionCategoriesFacade from '../../../domain/transactionCategories/transactionCategories.facade';
+import ICurrenciesFacade from '../../../domain/currencies/currencies.facade';
 
 export default class TransactionInteractor
   implements TransactionAnalyticInputPort, TransactionManagementInputPort {

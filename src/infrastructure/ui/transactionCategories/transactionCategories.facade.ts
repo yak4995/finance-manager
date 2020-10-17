@@ -1,7 +1,7 @@
 import IRepository from '../../../core/domain/repository.interface';
 import ITransactionCategory from '../../../core/domain/transactionCategories/entities/transactionCategory.interface';
 import TransactionCategoryService from '../../../core/domain/transactionCategories/services/transactionCategoryService';
-import ITransactionCategoriesFacade from '../../../core/app/transactionCategories/transactionCategories.facade';
+import ITransactionCategoriesFacade from '../../../core/domain/transactionCategories/transactionCategories.facade';
 import { Injectable } from '@nestjs/common';
 import TransactionCategoryAbstractFactory from '../../../core/domain/transactionCategories/factories/transactionCategoryFactory';
 

@@ -1,4 +1,4 @@
-import ICurrency from '../../domain/currencies/entities/currency.interface';
+import ICurrency from './entities/currency.interface';
 
 export default interface ICurrenciesFacade {
   findById(id: string): Promise<ICurrency>;

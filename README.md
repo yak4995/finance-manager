@@ -73,6 +73,10 @@ GraphQL explanations:
 
 In resolvers, that import GQL types, we import them from src/infrastructure/graphql.schema.generated.ts, that will be created by NestJS GraphQLModule from src/infrastructure/ui/schema.graphql (graphql types for UI) when you run "npm i".
 
+Logging via ELK:
+
+If you want provide logging via ELK stack, you already have ElasticSearch and Kibana in docker-compose. But Filebeat and Logstash you need install manually. There are some config files, which you could replace instead of defaults. They are in "filebeat config examples" and "logstash config examples" dirs.
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>

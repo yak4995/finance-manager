@@ -1,4 +1,4 @@
-import ITransactionCategoriesFacade from '../../transactionCategories/transactionCategories.facade';
+import ITransactionCategoriesFacade from '../../../domain/transactionCategories/transactionCategories.facade';
 import IRepository from '../../../domain/repository.interface';
 import ITransactionCategory from '../../../domain/transactionCategories/entities/transactionCategory.interface';
 import TransactionCategoryAbstractFactory from '../../../domain/transactionCategories/factories/transactionCategoryFactory';
