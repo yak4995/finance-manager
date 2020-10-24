@@ -44,8 +44,8 @@ import {
   dateStartForTransactionChangeMetrics,
   dateEndForTransactionChangeMetrics,
 } from '../../domain/test/fixtures/dateRanges';
-import ITransactionCategoriesFacade from '../transactionCategories/transactionCategories.facade';
-import ICurrenciesFacade from '../currencies/currencies.facade';
+import ITransactionCategoriesFacade from '../../domain/transactionCategories/transactionCategories.facade';
+import ICurrenciesFacade from '../../domain/currencies/currencies.facade';
 
 describe('TransactionInteractor tests', () => {
   const now: Date = new Date();
@@ -598,8 +598,14 @@ describe('TransactionInteractor tests', () => {
         Period.YEAR,
       ),
     ).toEqual({
-      '30.09.2017': 5,
-      '30.09.2018': 5,
+      '12/30/2017': 0,
+      '12/30/2018': 0,
+      '3/30/2018': 0,
+      '3/30/2019': 0,
+      '6/30/2018': 0,
+      '6/30/2019': 0,
+      '9/30/2018': 0,
+      '9/30/2019': 0,
     });
   });
 
@@ -613,8 +619,14 @@ describe('TransactionInteractor tests', () => {
         fakeBaseCurrency,
       ),
     ).toEqual({
-      '30.09.2017': 250_02,
-      '30.09.2018': 250_02,
+      '12/30/2017': 0,
+      '12/30/2018': 0,
+      '3/30/2018': 0,
+      '3/30/2019': 0,
+      '6/30/2018': 0,
+      '6/30/2019': 0,
+      '9/30/2018': 0,
+      '9/30/2019': 0,
     });
   });
 });

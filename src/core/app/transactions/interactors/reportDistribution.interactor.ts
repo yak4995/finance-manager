@@ -67,6 +67,7 @@ export default class ReportDistributionInteractor
       this.transactionAnalyticService.transactions = transactions;
       let message: number | TransactionsComparisonDto = null;
       const [startDate, endDate] = this.defineDateRange(item.period);
+      // TODO: to strategy?
       switch (item.metric) {
         case AvailableAnalyticMetric.TRANSACTIONS_COUNT_BY_CATEGORY_AND_DATE_RANGE:
           message = await this.transactionAnalyticService.getTransactionsCountBy(
@@ -141,6 +142,7 @@ export default class ReportDistributionInteractor
   /* istanbul ignore next */
   private defineDateRange(period: Period): [Date, Date] {
     const startDate: Date = new Date();
+    // TODO: to strategy?
     switch (period) {
       case Period.MONTH:
         if (startDate.getMonth() > 1) {

@@ -4,7 +4,7 @@ import ICurrenciesFacade from '../../../core/domain/currencies/currencies.facade
 import ICurrency from '../../../core/domain/currencies/entities/currency.interface';
 import { Injectable } from '@nestjs/common';
 
-// TODO: make singleton
+// TODO: make singleton?
 @Injectable()
 export class CurrenciesFacade implements ICurrenciesFacade {
   private readonly currenciesRepo: IRepository<ICurrency>;

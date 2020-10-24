@@ -274,32 +274,24 @@ export default class TransactionAnalyticService {
     dateStart: Date,
     dateEnd: Date,
     by: Period,
-  ) {
-    while (dateStart < dateEnd) {
-      const currentEndDate: Date = new Date(dateStart);
+  ): Generator<[Date, Date]> {
+    let preparedDateStart: moment.Moment = moment(dateStart);
+    let preparedDateEnd: moment.Moment = moment(dateEnd);
+    while (preparedDateStart < preparedDateEnd) {
+      const currentEndDate: moment.Moment = preparedDateStart;
       switch (by) {
         case Period.MONTH:
-          if (currentEndDate.getMonth() < 11) {
-            currentEndDate.setMonth(currentEndDate.getMonth() + 1);
-          } else {
-            currentEndDate.setMonth(0);
-            currentEndDate.setFullYear(currentEndDate.getFullYear() + 1);
-          }
+          currentEndDate.add(1, 'day');
           break;
         case Period.QUARTER:
-          if (currentEndDate.getMonth() < 9) {
-            currentEndDate.setMonth(currentEndDate.getMonth() + 3);
-          } else {
-            currentEndDate.setMonth(2);
-            currentEndDate.setFullYear(currentEndDate.getFullYear() + 1);
-          }
+          currentEndDate.add(1, 'month');
           break;
         case Period.YEAR:
-          currentEndDate.setFullYear(currentEndDate.getFullYear() + 1);
+          currentEndDate.add(3, 'months');
           break;
       }
-      yield [dateStart, currentEndDate];
-      dateStart = currentEndDate;
+      yield [preparedDateStart.toDate(), currentEndDate.toDate()];
+      preparedDateStart = currentEndDate;
     }
   }
 }

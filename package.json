@@ -34,6 +34,7 @@
     "@nestjs/jwt": "^6.1.1",
     "@nestjs/passport": "^6.1.1",
     "@nestjs/platform-express": "^6.11.1",
+    "@nestjs/schedule": "^0.4.1",
     "@nestjs/swagger": "^4.5.9",
     "@prisma/client": "^2.7.1",
     "@types/nodemailer": "^6.4.0",

@@ -18,11 +18,67 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import TransactionCategoriesModule from '../transactionCategories/transactionCategories.module';
 import { TransactionCategoriesFacade } from '../transactionCategories/transactionCategories.facade';
 import { CurrenciesFacade } from '../currencies/currencies.facade';
+import { DistributingMetricItemsController } from './controllers/distributingMetricItems.controller';
+import { BullModule, BullModuleOptions } from '@nestjs/bull';
+import { ScheduleModule } from '@nestjs/schedule';
+import { MailerModule, MailerService } from '@nestjs-modules/mailer';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { join } from 'path';
+import ReportDistributionInteractor from '../../../core/app/transactions/interactors/reportDistribution.interactor';
+import DistributingMetricItemAbstractFactory from '../../../core/app/transactions/factories/distributingMetricItemFactory';
+import { DefReportDistributionOutputPort } from './ports/defReportDistributionOutput.port';
+import ReportHasBeenGeneratedEventDispatcher from './services/reportHasBeenGenerated.dispatcher';
+import ReportHasBeenGeneratedListener from './listeners/reportHasBeenGenerated.listener';
+import DistributingMetricItemFactory from '../../persistance/factories/distributingMetricItem.factory';
+import DistributingMetricItemRepository from '../../persistance/repositories/distributingMetricItem.repository';
+import DistributingMetricItemCreator from '../../persistance/creators/distributingMetricItem.creator';
 
 @Module({
   imports: [
     AuthModule,
     PrismaModule,
+    // TODO: use Kafka instead of Redis
+    BullModule.registerQueueAsync({
+      name: 'metrics',
+      useFactory: async (
+        configService: ConfigService,
+      ): Promise<BullModuleOptions> => ({
+        redis: {
+          host: configService.get('QUEUE_HOST'),
+          port: configService.get('QUEUE_PORT'),
+          password: configService.get('QUEUE_PASSWORD'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    ScheduleModule.forRoot(),
+    MailerModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.get<string>('SMTP_HOST'),
+          port: configService.get<number>('SMTP_PORT'),
+          ssl: false,
+          tls: true,
+          auth: {
+            user: configService.get<string>('SMTP_USER'),
+            pass: configService.get<string>('SMTP_PASSWORD'),
+          },
+        } as SMTPTransport.Options,
+        defaults: {
+          from: configService.get<string>('SMTP_FROM'),
+        },
+        template: {
+          adapter: new PugAdapter(),
+          dir: join(
+            __dirname,
+            '../../../..',
+            configService.get<string>('MAIL_TEMPLATES_PATH'),
+          ),
+        },
+      }),
+      inject: [ConfigService],
+    }),
     CurrenciesModule,
     TransactionCategoriesModule,
     ElasticsearchModule.registerAsync({
@@ -33,10 +89,12 @@ import { CurrenciesFacade } from '../currencies/currencies.facade';
       inject: [ConfigService],
     }),
   ],
-  controllers: [TransactionController],
+  controllers: [TransactionController, DistributingMetricItemsController],
   providers: [
     TransactionSearchService,
+    ReportHasBeenGeneratedEventDispatcher,
     DefTransactionOutputPort,
+    DefReportDistributionOutputPort,
     {
       provide: 'TransactionCreator',
       useClass: TransactionCreator,
@@ -88,6 +146,51 @@ import { CurrenciesFacade } from '../currencies/currencies.facade';
         TransactionAnalyticService,
         TransactionSearchService,
         DefTransactionOutputPort,
+      ],
+    },
+    {
+      provide: 'DistributingMetricItemCreator',
+      useClass: DistributingMetricItemCreator,
+    },
+    {
+      provide: 'DistributingMetricItemRepositoryForFactory',
+      useFactory: (prisma: PrismaService) =>
+        new DistributingMetricItemRepository(prisma),
+      inject: [PrismaService],
+    },
+    {
+      provide: DistributingMetricItemAbstractFactory,
+      useClass: DistributingMetricItemFactory,
+    },
+    {
+      provide: 'TransactionCategoryShouldBeDeletedEventListeners',
+      useFactory: (mailService: MailerService) => [
+        new ReportHasBeenGeneratedListener(mailService),
+      ],
+      inject: [MailerService],
+    },
+    {
+      provide: 'ReportDistributionInputPort',
+      useFactory: (
+        distributionMetricItemFactory: DistributingMetricItemAbstractFactory,
+        transactionFactory: TransactionAbstractFactory,
+        transactionAnalyticService: TransactionAnalyticService,
+        eventDispatcher: ReportHasBeenGeneratedEventDispatcher,
+        outputPort: DefReportDistributionOutputPort,
+      ) =>
+        new ReportDistributionInteractor(
+          distributionMetricItemFactory,
+          transactionFactory.createTransactionRepo(),
+          transactionAnalyticService,
+          eventDispatcher,
+          outputPort,
+        ),
+      inject: [
+        DistributingMetricItemAbstractFactory,
+        TransactionAbstractFactory,
+        TransactionAnalyticService,
+        ReportHasBeenGeneratedEventDispatcher,
+        DefReportDistributionOutputPort,
       ],
     },
   ],

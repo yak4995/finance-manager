@@ -40,6 +40,8 @@ import {
   subscribeItems,
   generateDistributingMetricItemForMetricAndItem,
 } from './fixtures/distributingMetricItems';
+import ITransactionCategoriesFacade from '../../domain/transactionCategories/transactionCategories.facade';
+import FakeTransactionCategoriesFacade from './mocks/fakeTransactionCategoriesFacade';
 
 describe('TransactionCategoryInteractor tests', () => {
   DistributingMetricItemAbstractFactory.setInstance(
@@ -93,10 +95,14 @@ describe('TransactionCategoryInteractor tests', () => {
   const transactionCategoryService: TransactionCategoryService = new TransactionCategoryService(
     faketransactionCategoryRepo,
   );
+  const transactionCategoriesFacade: ITransactionCategoriesFacade = new FakeTransactionCategoriesFacade(
+    transactionCategoryService,
+    fakeTransactionCategoryFactory,
+  );
   const transactionAnalyticService: TransactionAnalyticService = new TransactionAnalyticService(
     [],
     fakeCurrencyConverter,
-    transactionCategoryService,
+    transactionCategoriesFacade,
   );
   const eventDispatcher: IEventDispatchService<ReportHasBeenGeneratedEvent> = new FakeEventDispatchGeneratedReportService();
   const outputPort: ReportDistributionOutputPort = new FakeReportDistributionOutputPort();
@@ -399,7 +405,39 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '30.08.2019': 0_00 });
+    ).toEqual({
+      '8/31/2019': 0,
+      '9/1/2019': 0,
+      '9/10/2019': 0,
+      '9/11/2019': 0,
+      '9/12/2019': 0,
+      '9/13/2019': 0,
+      '9/14/2019': 0,
+      '9/15/2019': 0,
+      '9/16/2019': 0,
+      '9/17/2019': 0,
+      '9/18/2019': 0,
+      '9/19/2019': 0,
+      '9/2/2019': 0,
+      '9/20/2019': 0,
+      '9/21/2019': 0,
+      '9/22/2019': 0,
+      '9/23/2019': 0,
+      '9/24/2019': 0,
+      '9/25/2019': 0,
+      '9/26/2019': 0,
+      '9/27/2019': 0,
+      '9/28/2019': 0,
+      '9/29/2019': 0,
+      '9/3/2019': 0,
+      '9/30/2019': 0,
+      '9/4/2019': 0,
+      '9/5/2019': 0,
+      '9/6/2019': 0,
+      '9/7/2019': 0,
+      '9/8/2019': 0,
+      '9/9/2019': 0,
+    });
   });
 
   it('test send method: quarter period and TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
@@ -410,7 +448,11 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '30.06.2019': 1 });
+    ).toEqual({
+      '7/30/2019': 0,
+      '8/30/2019': 0,
+      '9/30/2019': 0,
+    });
   });
 
   it('test send method: year period and TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
@@ -421,7 +463,12 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_COUNT_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '30.09.2018': 5 });
+    ).toEqual({
+      '12/30/2018': 0,
+      '3/30/2019': 0,
+      '6/30/2019': 0,
+      '9/30/2019': 0,
+    });
   });
 
   it('test send method: month period and TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
@@ -432,7 +479,39 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '30.08.2019': 0_00 });
+    ).toEqual({
+      '8/31/2019': 0,
+      '9/1/2019': 0,
+      '9/10/2019': 0,
+      '9/11/2019': 0,
+      '9/12/2019': 0,
+      '9/13/2019': 0,
+      '9/14/2019': 0,
+      '9/15/2019': 0,
+      '9/16/2019': 0,
+      '9/17/2019': 0,
+      '9/18/2019': 0,
+      '9/19/2019': 0,
+      '9/2/2019': 0,
+      '9/20/2019': 0,
+      '9/21/2019': 0,
+      '9/22/2019': 0,
+      '9/23/2019': 0,
+      '9/24/2019': 0,
+      '9/25/2019': 0,
+      '9/26/2019': 0,
+      '9/27/2019': 0,
+      '9/28/2019': 0,
+      '9/29/2019': 0,
+      '9/3/2019': 0,
+      '9/30/2019': 0,
+      '9/4/2019': 0,
+      '9/5/2019': 0,
+      '9/6/2019': 0,
+      '9/7/2019': 0,
+      '9/8/2019': 0,
+      '9/9/2019': 0,
+    });
   });
 
   it('test send method: quarter period and TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
@@ -443,7 +522,11 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '30.06.2019': 5_01 });
+    ).toEqual({
+      '7/30/2019': 0,
+      '8/30/2019': 0,
+      '9/30/2019': 0,
+    });
   });
 
   it('test send method: year period and TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE metric', async () => {
@@ -454,7 +537,12 @@ describe('TransactionCategoryInteractor tests', () => {
           AvailableAnalyticMetric.TRANSACTIONS_SUM_CHANGE_BY_CATEGORY_AND_DATE_RANGE,
         ),
       ),
-    ).toEqual({ '30.09.2018': 250_02 });
+    ).toEqual({
+      '12/30/2018': 0,
+      '3/30/2019': 0,
+      '6/30/2019': 0,
+      '9/30/2019': 0,
+    });
   });
 
   afterAll(() => {

@@ -1,6 +1,6 @@
 import 'ts-jest';
 
-import IRepository from '../repository.interface';
+import IRepository, { Criteria } from '../repository.interface';
 import ITransactionCategory from '../transactionCategories/entities/transactionCategory.interface';
 import ICurrencyConverterService from '../currencies/services/currencyConverterService.interface';
 import TransactionCategoryService from '../transactionCategories/services/transactionCategoryService';
@@ -27,10 +27,8 @@ import {
   generateTransactionsForSumMetrics,
   generateTransactionsForCountMetrics,
   generateTransactionsForRatioByCategories,
-  getTransactionCountChangeByMonthPeriodResult,
   getTransactionCountChangeByQuarterPeriodResult,
   getTransactionCountChangeByYearPeriodResult,
-  getTransactionSumChangeByMonthPeriodResult,
   getTransactionSumChangeByQuarterPeriodResult,
   getTransactionSumChangeByYearPeriodResult,
 } from './fixtures/transactions';
@@ -38,10 +36,38 @@ import {
   dateStartForTransactionChangeMetrics,
   dateEndForTransactionChangeMetrics,
 } from './fixtures/dateRanges';
+import ITransactionCategoriesFacade from '../transactionCategories/transactionCategories.facade';
+import FakeTransactionCategoriesFacade from '../../app/test/mocks/fakeTransactionCategoriesFacade';
+import TransactionCategoryAbstractFactory from '../transactionCategories/factories/transactionCategoryFactory';
+import FakeTransactionCategoryFactory from '../../app/test/mocks/fakeTransactionCategoryFactory';
 
 describe('TransactionAnalyticService tests', () => {
   const now: Date = new Date();
   const fakeCurrencyConverter: ICurrencyConverterService = new FakeCurrencyConverter();
+  TransactionCategoryAbstractFactory.setInstance(
+    new FakeTransactionCategoryFactory(
+      [
+        firstCategory,
+        secondCategory,
+        thirdCategory,
+        fourthCategory,
+        fifthCategory,
+        sixthCategory,
+        seventhCategory,
+      ],
+      {
+        getInstance: (fields: Criteria<ITransactionCategory>) => ({
+          id: 'fakeId',
+          isOutcome: fields.isOutcome ? fields.isOutcome : true,
+          isSystem: fields.isSystem ? fields.isSystem : false,
+          name: fields.name ? fields.name : '',
+          owner: fields.owner ? fields.owner : null,
+          parentCategory: fields.parentCategory ? fields.parentCategory : null,
+        }),
+      },
+    ),
+  );
+  const fakeTransactionCategoryFactory: TransactionCategoryAbstractFactory = FakeTransactionCategoryFactory.getInstance();
   const fakeTransactionCategoryRepo: IRepository<ITransactionCategory> = new FakeRepo<
     ITransactionCategory
   >([
@@ -56,10 +82,14 @@ describe('TransactionAnalyticService tests', () => {
   const transactionCategoryService: TransactionCategoryService = new TransactionCategoryService(
     fakeTransactionCategoryRepo,
   );
+  const transactionCategoriesFacade: ITransactionCategoriesFacade = new FakeTransactionCategoriesFacade(
+    transactionCategoryService,
+    fakeTransactionCategoryFactory,
+  );
   const service: TransactionAnalyticService = new TransactionAnalyticService(
     [],
     fakeCurrencyConverter,
-    transactionCategoryService,
+    transactionCategoriesFacade,
   );
 
   it('check methods existance', () => {
@@ -173,22 +203,6 @@ describe('TransactionAnalyticService tests', () => {
     }
   });
 
-  it('check getTransactionCountChangeByPeriod: month', async () => {
-    service.transactions = transactionForTransactionChangeMetrics;
-    try {
-      expect(
-        await service.getTransactionCountChangeByPeriod(
-          firstCategory,
-          dateStartForTransactionChangeMetrics,
-          dateEndForTransactionChangeMetrics,
-          Period.MONTH,
-        ),
-      ).toEqual(getTransactionCountChangeByMonthPeriodResult);
-    } catch (e) {
-      throw e;
-    }
-  });
-
   it('check getTransactionCountChangeByPeriod: quarter', async () => {
     service.transactions = transactionForTransactionChangeMetrics;
     try {
@@ -235,23 +249,6 @@ describe('TransactionAnalyticService tests', () => {
       expect(e).toEqual(
         new InvalidDateRangeException("'by' period is less than date range"),
       );
-    }
-  });
-
-  it('check getTransactionSumChangeByPeriod: month', async () => {
-    service.transactions = transactionForTransactionChangeMetrics;
-    try {
-      expect(
-        await service.getTransactionSumChangeByPeriod(
-          firstCategory,
-          dateStartForTransactionChangeMetrics,
-          dateEndForTransactionChangeMetrics,
-          Period.MONTH,
-          fakeBaseCurrency,
-        ),
-      ).toEqual(getTransactionSumChangeByMonthPeriodResult);
-    } catch (e) {
-      throw e;
     }
   });
 

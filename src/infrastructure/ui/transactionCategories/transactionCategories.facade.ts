@@ -5,7 +5,7 @@ import ITransactionCategoriesFacade from '../../../core/domain/transactionCatego
 import { Injectable } from '@nestjs/common';
 import TransactionCategoryAbstractFactory from '../../../core/domain/transactionCategories/factories/transactionCategoryFactory';
 
-// TODO: make singleton
+// TODO: make singleton?
 @Injectable()
 export class TransactionCategoriesFacade
   implements ITransactionCategoriesFacade {

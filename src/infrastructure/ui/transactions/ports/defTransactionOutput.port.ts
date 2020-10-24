@@ -1,8 +1,9 @@
 import TransactionOutputPort from '../../../../core/app/transactions/ports/transactionOutput.port';
 import ITransaction from '../../../../core/domain/transactions/entities/transaction.interface';
 import { TransactionsComparisonDto } from '../../../../core/domain/transactions/dto/transactionsComparison.dto';
-import { InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
+@Injectable()
 export class DefTransactionOutputPort implements TransactionOutputPort {
   async getTransactionDetail(result: ITransaction, e: Error): Promise<any> {
     if (e) {
