@@ -75,7 +75,7 @@ In resolvers, that import GQL types, we import them from src/infrastructure/grap
 
 Logging via ELK:
 
-If you want provide logging via ELK stack, you already have ElasticSearch and Kibana in docker-compose. But Filebeat and Logstash you need install manually. There are some config files, which you could replace instead of defaults. They are in "filebeat config examples" and "logstash config examples" dirs.
+If you want provide logging via ELK stack, you already have ElasticSearch and Kibana in docker-compose. But Filebeat and Logstash you need install manually. There are some config files, which you could replace instead of defaults. They are in "filebeat config examples" and "logstash config examples" dirs. Logstash can be run via 'logstash' command from your terminal, filebeat via 'sudo ./filebeat -e' from filebeat dir by the same way.
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
