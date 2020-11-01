@@ -1,6 +1,0 @@
-{
-    "preset": "ts-jest",
-    "clearMocks": true,
-    "verbose": false,
-    "testEnvironment": "node"
-}

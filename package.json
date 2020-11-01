@@ -5,21 +5,20 @@
   "author": "Yuriy Kryvokhyzha",
   "license": "MIT",
   "scripts": {
-    "format": "prettier --write \"src/**/*.ts\"",
+    "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "document": "npx compodoc -p tsconfig.json -s",
     "postinstall": "npx prisma init && ts-node generate-typings",
     "migrate": "npx prisma introspect && npx prisma generate",
-    "start": "ts-node -r tsconfig-paths/register src/main.ts",
+    "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "prestart:prod": "nest build",
-    "start:prod": "node dist/main.js",
-    "start:hmr": "node dist/server",
+    "start:prod": "node dist/apps/finance-manager/main.js",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "jest --config ./apps/finance-manager/test/jest-e2e.json",
     "webpack": "webpack --config webpack.config.js"
   },
   "dependencies": {
@@ -93,17 +92,27 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
     "testRegex": ".spec.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "node_modules",
       "<rootDir>/core/app/test",
       "<rootDir>/core/domain/test"
-    ]
+    ],
+    "roots": [
+      "<rootDir>/apps/",
+      "<rootDir>/libs/"
+    ],
+    "moduleNameMapper": {
+      "@domain/(.*)": "<rootDir>/libs/domain/src/$1",
+      "@domain": "<rootDir>/libs/domain/src",
+      "@app/(.*)": "<rootDir>/libs/app/src/$1",
+      "@app": "<rootDir>/libs/app/src"
+    }
   }
 }

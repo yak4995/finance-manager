@@ -11,11 +11,26 @@
     "target": "es6",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./src",
-    "skipLibCheck": true
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "paths": {
+      "@domain": [
+        "libs/domain/src"
+      ],
+      "@domain/*": [
+        "libs/domain/src/*"
+      ],
+      "@app": [
+        "libs/app/src"
+      ],
+      "@app/*": [
+        "libs/app/src/*"
+      ]
+    }
   },
   "include": [
-    "src/**/*"
+    "apps/**/src/**/*",
+    "libs/**/src/**/*"
   ],
   "exclude": [
     "node_modules",

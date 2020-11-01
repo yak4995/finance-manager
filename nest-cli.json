@@ -1,5 +1,44 @@
 {
   "language": "ts",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "apps/finance-manager/src",
+  "monorepo": true,
+  "root": "apps/finance-manager",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/finance-manager/tsconfig.app.json",
+    "assets": [
+      "**/*.graphql",
+      "**/*.pug"
+    ]
+  },
+  "projects": {
+    "finance-manager": {
+      "type": "application",
+      "root": "apps/finance-manager",
+      "entryFile": "main",
+      "sourceRoot": "apps/finance-manager/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/finance-manager/tsconfig.app.json"
+      }
+    },
+    "domain": {
+      "type": "library",
+      "root": "libs/domain",
+      "entryFile": "index",
+      "sourceRoot": "libs/domain/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/domain/tsconfig.lib.json"
+      }
+    },
+    "app": {
+      "type": "library",
+      "root": "libs/app",
+      "entryFile": "index",
+      "sourceRoot": "libs/app/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/app/tsconfig.lib.json"
+      }
+    }
+  }
 }

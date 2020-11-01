@@ -1,6 +1,6 @@
 {
-  "watch": ["src"],
+  "watch": ["apps"],
   "ext": "ts",
-  "ignore": ["src/**/*.spec.ts"],
-  "exec": "ts-node -r tsconfig-paths/register src/main.ts"
+  "ignore": ["apps/**/*.spec.ts"],
+  "exec": "ts-node -r tsconfig-paths/register apps/finance-manager/src/main.ts"
 }

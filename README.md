@@ -71,7 +71,7 @@ Generate ssl certificate for localhost in terminal:
 
 GraphQL explanations:
 
-In resolvers, that import GQL types, we import them from src/infrastructure/graphql.schema.generated.ts, that will be created by NestJS GraphQLModule from src/infrastructure/ui/schema.graphql (graphql types for UI) when you run "npm i".
+In resolvers, that import GQL types, we import them from src/graphql.schema.generated.ts, that will be created by NestJS GraphQLModule from src/ui/schema.graphql (graphql types for UI) when you run "npm i".
 
 Logging via ELK:
 

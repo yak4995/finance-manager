@@ -5,8 +5,8 @@ coverage/
 documentation/
 ssl/
 logs/
-prisma/
+/prisma
 dbdata/*
 .env
-src/infrastructure/graphql.schema.generated.ts
+apps/finance-manager/src/graphql.schema.generated.ts
 .DS_Store
