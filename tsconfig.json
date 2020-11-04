@@ -25,6 +25,24 @@
       ],
       "@app/*": [
         "libs/app/src/*"
+      ],
+      "@common": [
+        "libs/common/src"
+      ],
+      "@common/*": [
+        "libs/common/src/*"
+      ],
+      "@persistance": [
+        "libs/persistance/src"
+      ],
+      "@persistance/*": [
+        "libs/persistance/src/*"
+      ],
+      "@transport": [
+        "libs/transport/src"
+      ],
+      "@transport/*": [
+        "libs/transport/src/*"
       ]
     }
   },

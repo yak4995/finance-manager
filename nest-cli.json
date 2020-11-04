@@ -1,27 +1,18 @@
 {
   "language": "ts",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/finance-manager/src",
+  "sourceRoot": "apps/users/src",
   "monorepo": true,
-  "root": "apps/finance-manager",
+  "root": "apps/users",
   "compilerOptions": {
-    "webpack": true,
-    "tsConfigPath": "apps/finance-manager/tsconfig.app.json",
+    "tsConfigPath": "apps/users/tsconfig.app.json",
     "assets": [
       "**/*.graphql",
-      "**/*.pug"
+      "**/*.pug",
+      "**/*.proto"
     ]
   },
   "projects": {
-    "finance-manager": {
-      "type": "application",
-      "root": "apps/finance-manager",
-      "entryFile": "main",
-      "sourceRoot": "apps/finance-manager/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/finance-manager/tsconfig.app.json"
-      }
-    },
     "domain": {
       "type": "library",
       "root": "libs/domain",
@@ -38,6 +29,69 @@
       "sourceRoot": "libs/app/src",
       "compilerOptions": {
         "tsConfigPath": "libs/app/tsconfig.lib.json"
+      }
+    },
+    "common": {
+      "type": "library",
+      "root": "libs/common",
+      "entryFile": "index",
+      "sourceRoot": "libs/common/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/common/tsconfig.lib.json"
+      }
+    },
+    "persistance": {
+      "type": "library",
+      "root": "libs/persistance",
+      "entryFile": "index",
+      "sourceRoot": "libs/persistance/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/persistance/tsconfig.lib.json"
+      }
+    },
+    "transport": {
+      "type": "library",
+      "root": "libs/transport",
+      "entryFile": "index",
+      "sourceRoot": "libs/transport/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/transport/tsconfig.lib.json"
+      }
+    },
+    "currencies": {
+      "type": "application",
+      "root": "apps/currencies",
+      "entryFile": "main",
+      "sourceRoot": "apps/currencies/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/currencies/tsconfig.app.json"
+      }
+    },
+    "transaction-categories": {
+      "type": "application",
+      "root": "apps/transaction-categories",
+      "entryFile": "main",
+      "sourceRoot": "apps/transaction-categories/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/transaction-categories/tsconfig.app.json"
+      }
+    },
+    "transactions": {
+      "type": "application",
+      "root": "apps/transactions",
+      "entryFile": "main",
+      "sourceRoot": "apps/transactions/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/transactions/tsconfig.app.json"
+      }
+    },
+    "users": {
+      "type": "application",
+      "root": "apps/users",
+      "entryFile": "main",
+      "sourceRoot": "apps/users/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/users/tsconfig.app.json"
       }
     }
   }

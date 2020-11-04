@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package currenciesService;
+
+service CurrenciesFacade {
+  rpc findById (CurrencyId) returns (Currency) {}
+  rpc findByCode (CurrencyCode) returns (Currency) {}
+  rpc getRateFor(RateQuery) returns (Rate) {}
+}
+
+message CurrencyId {
+  string id = 1;
+}
+
+message CurrencyCode {
+  string code = 1;
+}
+
+message Currency {
+  string id = 1;
+  string name = 2;
+  string code = 3;
+}
+
+message RateQuery {
+  string from = 1;
+  string to = 2;
+  int32 forDate = 3;
+}
+
+message Rate {
+  double rate = 1;
+}

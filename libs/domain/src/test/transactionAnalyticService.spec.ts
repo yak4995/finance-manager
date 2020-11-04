@@ -5,6 +5,9 @@ import TransactionCategoryService from '../transactionCategories/services/transa
 import TransactionAnalyticService from '../transactions/services/transactionAnalyticService';
 import TransactionCategoryAbstractFactory from '../transactionCategories/factories/transactionCategoryFactory';
 import ITransactionCategoriesFacade from '../transactionCategories/transactionCategories.facade';
+import CurrencyAbstractFactory from '../currencies/factories/currencyFactory';
+import ICurrency from '../currencies/entities/currency.interface';
+import ICurrenciesFacade from '../currencies/currencies.facade';
 import { Period } from '../period/enums/period.enum';
 import { InvalidDateRangeException } from '../transactions/exceptions/invalidDateRange.exception';
 
@@ -13,9 +16,11 @@ import FakeRepo from './mocks/fakeRepo';
 import FakeCurrencyConverter from './mocks/fakeCurrencyConverter';
 import FakeTransactionCategoryFactory from '../../../app/src/test/mocks/fakeTransactionCategoryFactory';
 import FakeTransactionCategoriesFacade from '../../../app/src/test/mocks/fakeTransactionCategoriesFacade';
+import FakeCurrenciesFacade from '../../../app/src/test/mocks/fakeCurrenciesFacade';
+import FakeCurrencyFactory from '../../../app/src/test/mocks/fakeCurrencyFactory';
 
 // fixtures
-import { fakeBaseCurrency } from './fixtures/currencies';
+import { fakeBaseCurrency, fakeCurrency } from './fixtures/currencies';
 import {
   thirdCategory,
   sixthCategory,
@@ -43,6 +48,16 @@ import {
 describe('TransactionAnalyticService tests', () => {
   const now: Date = new Date();
   const fakeCurrencyConverter: ICurrencyConverterService = new FakeCurrencyConverter();
+  CurrencyAbstractFactory.setInstance(
+    new FakeCurrencyFactory([fakeCurrency, fakeBaseCurrency], {
+      getInstance: (fields: Criteria<ICurrency>): ICurrency => null,
+    }),
+  );
+  const fakeCurrencyFactory: CurrencyAbstractFactory = FakeCurrencyFactory.getInstance();
+  const fakeCurrenciesFacade: ICurrenciesFacade = new FakeCurrenciesFacade(
+    fakeCurrencyFactory,
+    fakeCurrencyConverter,
+  );
   TransactionCategoryAbstractFactory.setInstance(
     new FakeTransactionCategoryFactory(
       [
@@ -89,7 +104,7 @@ describe('TransactionAnalyticService tests', () => {
   );
   const service: TransactionAnalyticService = new TransactionAnalyticService(
     [],
-    fakeCurrencyConverter,
+    fakeCurrenciesFacade,
     transactionCategoriesFacade,
   );
 
@@ -166,7 +181,7 @@ describe('TransactionAnalyticService tests', () => {
           now,
           now,
         ),
-      ).toEqual({ '6': 50, '7': 50 });
+      ).toEqual({ '3': 60, '6': 20, '7': 20 });
     } catch (e) {
       throw e;
     }
@@ -182,7 +197,7 @@ describe('TransactionAnalyticService tests', () => {
           now,
           fakeBaseCurrency,
         ),
-      ).toEqual({ '6': 94, '7': 6 });
+      ).toEqual({ '3': 66, '6': 32, '7': 2 });
     } catch (e) {
       throw e;
     }

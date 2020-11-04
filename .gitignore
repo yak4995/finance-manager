@@ -8,5 +8,5 @@ logs/
 /prisma
 dbdata/*
 .env
-apps/finance-manager/src/graphql.schema.generated.ts
+libs/common/src/graphql.schema.generated.ts
 .DS_Store

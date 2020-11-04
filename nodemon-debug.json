@@ -2,5 +2,5 @@
   "watch": ["apps"],
   "ext": "ts",
   "ignore": ["apps/**/*.spec.ts"],
-  "exec": "node --inspect-brk -r ts-node/register apps/finance-manager/src/main.ts"
+  "exec": "node --inspect-brk -r ts-node/register apps/users/src/main.ts"
 }

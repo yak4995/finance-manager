@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package categoriesService;
+
+service CategoriesFacade {
+  rpc findById (CategoryId) returns (TransactionCategory) {}
+  rpc getTransactionCategoryChildren(TransactionCategory) returns (TransactionCategoryArray) {}
+  rpc getTransactionCategoryDirectChildren(TransactionCategory) returns (TransactionCategoryArray) {}
+}
+
+message CategoryId {
+  string id = 1;
+}
+
+message TransactionCategory {
+  string id = 1;
+  string name = 2;
+  optional TransactionCategory parentCategory = 3;
+  optional User owner = 4;
+  bool isSystem = 5;
+  bool isOutcome = 6;
+}
+
+message User {
+  string id = 1;
+}
+
+message TransactionCategoryArray {
+  repeated TransactionCategory result = 1;
+}

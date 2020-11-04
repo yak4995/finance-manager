@@ -1,10 +1,8 @@
 This project is my pet-project, that provided HTTP REST/GraphQL API for personal finance management and analysis. It implemented from Robert Martin "clear architecture" principles for more scalability and independent extensionsiability.
 
-For user interfaces uses HTTPS protocol, for data storage - Prisma ORM, for asyncronyous task executing and queueing - Redis, for unit and e2e tests - jest library. Base programming language is TypeScript.
+For user interfaces uses HTTPS protocol, for data storage - Prisma2 ORM, for asyncronyous task executing and queueing - Redis, for unit and e2e tests - jest library. Base programming language is TypeScript.
 
-In future, I plan to transfer asyncronyous task executing and queueing to Kafka, authorization - to passwordless. Also, the project architecture will be scaled to microservices in monorepo, that will communicate with each other by GRPC protocol.
-
-In future, the project will be extended with localization (by languages, default currencies and timezones), taxes management, inventory management, budget and cost-estimate management.
+In future, I plan to transfer asyncronyous task executing and queueing to Kafka, authorization - to passwordless.
 
 Project setup:
 1. Execute "npm i" from project dir. Then replace the content of the prisma/schema.prisma file to
@@ -25,7 +23,7 @@ and the content of prisma/.env file to
 2. Copy .env.example to .env and replace there values with yours.
 3. Create empty "dbdata" dir in the project root, then execute "docker-compose up -d", then "npm run migrate".
 4. Create SSL-certificates (instructions see below) or put in its paths to .env file if you already have it.
-5. Interactive documentation by endpoints locates here: https://{URL with deployed app}/api/docs
+5. Interactive documentation by endpoints locates here: https://{URL with deployed app}:{PORT of service}/api/docs
 6. Migrations in SQL format locates here: dbscripts/init_migration.sql
 
 Generate ssl certificate for localhost in terminal:

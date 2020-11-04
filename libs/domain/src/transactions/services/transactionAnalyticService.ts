@@ -3,16 +3,17 @@ import * as moment from 'moment';
 import ITransaction from '../entities/transaction.interface';
 import ITransactionCategory from '../../transactionCategories/entities/transactionCategory.interface';
 import ICurrency from '../../currencies/entities/currency.interface';
-import ICurrencyConverterService from '../../currencies/services/currencyConverterService.interface';
 import { Period } from '../../period/enums/period.enum';
 import { TransactionsComparisonDto } from '../dto/transactionsComparison.dto';
 import { InvalidDateRangeException } from '../exceptions/invalidDateRange.exception';
 import ITransactionCategoriesFacade from '../../transactionCategories/transactionCategories.facade';
 
+import ICurrenciesFacade from '@domain/currencies/currencies.facade';
+
 export default class TransactionAnalyticService {
   constructor(
     private _transactions: ITransaction[],
-    private readonly converter: ICurrencyConverterService,
+    private readonly currenciesFacade: ICurrenciesFacade,
     private readonly transactionCategoriesFacade: ITransactionCategoriesFacade,
   ) {}
 
@@ -166,10 +167,10 @@ export default class TransactionAnalyticService {
   ): Promise<number> {
     const preparedTransactionsValues: number[] = [];
     for (const transaction of transactions) {
-      const rate = await this.converter.getRateFor(
+      const rate = await this.currenciesFacade.getRateFor(
         transaction.currency.code,
         baseCurrency.code,
-        new Date(),
+        new Date().getTime(),
       );
       preparedTransactionsValues.push(rate * transaction.amount);
     }
@@ -190,19 +191,19 @@ export default class TransactionAnalyticService {
     );
     let general: number = 0;
     const result: TransactionsComparisonDto = {};
-    for (const childCategory of directChildren) {
+    for (const category of [baseCategory].concat(directChildren ?? [])) {
       const transactionsForProcessing: ITransaction[] = await this.getTransactionsByFilter(
         {
           dateStart,
           dateEnd,
-          category: childCategory,
+          category,
         },
       );
       const tempResult: number = await processFunction(
         transactionsForProcessing,
       );
       general += tempResult;
-      result[childCategory.id] = tempResult;
+      result[category.id] = tempResult;
     }
     for (const categoryId in result) {
       result[categoryId] =
@@ -279,7 +280,7 @@ export default class TransactionAnalyticService {
     let preparedDateStart: moment.Moment = moment(dateStart);
     let preparedDateEnd: moment.Moment = moment(dateEnd);
     while (preparedDateStart < preparedDateEnd) {
-      const currentEndDate: moment.Moment = preparedDateStart;
+      const currentEndDate: moment.Moment = moment(preparedDateStart);
       switch (by) {
         case Period.MONTH:
           currentEndDate.add(1, 'day');

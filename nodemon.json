@@ -2,5 +2,5 @@
   "watch": ["apps"],
   "ext": "ts",
   "ignore": ["apps/**/*.spec.ts"],
-  "exec": "ts-node -r tsconfig-paths/register apps/finance-manager/src/main.ts"
+  "exec": "ts-node -r tsconfig-paths/register apps/users/src/main.ts"
 }

@@ -93,9 +93,6 @@ describe('TransactionInteractor tests', () => {
     transactionCategoryService,
     fakeTransactionCategoryFactory,
   );
-  const fakeCurrenciesFacade: ICurrenciesFacade = new FakeCurrenciesFacade(
-    fakeCurrencyFactory,
-  );
 
   const transactionSet: ITransaction[] = transactionForTransactionChangeMetrics.map(
     (t: ITransaction): ITransaction => {
@@ -119,9 +116,13 @@ describe('TransactionInteractor tests', () => {
   const fakeTransactionFactory: TransactionAbstractFactory = FakeTransactionFactory.getInstance();
   const fakeTransactionRepo: IRepository<ITransaction> = fakeTransactionFactory.createTransactionRepo();
   const fakeCurrencyConverter: ICurrencyConverterService = new FakeCurrencyConverter();
+  const fakeCurrenciesFacade: ICurrenciesFacade = new FakeCurrenciesFacade(
+    fakeCurrencyFactory,
+    fakeCurrencyConverter,
+  );
   const transactionAnalyticService: TransactionAnalyticService = new TransactionAnalyticService(
     transactionSet,
-    fakeCurrencyConverter,
+    fakeCurrenciesFacade,
     fakeTransactionCategoriesFacade,
   );
   const fakeTransactionsSearchService: ISearchService<ITransaction> = new FakeSearchService<
@@ -581,7 +582,7 @@ describe('TransactionInteractor tests', () => {
         dateStartForTransactionChangeMetrics,
         dateEndForTransactionChangeMetrics,
       ),
-    ).toEqual({ '2': 0, '3': 0, '4': 0 });
+    ).toEqual({ '1': 100, '2': 0, '3': 0, '4': 0 });
   });
 
   it('getTransactionSumRatioByCategories', async () => {
@@ -592,7 +593,7 @@ describe('TransactionInteractor tests', () => {
         dateEndForTransactionChangeMetrics,
         fakeBaseCurrency,
       ),
-    ).toEqual({ '2': 0, '3': 0, '4': 0 });
+    ).toEqual({ '1': 100, '2': 0, '3': 0, '4': 0 });
   });
 
   it('getTransactionCountChangeByPeriod', async () => {
@@ -604,14 +605,14 @@ describe('TransactionInteractor tests', () => {
         Period.YEAR,
       ),
     ).toEqual({
-      '30.03.2018': 0,
-      '30.03.2019': 0,
-      '30.06.2018': 0,
-      '30.06.2019': 0,
-      '30.09.2018': 0,
-      '30.09.2019': 0,
-      '30.12.2017': 0,
-      '30.12.2018': 0,
+      '30.03.2018': 2,
+      '30.03.2019': 2,
+      '30.06.2018': 1,
+      '30.06.2019': 1,
+      '30.09.2017': 1,
+      '30.09.2018': 1,
+      '30.12.2017': 1,
+      '30.12.2018': 1,
     });
   });
 
@@ -625,14 +626,14 @@ describe('TransactionInteractor tests', () => {
         fakeBaseCurrency,
       ),
     ).toEqual({
-      '30.03.2018': 0,
-      '30.03.2019': 0,
-      '30.06.2018': 0,
-      '30.06.2019': 0,
-      '30.09.2018': 0,
-      '30.09.2019': 0,
-      '30.12.2017': 0,
-      '30.12.2018': 0,
+      '30.03.2018': 16000,
+      '30.03.2019': 16000,
+      '30.06.2018': 501,
+      '30.06.2019': 501,
+      '30.09.2017': 8000,
+      '30.09.2018': 8000,
+      '30.12.2017': 501,
+      '30.12.2018': 501,
     });
   });
 });
