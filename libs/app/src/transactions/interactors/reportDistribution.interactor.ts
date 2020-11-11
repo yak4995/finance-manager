@@ -60,56 +60,48 @@ export default class ReportDistributionInteractor
 
   public async send(item: IDistributingMetricItem): Promise<any> {
     try {
+      const [startDate, endDate] = this.defineDateRange(item.period);
       const transactions: ITransaction[] = await this.transactionsRepo.findByAndCriteria(
         {
           owner: item.user,
+          range: {
+            field: 'datetime',
+            from: startDate,
+            to: endDate,
+          },
         },
       );
       this.transactionAnalyticService.transactions = transactions;
       let message: number | TransactionsComparisonDto = null;
-      const [startDate, endDate] = this.defineDateRange(item.period);
       // TODO: to strategy?
       switch (item.metric) {
         case AvailableAnalyticMetric.TRANSACTIONS_COUNT_BY_CATEGORY_AND_DATE_RANGE:
           message = await this.transactionAnalyticService.getTransactionsCountBy(
             item.category,
-            startDate,
-            endDate,
           );
           break;
         case AvailableAnalyticMetric.TRANSACTIONS_SUM_BY_CATEGORY_AND_DATE_RANGE:
           message = await this.transactionAnalyticService.getTransactionsSumBy(
             item.category,
-            startDate,
-            endDate,
             item.baseCurrency,
           );
           break;
         case AvailableAnalyticMetric.TRANSACTIONS_COUNT_BY_DATE_RANGE:
-          message = await this.transactionAnalyticService.getTransactionsCountForDateRange(
-            startDate,
-            endDate,
-          );
+          message = await this.transactionAnalyticService.getTransactionsCount();
           break;
         case AvailableAnalyticMetric.TRANSACTIONS_SUM_BY_DATE_RANGE:
-          message = await this.transactionAnalyticService.getTransactionsSumForDateRange(
-            startDate,
-            endDate,
+          message = await this.transactionAnalyticService.getTransactionsSum(
             item.baseCurrency,
           );
           break;
         case AvailableAnalyticMetric.TRANSACTIONS_COUNT_RATIO_BY_CATEGORY_AND_DATE_RANGE:
           message = await this.transactionAnalyticService.getTransactionCountRatioByCategories(
             item.category,
-            startDate,
-            endDate,
           );
           break;
         case AvailableAnalyticMetric.TRANSACTIONS_SUM_RATIO_BY_CATEGORY_AND_DATE_RANGE:
           message = await this.transactionAnalyticService.getTransactionSumRatioByCategories(
             item.category,
-            startDate,
-            endDate,
             item.baseCurrency,
           );
           break;

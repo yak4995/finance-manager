@@ -22,23 +22,15 @@ export default class TransactionCategoryInteractor
 
   async getTopCategories(user: IUser): Promise<any> {
     try {
-      const [ownTopCategories, systemTopCategories]: [
-        ITransactionCategory[],
-        ITransactionCategory[],
-      ] = await Promise.all([
-        this.transactionCategoryRepo.findByAndCriteria({
-          isSystem: false,
-          parentCategory: null,
-          owner: user,
-        }),
-        this.transactionCategoryRepo.findByAndCriteria({
+      const systemTopCategories: ITransactionCategory[] = await this.transactionCategoryRepo.findByAndCriteria(
+        {
           isSystem: true,
           parentCategory: null,
           owner: null,
-        }),
-      ]);
+        },
+      );
       return this.transactionCategoryOutputPort.getTopCategories(
-        [...ownTopCategories, ...systemTopCategories],
+        systemTopCategories,
         null,
       );
     } catch (e) {

@@ -9,10 +9,12 @@ export default interface TransactionOutputPort {
   addTransaction(result: ITransaction, e: Error): Promise<any>;
   updateTransaction(result: ITransaction, e: Error): Promise<ITransaction>;
   deleteTransaction(transaction: ITransaction, e: Error): Promise<any>;
+  getMaxTransactionByCategory(result: ITransaction, e: Error): Promise<any>;
+  getMinTransactionByCategory(result: ITransaction, e: Error): Promise<any>;
   getTransactionsCountBy(result: number, e: Error): Promise<any>;
   getTransactionsSumBy(result: number, e: Error): Promise<any>;
-  getTransactionsCountForDateRange(result: number, e: Error): Promise<any>;
-  getTransactionsSumForDateRange(result: number, e: Error): Promise<any>;
+  getTransactionsCount(result: number, e: Error): Promise<any>;
+  getTransactionsSum(result: number, e: Error): Promise<any>;
   getTransactionCountRatioByCategories(
     result: TransactionsComparisonDto,
     e: Error,

@@ -215,16 +215,44 @@ export default class TransactionInteractor
     }
   }
 
+  public async getMaxTransactionByCategory(
+    category: ITransactionCategory,
+  ): Promise<ITransaction> {
+    try {
+      const result: ITransaction = await this.transactionAnalyticService.getMaxTransactionByCategory(
+        category,
+      );
+      return this.transactionOutputPort.getMaxTransactionByCategory(
+        result,
+        null,
+      );
+    } catch (e) {
+      return this.transactionOutputPort.getMaxTransactionByCategory(null, e);
+    }
+  }
+
+  public async getMinTransactionByCategory(
+    category: ITransactionCategory,
+  ): Promise<ITransaction> {
+    try {
+      const result: ITransaction = await this.transactionAnalyticService.getMinTransactionByCategory(
+        category,
+      );
+      return this.transactionOutputPort.getMinTransactionByCategory(
+        result,
+        null,
+      );
+    } catch (e) {
+      return this.transactionOutputPort.getMinTransactionByCategory(null, e);
+    }
+  }
+
   public async getTransactionsCountBy(
     category: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
   ): Promise<any> {
     try {
       const result: number = await this.transactionAnalyticService.getTransactionsCountBy(
         category,
-        dateStart,
-        dateEnd,
       );
       return this.transactionOutputPort.getTransactionsCountBy(result, null);
     } catch (e) {
@@ -234,15 +262,11 @@ export default class TransactionInteractor
 
   public async getTransactionsSumBy(
     category: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
     baseCurrency: ICurrency,
   ): Promise<any> {
     try {
       const result: number = await this.transactionAnalyticService.getTransactionsSumBy(
         category,
-        dateStart,
-        dateEnd,
         baseCurrency,
       );
       return this.transactionOutputPort.getTransactionsSumBy(result, null);
@@ -251,57 +275,32 @@ export default class TransactionInteractor
     }
   }
 
-  public async getTransactionsCountForDateRange(
-    dateStart: Date,
-    dateEnd: Date,
-  ): Promise<any> {
+  public async getTransactionsCount(): Promise<any> {
     try {
-      const result: number = await this.transactionAnalyticService.getTransactionsCountForDateRange(
-        dateStart,
-        dateEnd,
-      );
-      return this.transactionOutputPort.getTransactionsCountForDateRange(
-        result,
-        null,
-      );
+      const result: number = await this.transactionAnalyticService.getTransactionsCount();
+      return this.transactionOutputPort.getTransactionsCount(result, null);
     } catch (e) {
-      return this.transactionOutputPort.getTransactionsCountForDateRange(
-        null,
-        e,
-      );
+      return this.transactionOutputPort.getTransactionsCount(null, e);
     }
   }
 
-  public async getTransactionsSumForDateRange(
-    dateStart: Date,
-    dateEnd: Date,
-    baseCurrency: ICurrency,
-  ): Promise<any> {
+  public async getTransactionsSum(baseCurrency: ICurrency): Promise<any> {
     try {
-      const result: number = await this.transactionAnalyticService.getTransactionsSumForDateRange(
-        dateStart,
-        dateEnd,
+      const result: number = await this.transactionAnalyticService.getTransactionsSum(
         baseCurrency,
       );
-      return this.transactionOutputPort.getTransactionsSumForDateRange(
-        result,
-        null,
-      );
+      return this.transactionOutputPort.getTransactionsSum(result, null);
     } catch (e) {
-      return this.transactionOutputPort.getTransactionsSumForDateRange(null, e);
+      return this.transactionOutputPort.getTransactionsSum(null, e);
     }
   }
 
   public async getTransactionCountRatioByCategories(
     baseCategory: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
   ): Promise<any> {
     try {
       const result: TransactionsComparisonDto = await this.transactionAnalyticService.getTransactionCountRatioByCategories(
         baseCategory,
-        dateStart,
-        dateEnd,
       );
       return this.transactionOutputPort.getTransactionCountRatioByCategories(
         result,
@@ -317,15 +316,11 @@ export default class TransactionInteractor
 
   public async getTransactionSumRatioByCategories(
     baseCategory: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
     baseCurrency: ICurrency,
   ): Promise<any> {
     try {
       const result: TransactionsComparisonDto = await this.transactionAnalyticService.getTransactionSumRatioByCategories(
         baseCategory,
-        dateStart,
-        dateEnd,
         baseCurrency,
       );
       return this.transactionOutputPort.getTransactionSumRatioByCategories(

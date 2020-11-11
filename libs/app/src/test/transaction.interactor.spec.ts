@@ -146,10 +146,12 @@ describe('TransactionInteractor tests', () => {
     expect(service.addTransaction).toBeDefined();
     expect(service.updateTransaction).toBeDefined();
     expect(service.deleteTransaction).toBeDefined();
+    expect(service.getMaxTransactionByCategory).toBeDefined();
+    expect(service.getMinTransactionByCategory).toBeDefined();
     expect(service.getTransactionsCountBy).toBeDefined();
     expect(service.getTransactionsSumBy).toBeDefined();
-    expect(service.getTransactionsCountForDateRange).toBeDefined();
-    expect(service.getTransactionsSumForDateRange).toBeDefined();
+    expect(service.getTransactionsCount).toBeDefined();
+    expect(service.getTransactionsSum).toBeDefined();
     expect(service.getTransactionCountRatioByCategories).toBeDefined();
     expect(service.getTransactionSumRatioByCategories).toBeDefined();
     expect(service.getTransactionCountChangeByPeriod).toBeDefined();
@@ -535,53 +537,75 @@ describe('TransactionInteractor tests', () => {
     });
   });
 
+  it('getMaxTransactionByCategory', async () => {
+    expect(await service.getMaxTransactionByCategory(firstCategory)).toEqual({
+      amount: 10000,
+      currency: {
+        code: 'USD',
+        id: '1',
+        name: 'USD',
+      },
+      datetime: new Date('2017-09-30T21:00:00.000Z'),
+      id: '1',
+      owner: {
+        id: 'fakeId',
+      },
+      transactionCategory: {
+        id: '1',
+        isOutcome: true,
+        isSystem: true,
+        name: '',
+        owner: null,
+        parentCategory: null,
+      },
+    });
+  });
+
+  it('getMinTransactionByCategory', async () => {
+    expect(await service.getMinTransactionByCategory(firstCategory)).toEqual({
+      amount: 501,
+      currency: {
+        code: 'EUR',
+        id: '2',
+        name: 'EUR',
+      },
+      datetime: new Date('2017-12-31T22:00:00.000Z'),
+      id: '2',
+      owner: {
+        id: 'fakeId',
+      },
+      transactionCategory: {
+        id: '1',
+        isOutcome: true,
+        isSystem: true,
+        name: '',
+        owner: null,
+        parentCategory: null,
+      },
+    });
+  });
+
   it('getTransactionsCountBy', async () => {
-    expect(
-      await service.getTransactionsCountBy(
-        firstCategory,
-        dateStartForTransactionChangeMetrics,
-        dateEndForTransactionChangeMetrics,
-      ),
-    ).toBe(10);
+    expect(await service.getTransactionsCountBy(firstCategory)).toBe(10);
   });
 
   it('getTransactionsSumBy', async () => {
     expect(
-      await service.getTransactionsSumBy(
-        firstCategory,
-        dateStartForTransactionChangeMetrics,
-        dateEndForTransactionChangeMetrics,
-        fakeBaseCurrency,
-      ),
+      await service.getTransactionsSumBy(firstCategory, fakeBaseCurrency),
     ).toBe(500_04);
   });
 
-  it('getTransactionsCountForDateRange', async () => {
-    expect(
-      await service.getTransactionsCountForDateRange(
-        dateStartForTransactionChangeMetrics,
-        dateEndForTransactionChangeMetrics,
-      ),
-    ).toBe(10);
+  it('getTransactionsCount', async () => {
+    expect(await service.getTransactionsCount()).toBe(10);
   });
 
   it('getTransactionsSumForDateRange', async () => {
-    expect(
-      await service.getTransactionsSumForDateRange(
-        dateStartForTransactionChangeMetrics,
-        dateEndForTransactionChangeMetrics,
-        fakeBaseCurrency,
-      ),
-    ).toBe(500_04);
+    expect(await service.getTransactionsSum(fakeBaseCurrency)).toBe(500_04);
   });
 
   it('getTransactionCountRatioByCategories', async () => {
     expect(
-      await service.getTransactionCountRatioByCategories(
-        firstCategory,
-        dateStartForTransactionChangeMetrics,
-        dateEndForTransactionChangeMetrics,
-      ),
+      await service.getTransactionCountRatioByCategories(firstCategory),
     ).toEqual({ '1': 100, '2': 0, '3': 0, '4': 0 });
   });
 
@@ -589,8 +613,6 @@ describe('TransactionInteractor tests', () => {
     expect(
       await service.getTransactionSumRatioByCategories(
         firstCategory,
-        dateStartForTransactionChangeMetrics,
-        dateEndForTransactionChangeMetrics,
         fakeBaseCurrency,
       ),
     ).toEqual({ '1': 100, '2': 0, '3': 0, '4': 0 });

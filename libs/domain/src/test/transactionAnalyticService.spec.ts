@@ -109,22 +109,54 @@ describe('TransactionAnalyticService tests', () => {
   );
 
   it('check methods existance', () => {
+    expect(service.getMaxTransactionByCategory).toBeDefined();
+    expect(service.getMinTransactionByCategory).toBeDefined();
     expect(service.getTransactionsCountBy).toBeDefined();
     expect(service.getTransactionsSumBy).toBeDefined();
-    expect(service.getTransactionsCountForDateRange).toBeDefined();
-    expect(service.getTransactionsSumForDateRange).toBeDefined();
+    expect(service.getTransactionsCount).toBeDefined();
+    expect(service.getTransactionsSum).toBeDefined();
     expect(service.getTransactionCountRatioByCategories).toBeDefined();
     expect(service.getTransactionSumRatioByCategories).toBeDefined();
     expect(service.getTransactionCountChangeByPeriod).toBeDefined();
     expect(service.getTransactionSumChangeByPeriod).toBeDefined();
   });
 
+  it('check getMaxTransactionByCategory', async () => {
+    service.transactions = generateTransactionsForSumMetrics(now);
+    try {
+      expect(await service.getMaxTransactionByCategory(thirdCategory)).toEqual({
+        id: '1',
+        currency: fakeCurrency,
+        owner: null,
+        transactionCategory: thirdCategory,
+        datetime: now,
+        amount: 100_00,
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
+
+  it('check getMinTransactionByCategory', async () => {
+    service.transactions = generateTransactionsForSumMetrics(now);
+    try {
+      expect(await service.getMinTransactionByCategory(thirdCategory)).toEqual({
+        id: '2',
+        currency: fakeBaseCurrency,
+        owner: null,
+        transactionCategory: thirdCategory,
+        datetime: now,
+        amount: 5_01,
+      });
+    } catch (e) {
+      throw e;
+    }
+  });
+
   it('check getTransactionsCountBy', async () => {
     service.transactions = generateTransactionsForCountMetrics(now);
     try {
-      expect(
-        await service.getTransactionsCountBy(thirdCategory, now, now),
-      ).toBe(1);
+      expect(await service.getTransactionsCountBy(thirdCategory)).toBe(1);
     } catch (e) {
       throw e;
     }
@@ -134,22 +166,17 @@ describe('TransactionAnalyticService tests', () => {
     service.transactions = generateTransactionsForSumMetrics(now);
     try {
       expect(
-        await service.getTransactionsSumBy(
-          thirdCategory,
-          now,
-          now,
-          fakeBaseCurrency,
-        ),
+        await service.getTransactionsSumBy(thirdCategory, fakeBaseCurrency),
       ).toBe(85_01);
     } catch (e) {
       throw e;
     }
   });
 
-  it('check getTransactionsCountForDateRange', async () => {
+  it('check getTransactionsCount', async () => {
     service.transactions = generateTransactionsForCountMetrics(now);
     try {
-      expect(await service.getTransactionsCountForDateRange(now, now)).toBe(2);
+      expect(await service.getTransactionsCount()).toBe(2);
     } catch (e) {
       throw e;
     }
@@ -160,13 +187,7 @@ describe('TransactionAnalyticService tests', () => {
     tomorrow.setDate(tomorrow.getDate() + 1);
     service.transactions = generateTransactionsForSumMetrics(now);
     try {
-      expect(
-        await service.getTransactionsSumForDateRange(
-          now,
-          now,
-          fakeBaseCurrency,
-        ),
-      ).toBe(90_02);
+      expect(await service.getTransactionsSum(fakeBaseCurrency)).toBe(90_02);
     } catch (e) {
       throw e;
     }
@@ -176,11 +197,7 @@ describe('TransactionAnalyticService tests', () => {
     service.transactions = generateTransactionsForRatioByCategories(now);
     try {
       expect(
-        await service.getTransactionCountRatioByCategories(
-          thirdCategory,
-          now,
-          now,
-        ),
+        await service.getTransactionCountRatioByCategories(thirdCategory),
       ).toEqual({ '3': 60, '6': 20, '7': 20 });
     } catch (e) {
       throw e;
@@ -193,8 +210,6 @@ describe('TransactionAnalyticService tests', () => {
       expect(
         await service.getTransactionSumRatioByCategories(
           thirdCategory,
-          now,
-          now,
           fakeBaseCurrency,
         ),
       ).toEqual({ '3': 66, '6': 32, '7': 2 });

@@ -69,6 +69,28 @@ export class DefTransactionOutputPort implements TransactionOutputPort {
     return transaction;
   }
 
+  async getMaxTransactionByCategory(
+    result: ITransaction,
+    e: Error,
+  ): Promise<any> {
+    if (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+
+    return result;
+  }
+
+  async getMinTransactionByCategory(
+    result: ITransaction,
+    e: Error,
+  ): Promise<any> {
+    if (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+
+    return result;
+  }
+
   async getTransactionsCountBy(result: number, e: Error): Promise<any> {
     if (e) {
       throw new InternalServerErrorException(e.message);
@@ -85,10 +107,7 @@ export class DefTransactionOutputPort implements TransactionOutputPort {
     return result;
   }
 
-  async getTransactionsCountForDateRange(
-    result: number,
-    e: Error,
-  ): Promise<any> {
+  async getTransactionsCount(result: number, e: Error): Promise<any> {
     if (e) {
       throw new InternalServerErrorException(e.message);
     }
@@ -96,7 +115,7 @@ export class DefTransactionOutputPort implements TransactionOutputPort {
     return result;
   }
 
-  async getTransactionsSumForDateRange(result: number, e: Error): Promise<any> {
+  async getTransactionsSum(result: number, e: Error): Promise<any> {
     if (e) {
       throw new InternalServerErrorException(e.message);
     }

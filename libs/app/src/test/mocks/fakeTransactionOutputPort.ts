@@ -76,6 +76,26 @@ export default class FakeTransactionOutputPort
     return transaction;
   }
 
+  async getMaxTransactionByCategory(
+    result: ITransaction,
+    e: Error,
+  ): Promise<any> {
+    if (e) {
+      throw e;
+    }
+    return result;
+  }
+
+  async getMinTransactionByCategory(
+    result: ITransaction,
+    e: Error,
+  ): Promise<any> {
+    if (e) {
+      throw e;
+    }
+    return result;
+  }
+
   async getTransactionsCountBy(
     result: number,
     e: Error = null,
@@ -93,20 +113,14 @@ export default class FakeTransactionOutputPort
     return result;
   }
 
-  async getTransactionsCountForDateRange(
-    result: number,
-    e: Error = null,
-  ): Promise<number> {
+  async getTransactionsCount(result: number, e: Error = null): Promise<number> {
     if (e) {
       throw e;
     }
     return result;
   }
 
-  async getTransactionsSumForDateRange(
-    result: number,
-    e: Error = null,
-  ): Promise<number> {
+  async getTransactionsSum(result: number, e: Error = null): Promise<number> {
     if (e) {
       throw e;
     }

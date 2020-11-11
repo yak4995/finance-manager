@@ -194,6 +194,72 @@ export default class TransactionController {
       example: 'Transaction category id is invalid',
     },
   })
+  @Get('report/max')
+  public async getMaxTransactionByCategory(
+    @User() user: IUser,
+    @Query() payload: TransactionsCategoryRangeDto,
+  ): Promise<any> {
+    try {
+      const [category, transactions]: [
+        ITransactionCategory,
+        ITransaction[],
+      ] = await Promise.all([
+        this.transactionCategoriesFacade.findById(payload.categoryId),
+        this.transactionsRepo.findByAndCriteria({
+          owner: user,
+          range: {
+            field: 'datetime',
+            from: payload.dateStart,
+            to: payload.dateEnd,
+          },
+        }),
+      ]);
+      this.transactionInputPort.setTransactions(transactions);
+      return this.transactionInputPort.getMaxTransactionByCategory(category);
+    } catch (e) {
+      throw new BadRequestException('Transaction category id is invalid');
+    }
+  }
+
+  @ApiBadRequestResponse({
+    schema: {
+      type: 'string',
+      example: 'Transaction category id is invalid',
+    },
+  })
+  @Get('report/min')
+  public async getMinTransactionByCategory(
+    @User() user: IUser,
+    @Query() payload: TransactionsCategoryRangeDto,
+  ): Promise<any> {
+    try {
+      const [category, transactions]: [
+        ITransactionCategory,
+        ITransaction[],
+      ] = await Promise.all([
+        this.transactionCategoriesFacade.findById(payload.categoryId),
+        this.transactionsRepo.findByAndCriteria({
+          owner: user,
+          range: {
+            field: 'datetime',
+            from: payload.dateStart,
+            to: payload.dateEnd,
+          },
+        }),
+      ]);
+      this.transactionInputPort.setTransactions(transactions);
+      return this.transactionInputPort.getMinTransactionByCategory(category);
+    } catch (e) {
+      throw new BadRequestException('Transaction category id is invalid');
+    }
+  }
+
+  @ApiBadRequestResponse({
+    schema: {
+      type: 'string',
+      example: 'Transaction category id is invalid',
+    },
+  })
   @Get('report/count')
   async getTransactionsCountBy(
     @User() user: IUser,
@@ -215,11 +281,7 @@ export default class TransactionController {
         }),
       ]);
       this.transactionInputPort.setTransactions(transactions);
-      return this.transactionInputPort.getTransactionsCountBy(
-        category,
-        new Date(payload.dateStart),
-        new Date(payload.dateEnd),
-      );
+      return this.transactionInputPort.getTransactionsCountBy(category);
     } catch (e) {
       throw new BadRequestException('Transaction category id is invalid');
     }
@@ -256,8 +318,6 @@ export default class TransactionController {
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionsSumBy(
         category,
-        new Date(payload.dateStart),
-        new Date(payload.dateEnd),
         baseCurrency,
       );
     } catch (e) {
@@ -281,10 +341,7 @@ export default class TransactionController {
       },
     );
     this.transactionInputPort.setTransactions(transactions);
-    return this.transactionInputPort.getTransactionsCountForDateRange(
-      new Date(payload.dateStart),
-      new Date(payload.dateEnd),
-    );
+    return this.transactionInputPort.getTransactionsCount();
   }
 
   @Get('/report/sum-by-range')
@@ -304,11 +361,7 @@ export default class TransactionController {
       }),
     ]);
     this.transactionInputPort.setTransactions(transactions);
-    return this.transactionInputPort.getTransactionsSumForDateRange(
-      new Date(payload.dateStart),
-      new Date(payload.dateEnd),
-      baseCurrency,
-    );
+    return this.transactionInputPort.getTransactionsSum(baseCurrency);
   }
 
   @ApiBadRequestResponse({
@@ -340,8 +393,6 @@ export default class TransactionController {
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionCountRatioByCategories(
         baseCategory,
-        new Date(payload.dateStart),
-        new Date(payload.dateEnd),
       );
     } catch (e) {
       throw new BadRequestException('Transaction category id is invalid');
@@ -379,8 +430,6 @@ export default class TransactionController {
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionSumRatioByCategories(
         baseCategory,
-        new Date(payload.dateStart),
-        new Date(payload.dateEnd),
         baseCurrency,
       );
     } catch (e) {

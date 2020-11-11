@@ -25,46 +25,47 @@ export default class TransactionAnalyticService {
     this._transactions = transactions;
   }
 
+  public async getMaxTransactionByCategory(
+    category: ITransactionCategory,
+  ): Promise<ITransaction> {
+    const maxAmount: number = Math.max(
+      ...(await this.getTransactionsByFilter({ category })).map(t => t.amount),
+    );
+    return this.transactions.find(t => t.amount === maxAmount);
+  }
+
+  public async getMinTransactionByCategory(
+    category: ITransactionCategory,
+  ): Promise<ITransaction> {
+    const minAmount: number = Math.min(
+      ...(await this.getTransactionsByFilter({ category })).map(t => t.amount),
+    );
+    return this.transactions.find(t => t.amount === minAmount);
+  }
+
   public async getTransactionsCountBy(
     category: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
   ): Promise<number> {
-    return (
-      await this.getTransactionsByFilter({
-        category,
-        dateStart,
-        dateEnd,
-      })
-    ).length;
+    return (await this.getTransactionsByFilter({ category })).length;
   }
 
   public async getTransactionsSumBy(
     category: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
     baseCurrency: ICurrency,
   ): Promise<number> {
     return this.getSumByTransactions(
-      await this.getTransactionsByFilter({ category, dateStart, dateEnd }),
+      await this.getTransactionsByFilter({ category }),
       baseCurrency,
     );
   }
 
-  public async getTransactionsCountForDateRange(
-    dateStart: Date,
-    dateEnd: Date,
-  ): Promise<number> {
-    return (await this.getTransactionsByFilter({ dateStart, dateEnd })).length;
+  public async getTransactionsCount(): Promise<number> {
+    return (await this.getTransactionsByFilter({})).length;
   }
 
-  public async getTransactionsSumForDateRange(
-    dateStart: Date,
-    dateEnd: Date,
-    baseCurrency: ICurrency,
-  ): Promise<number> {
+  public async getTransactionsSum(baseCurrency: ICurrency): Promise<number> {
     return this.getSumByTransactions(
-      await this.getTransactionsByFilter({ dateStart, dateEnd }),
+      await this.getTransactionsByFilter({}),
       baseCurrency,
     );
   }
@@ -72,27 +73,19 @@ export default class TransactionAnalyticService {
   // pie diagramm data for transactions structure
   public async getTransactionCountRatioByCategories(
     baseCategory: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
   ): Promise<TransactionsComparisonDto> {
     return this.processTransactionRatioByCategory(
       baseCategory,
-      dateStart,
-      dateEnd,
       async (arg: ITransaction[]): Promise<number> => arg.length,
     );
   }
 
   public async getTransactionSumRatioByCategories(
     baseCategory: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
     baseCurrency: ICurrency,
   ): Promise<TransactionsComparisonDto> {
     return this.processTransactionRatioByCategory(
       baseCategory,
-      dateStart,
-      dateEnd,
       async (arg: ITransaction[]): Promise<number> =>
         await this.getSumByTransactions(arg, baseCurrency),
     );
@@ -132,33 +125,27 @@ export default class TransactionAnalyticService {
   }
 
   private async getTransactionsByFilter(filter: {
-    dateStart: Date;
-    dateEnd: Date;
     category?: ITransactionCategory;
     categories?: ITransactionCategory[];
   }): Promise<ITransaction[]> {
-    const result: ITransaction[] = this.transactions.filter(
-      (t: ITransaction): boolean =>
-        t.datetime >= filter.dateStart && t.datetime <= filter.dateEnd,
-    );
     if (filter.category) {
       const categoryChildrenIds: string[] = (
         await this.transactionCategoriesFacade.getTransactionCategoryChildren(
           filter.category,
         )
       ).map((childCategory: ITransactionCategory): string => childCategory.id);
-      return result.filter((t: ITransaction): boolean =>
+      return this.transactions.filter((t: ITransaction): boolean =>
         categoryChildrenIds.includes(t.transactionCategory.id),
       );
     }
     if (filter.categories) {
-      return result.filter((t: ITransaction): boolean =>
+      return this.transactions.filter((t: ITransaction): boolean =>
         filter.categories
           .map((tc: ITransactionCategory): string => tc.id)
           .includes(t.transactionCategory.id),
       );
     }
-    return result;
+    return this.transactions;
   }
 
   private async getSumByTransactions(
@@ -182,8 +169,6 @@ export default class TransactionAnalyticService {
 
   private async processTransactionRatioByCategory(
     baseCategory: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
     processFunction: (transactions: ITransaction[]) => Promise<number>,
   ): Promise<TransactionsComparisonDto> {
     const directChildren: ITransactionCategory[] = await this.transactionCategoriesFacade.getTransactionCategoryDirectChildren(
@@ -193,11 +178,7 @@ export default class TransactionAnalyticService {
     const result: TransactionsComparisonDto = {};
     for (const category of [baseCategory].concat(directChildren ?? [])) {
       const transactionsForProcessing: ITransaction[] = await this.getTransactionsByFilter(
-        {
-          dateStart,
-          dateEnd,
-          category,
-        },
+        { category },
       );
       const tempResult: number = await processFunction(
         transactionsForProcessing,
@@ -247,8 +228,6 @@ export default class TransactionAnalyticService {
     }
     const transactionsForProcessing: ITransaction[] = await this.getTransactionsByFilter(
       {
-        dateStart,
-        dateEnd,
         categories: await this.transactionCategoriesFacade.getTransactionCategoryChildren(
           category,
         ),

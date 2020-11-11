@@ -6,40 +6,31 @@ import ITransaction from '@domain/transactions/entities/transaction.interface';
 export default interface TransactionAnalyticInputPort {
   setTransactions(transactions: ITransaction[]): void;
 
-  getTransactionsCountBy(
+  getMaxTransactionByCategory(
     category: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
-  ): Promise<any>;
+  ): Promise<ITransaction>;
+
+  getMinTransactionByCategory(
+    category: ITransactionCategory,
+  ): Promise<ITransaction>;
+
+  getTransactionsCountBy(category: ITransactionCategory): Promise<any>;
 
   getTransactionsSumBy(
     category: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
     baseCurrency: ICurrency,
   ): Promise<any>;
 
-  getTransactionsCountForDateRange(
-    dateStart: Date,
-    dateEnd: Date,
-  ): Promise<any>;
+  getTransactionsCount(): Promise<any>;
 
-  getTransactionsSumForDateRange(
-    dateStart: Date,
-    dateEnd: Date,
-    baseCurrency: ICurrency,
-  ): Promise<any>;
+  getTransactionsSum(baseCurrency: ICurrency): Promise<any>;
 
   getTransactionCountRatioByCategories(
     baseCategory: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
   ): Promise<any>;
 
   getTransactionSumRatioByCategories(
     baseCategory: ITransactionCategory,
-    dateStart: Date,
-    dateEnd: Date,
     baseCurrency: ICurrency,
   ): Promise<any>;
 
