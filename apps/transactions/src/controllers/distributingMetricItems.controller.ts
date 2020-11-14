@@ -111,8 +111,8 @@ export class DistributingMetricItemsController {
       example: 'This user doesn`t have any of these groups',
     },
   })
-  // @UseGuards(JwtAuthGuard)
-  // @OnlyRoles(Roles.ADMINISTRATOR, Roles.USER)
+  @UseGuards(JwtAuthGuard)
+  @OnlyRoles(Roles.ADMINISTRATOR, Roles.USER)
   @Delete('unsubscribe')
   async unsubscribe(
     @User() user: IUserCredential,

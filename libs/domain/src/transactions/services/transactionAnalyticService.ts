@@ -177,9 +177,12 @@ export default class TransactionAnalyticService {
     let general: number = 0;
     const result: TransactionsComparisonDto = {};
     for (const category of [baseCategory].concat(directChildren ?? [])) {
-      const transactionsForProcessing: ITransaction[] = await this.getTransactionsByFilter(
-        { category },
-      );
+      const transactionsForProcessing: ITransaction[] =
+        category.id !== baseCategory.id
+          ? await this.getTransactionsByFilter({ category })
+          : this.transactions.filter(
+              t => t.transactionCategory.id === baseCategory.id,
+            );
       const tempResult: number = await processFunction(
         transactionsForProcessing,
       );

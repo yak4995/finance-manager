@@ -14,7 +14,7 @@ export default class ReportHasBeenGeneratedEventDispatcher extends IEventDispatc
   ReportHasBeenGeneratedEvent
 > {
   constructor(
-    @Inject('TransactionCategoryShouldBeDeletedEventListeners')
+    @Inject('ReportHasBeenGeneratedEventListeners')
     eventListeners: IEventListener<ReportHasBeenGeneratedEvent>[],
     @InjectQueue('metrics')
     private readonly metricsQueue: Queue<ReportHasBeenGeneratedEvent>,

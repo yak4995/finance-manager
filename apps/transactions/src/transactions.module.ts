@@ -178,11 +178,12 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
       useClass: DistributingMetricItemFactory,
     },
     {
-      provide: 'TransactionCategoryShouldBeDeletedEventListeners',
-      useFactory: (mailService: MailerService) => [
-        new ReportHasBeenGeneratedListener(mailService),
-      ],
-      inject: [MailerService],
+      provide: 'ReportHasBeenGeneratedEventListeners',
+      useFactory: (
+        mailService: MailerService,
+        categoriesFacade: TransactionCategoriesFacade,
+      ) => [new ReportHasBeenGeneratedListener(mailService, categoriesFacade)],
+      inject: [MailerService, TransactionCategoriesFacade],
     },
     {
       provide: 'ReportDistributionInputPort',

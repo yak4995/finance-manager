@@ -142,7 +142,6 @@ describe('ReportDistributionInteractor tests', () => {
       .fn()
       .mockImplementation((period: Period): [Date, Date] => {
         const startDate: Date = new Date('2019-07-15');
-        // TODO: to strategy?
         switch (period) {
           case Period.MONTH:
             if (startDate.getMonth() > 1) {

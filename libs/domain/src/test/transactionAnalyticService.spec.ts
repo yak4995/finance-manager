@@ -198,7 +198,7 @@ describe('TransactionAnalyticService tests', () => {
     try {
       expect(
         await service.getTransactionCountRatioByCategories(thirdCategory),
-      ).toEqual({ '3': 60, '6': 20, '7': 20 });
+      ).toEqual({ '3': 33, '6': 33, '7': 33 });
     } catch (e) {
       throw e;
     }
@@ -212,7 +212,7 @@ describe('TransactionAnalyticService tests', () => {
           thirdCategory,
           fakeBaseCurrency,
         ),
-      ).toEqual({ '3': 66, '6': 32, '7': 2 });
+      ).toEqual({ '3': 48, '6': 48, '7': 3 });
     } catch (e) {
       throw e;
     }
