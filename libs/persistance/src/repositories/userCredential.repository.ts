@@ -49,7 +49,9 @@ export default class UserCredentialRepository
       isActive: result.isActive,
       profileImageUrl: result.profileImageUrl,
       roles: entity.roles,
-      passwordHash: entity.passwordHash,
+      // passwordHash: entity.passwordHash,
+      otp: entity.otp,
+      lastLoginDate: entity.lastLoginDate,
     };
   }
 
@@ -88,7 +90,9 @@ export default class UserCredentialRepository
         email: user.email,
         isActive: user.isActive,
         profileImageUrl: user.profileImageUrl,
-        passwordHash: user.passwordHash,
+        // passwordHash: user.passwordHash,
+        otp: user.otp,
+        lastLoginDate: user.lastLoginDate,
         roles: (await this.getRelatedEntities(user.id, 'roles')).map(
           (role): Roles => role.name as Roles,
         ),
@@ -106,7 +110,9 @@ export default class UserCredentialRepository
       email: result.email,
       isActive: result.isActive,
       profileImageUrl: result.profileImageUrl,
-      passwordHash: result.passwordHash,
+      // passwordHash: result.passwordHash,
+      otp: result.otp,
+      lastLoginDate: result.lastLoginDate,
       roles: (await this.getRelatedEntities(result.id, 'roles')).map(
         (role): Roles => role.name as Roles,
       ),
@@ -123,7 +129,9 @@ export default class UserCredentialRepository
         email: result[0].email,
         isActive: result[0].isActive,
         profileImageUrl: result[0].profileImageUrl,
-        passwordHash: result[0].passwordHash,
+        // passwordHash: result[0].passwordHash,
+        otp: result[0].otp,
+        lastLoginDate: result[0].lastLoginDate,
         roles: (await this.getRelatedEntities(result[0].id, 'roles')).map(
           (role): Roles => role.name as Roles,
         ),
@@ -150,7 +158,9 @@ export default class UserCredentialRepository
         email: user.email,
         isActive: user.isActive,
         profileImageUrl: user.profileImageUrl,
-        passwordHash: user.passwordHash,
+        // passwordHash: user.passwordHash,
+        otp: user.otp,
+        lastLoginDate: user.lastLoginDate,
         roles: (await this.getRelatedEntities(user.id, 'roles')).map(
           (role): Roles => role.name as Roles,
         ),
@@ -185,7 +195,9 @@ export default class UserCredentialRepository
         email: user.email,
         isActive: user.isActive,
         profileImageUrl: user.profileImageUrl,
-        passwordHash: user.passwordHash,
+        // passwordHash: user.passwordHash,
+        otp: user.otp,
+        lastLoginDate: user.lastLoginDate,
         roles: (await this.getRelatedEntities(user.id, 'roles')).map(
           (role): Roles => role.name as Roles,
         ),

@@ -9,11 +9,13 @@ import ISecuredUserCredential from '@persistance/entities/securedUserCredential'
 
 import { FileLoggerService } from '@transport/logger/fileLogger.service';
 
-import AuthService from '@common/services/auth.service';
+// import AuthService from '@common/services/auth.service';
+import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
 
 @Injectable()
 export default class DefAuthorityOutputPort implements AuthorityOutputPort {
-  constructor(private readonly authService: AuthService) {}
+  // constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: PasswordlessAuthService) {}
 
   processLogin(
     user: ISecuredUserCredential,
@@ -55,7 +57,7 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
         'DefAuthorityOutputPort::processRegistration',
       );
     }
-    const { passwordHash, ...result } = savedUser;
+    const { /*passwordHash*/ otp, ...result } = savedUser;
     return result;
   }
 
@@ -79,7 +81,7 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
       );
       throw new BadRequestException(e.message);
     }
-    const { passwordHash, ...result } = user;
+    const { /*passwordHash*/ otp, ...result } = user;
     return result;
   }
 

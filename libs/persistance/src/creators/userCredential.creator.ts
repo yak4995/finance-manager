@@ -19,7 +19,9 @@ export default class UserCredentialCreator
       isActive: fields.isActive ?? true,
       profileImageUrl: fields.profileImageUrl ?? '',
       roles: fields.roles ?? [Roles.USER],
-      passwordHash: fields.passwordHash,
+      // passwordHash: fields.passwordHash,
+      otp: null,
+      lastLoginDate: null,
     };
   }
 }

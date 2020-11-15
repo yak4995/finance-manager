@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS public.user_credentials (
   "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
   "email" VARCHAR UNIQUE NOT NULL,
   "profileImageUrl" VARCHAR DEFAULT NULL,
-  "passwordHash" VARCHAR NOT NULL,
+  "otp" VARCHAR DEFAULT NULL,
+  "lastLoginDate" TIMESTAMP DEFAULT NULL,
   "isActive" BOOLEAN DEFAULT false,
   CONSTRAINT "pkey_users" PRIMARY KEY ("id")
 );

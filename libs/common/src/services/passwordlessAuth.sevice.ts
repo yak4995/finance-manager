@@ -1,9 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
+import { MailerService } from '@nestjs-modules/mailer';
+import * as moment from 'moment';
 
-import IAuthorityService from '@app/users/interfaces/authorityService.interface';
+// import IAuthorityService from '@app/users/interfaces/authorityService.interface';
+import IPasswordlessAuthorityService from '@app/users/interfaces/passwordlessAuthorityService.interface';
 import UserCredentialAbstractFactory from '@app/users/factories/userCredentialFactory';
 import IUserRegisterDto from '@app/users/dto/iUserRegister.dto';
 import IUserCredential from '@app/users/entities/userCredential.interface';
@@ -19,13 +21,15 @@ import { FileLoggerService } from '@transport/logger/fileLogger.service';
 import JwtPayloadInterface from '@common/interfaces/jwt-payload.interface';
 
 @Injectable()
-export default class AuthService implements IAuthorityService {
+export default class PasswordlessAuthService
+  implements IPasswordlessAuthorityService {
   private readonly userCredentialRepo: IRepository<ISecuredUserCredential>;
 
   constructor(
     private readonly userCredentialFactory: UserCredentialAbstractFactory,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailerService,
   ) {
     this.userCredentialRepo = userCredentialFactory.createUserCredentialRepo() as IRepository<
       ISecuredUserCredential
@@ -35,11 +39,33 @@ export default class AuthService implements IAuthorityService {
   public async signUp(payload: IUserRegisterDto): Promise<IUserCredential> {
     return this.userCredentialFactory.createUserCredential({
       email: payload.email,
-      /*passwordHash: await bcrypt.hash(
-        payload.authorityData,
-        Number(this.configService.get<number>('PASSWORD_HASH_ROUNDS_COUNT')),
-      ),*/
     } as Criteria<IUserCredential>);
+  }
+
+  public async sendOtp(email: string): Promise<string> {
+    try {
+      const user: ISecuredUserCredential = await this.userCredentialRepo.findOneByAndCriteria(
+        { email },
+      );
+      const otp = Math.random()
+        .toString(36)
+        .substring(6);
+      await this.userCredentialRepo.update({ otp }, user.id);
+      await this.mailService.sendMail({
+        to: email,
+        subject: 'Finance Manager OTP',
+        template: 'otp',
+        context: { otp },
+      });
+      return 'Otp has been sent';
+    } catch (e) {
+      FileLoggerService.error(
+        e.message,
+        e.stack,
+        'PasswordlessAuthService::sendOtp',
+      );
+      throw e;
+    }
   }
 
   public async signIn(payload: IUserLoginDto): Promise<IUserCredential> {
@@ -48,15 +74,25 @@ export default class AuthService implements IAuthorityService {
         email: payload.email,
       },
     );
-    const isPasswordValid: boolean = await bcrypt.compare(
-      payload.authorityData,
-      'temp',
-      // user.passwordHash,
-    );
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Password is invalid!');
+    if (user) {
+      await this.userCredentialRepo.update(
+        {
+          lastLoginDate: new Date(),
+          otp: null,
+        },
+        user.id,
+      );
+      const isOtpValid: boolean =
+        user.lastLoginDate &&
+        moment().diff(user.lastLoginDate, 'seconds') > 30 &&
+        payload.authorityData === user.otp;
+      if (!isOtpValid) {
+        throw new UnauthorizedException('Otp is invalid!');
+      }
+      return user;
+    } else {
+      return null;
     }
-    return user;
   }
 
   public signOut(_user: IUserCredential): never {

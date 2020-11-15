@@ -12,13 +12,12 @@ export default class UserRegisterDto implements IUserRegisterDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
-
-  @ApiProperty({
+  /*@ApiProperty({
     title: 'user password',
     type: 'string',
     required: true,
   })
   @IsNotEmpty()
-  @IsString()
+  @IsString()*/
   authorityData: any;
 }

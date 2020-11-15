@@ -7,6 +7,7 @@ import {
   Delete,
   Inject,
   Get,
+  Param,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -23,7 +24,7 @@ import {
 import UserRegisterDto from '../dtos/userRegister.dto';
 import UserLoginDto from '../dtos/userLogin.dto';
 
-import SessionsManagementInputPort from '@app/users/ports/sessionsManagementInput.port';
+// import SessionsManagementInputPort from '@app/users/ports/sessionsManagementInput.port';
 import UserCredentialsManagementInputPort from '@app/users/ports/userCredentialsManagementInput.port';
 import IUserCredential from '@app/users/entities/userCredential.interface';
 
@@ -32,9 +33,10 @@ import IUser from '@domain/users/entities/user.interface';
 import JwtAuthGuard from '@common/guards/jwt-auth.guard';
 
 import ISecuredUserCredential from '@persistance/entities/securedUserCredential';
-import { User } from '@common/decorators/user.decorator';
 
-// TODO: outside auth provider like auth0 with passwordless
+import { User } from '@common/decorators/user.decorator';
+import PasswordlessSessionManagementInputPort from '@app/users/ports/passwordlessSessionManagementInput.port';
+
 @ApiTags('Authorization and profile management')
 @ApiUnauthorizedResponse({
   schema: {
@@ -57,7 +59,8 @@ import { User } from '@common/decorators/user.decorator';
 export default class AuthController {
   constructor(
     @Inject('SessionsManagementInputPort&UserCredentialsManagementInputPort')
-    private readonly authorityInputPort: SessionsManagementInputPort &
+    private readonly authorityInputPort: PasswordlessSessionManagementInputPort &
+      // SessionsManagementInputPort &
       UserCredentialsManagementInputPort,
   ) {}
 
@@ -77,7 +80,7 @@ export default class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('/profile')
   getProfile(@User() user: ISecuredUserCredential) {
-    const { id, passwordHash, ...result } = user;
+    const { id, /*passwordHash*/ otp, ...result } = user;
     return result;
   }
 
@@ -105,11 +108,22 @@ export default class AuthController {
     return this.authorityInputPort.signUp(payload);
   }
 
+  @ApiOperation({ description: 'Create new user in the system' })
+  @ApiCreatedResponse({
+    description: 'status',
+    status: 200,
+  })
+  @Post('sendOtp/:email')
+  sendOtp(@Param('email') email: string): Promise<string> {
+    return this.authorityInputPort.sendOtp(email);
+  }
+
   @ApiOperation({ description: 'Get API access token for existing user' })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      examples: ['This user has not been found', 'Password is invalid!'],
+      // examples: ['This user has not been found', 'Password is invalid!'],
+      examples: ['This user has not been found', 'Otp is invalid!'],
     },
   })
   @ApiCreatedResponse({

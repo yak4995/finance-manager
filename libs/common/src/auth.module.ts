@@ -17,6 +17,7 @@ import GqlAuthGuard from './guards/gql-auth.guard';
 import JwtAuthGuard from './guards/jwt-auth.guard';
 import AuthService from './services/auth.service';
 import JwtStrategy from './services/jwt.strategy';
+import PasswordlessAuthService from './services/passwordlessAuth.sevice';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import JwtStrategy from './services/jwt.strategy';
     JwtAuthGuard,
     JwtStrategy,
     AuthService,
+    PasswordlessAuthService,
     {
       provide: 'UserCredentialCreator',
       useClass: UserCredentialCreator,
@@ -53,6 +55,12 @@ import JwtStrategy from './services/jwt.strategy';
       useClass: UserCredentialFactory,
     },
   ],
-  exports: [GqlAuthGuard, JwtAuthGuard, JwtStrategy, AuthService],
+  exports: [
+    GqlAuthGuard,
+    JwtAuthGuard,
+    JwtStrategy,
+    AuthService,
+    PasswordlessAuthService,
+  ],
 })
 export class AuthModule {}

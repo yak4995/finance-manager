@@ -16,7 +16,8 @@ import UserShouldBeDeletedEventListener from './listeners/userShouldBeDeletedEve
 import UsersResolver from './users.resolver';
 
 import UserCredentialAbstractFactory from '@app/users/factories/userCredentialFactory';
-import AuthorityInteractor from '@app/users/interactors/authority.interactor';
+import AuthorityPasswordlessInteractor from '@app/users/interactors/authorityPasswordless.interactor';
+// import AuthorityInteractor from '@app/users/interactors/authority.interactor';
 
 import PrismaModule from '@persistance/prisma/prisma.module';
 import UserCredentialCreator from '@persistance/creators/userCredential.creator';
@@ -26,8 +27,9 @@ import UserCredentialFactory from '@persistance/factories/userCredential.factory
 
 import { LoggerModule } from '@transport/logger/logger.module';
 
-import AuthService from '@common/services/auth.service';
 import { AuthModule } from '@common/auth.module';
+// import AuthService from '@common/services/auth.service';
+import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
 
 @Module({
   imports: [
@@ -139,23 +141,32 @@ import { AuthModule } from '@common/auth.module';
       ],
       inject: [MailerService],
     },
-    {
+    /*{
       provide: 'UserShouldBeDeletedEventListeners',
       useFactory: (authService: AuthService) => [
         new UserShouldBeDeletedEventListener(authService),
       ],
       inject: [AuthService],
+    },*/
+    {
+      provide: 'UserShouldBeDeletedEventListeners',
+      useFactory: (authService: PasswordlessAuthService) => [
+        new UserShouldBeDeletedEventListener(authService),
+      ],
+      inject: [PasswordlessAuthService],
     },
     {
       provide: 'SessionsManagementInputPort&UserCredentialsManagementInputPort',
       useFactory: (
-        authService: AuthService,
+        // authService: AuthService,
+        authService: PasswordlessAuthService,
         userCredentialFactory: UserCredentialAbstractFactory,
         userHasBeenRegisteredEventDispatcher: UserHasBeenRegisteredEventDispatcher,
         userShouldBeDeletedEventDispatcher: UserShouldBeDeletedEventDispatcher,
         authOutputPort: DefAuthorityOutputPort,
       ) =>
-        new AuthorityInteractor(
+        // new AuthorityInteractor(
+        new AuthorityPasswordlessInteractor(
           authService,
           userCredentialFactory.createUserCredentialRepo(),
           userHasBeenRegisteredEventDispatcher,
@@ -163,7 +174,8 @@ import { AuthModule } from '@common/auth.module';
           authOutputPort,
         ),
       inject: [
-        AuthService,
+        // AuthService,
+        PasswordlessAuthService,
         UserCredentialAbstractFactory,
         UserHasBeenRegisteredEventDispatcher,
         UserShouldBeDeletedEventDispatcher,

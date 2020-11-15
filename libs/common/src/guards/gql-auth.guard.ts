@@ -11,13 +11,15 @@ import { Reflector } from '@nestjs/core';
 import IUserCredential from '@app/users/entities/userCredential.interface';
 import { Roles } from '@app/users/enums/roles.enum';
 
-import AuthService from '@common/services/auth.service';
+// import AuthService from '@common/services/auth.service';
+import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
 
 @Injectable()
 export default class GqlAuthGuard extends AuthGuard('jwt') {
   constructor(
     private readonly reflector: Reflector,
-    private readonly authService: AuthService,
+    // private readonly authService: AuthService,
+    private readonly authService: PasswordlessAuthService,
   ) {
     super();
   }
