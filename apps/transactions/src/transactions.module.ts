@@ -45,7 +45,6 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
   imports: [
     AuthModule,
     LoggerModule,
-    ConfigModule.forRoot(),
     PrismaModule,
     BullModule.registerQueueAsync({
       name: 'metrics',
@@ -107,6 +106,7 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
     TransactionCategoriesFacade,
     TransactionSearchService,
     ReportHasBeenGeneratedEventDispatcher,
+    ReportHasBeenGeneratedListener,
     DefTransactionOutputPort,
     DefReportDistributionOutputPort,
     {

@@ -1,10 +1,9 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { Inject, UseGuards, BadRequestException } from '@nestjs/common';
 
-import CurrencyShouldBeDeletedEvent from './events/currencyShouldBeDeleted.event';
-
 import { Roles } from '@app/users/enums/roles.enum';
 import IEventDispatchService from '@app/events/eventDispatchService.interface';
+import CurrencyShouldBeDeletedEvent from '@app/events/currencyShouldBeDeleted.event';
 
 import CurrencyAbstractFactory from '@domain/currencies/factories/currencyFactory';
 import IRepository from '@domain/repository.interface';

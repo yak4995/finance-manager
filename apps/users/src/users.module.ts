@@ -36,7 +36,6 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
     AuthModule,
     PrismaModule,
     LoggerModule,
-    // ConfigModule,
     BullModule.registerQueueAsync(
       {
         name: 'mailing',

@@ -165,10 +165,8 @@ import { RedisCacheService } from '@common/services/redisCache.service';
         DefTransactionCategoryOutputPort,
       ],
     },
-    {
-      provide: 'TransactionCategoryShoulBeDeletedEventDispatcher',
-      useClass: TransactionCategoryShoulBeDeletedEventDispatcher,
-    },
+    TransactionCategoryShoulBeDeletedEventDispatcher,
+    TransactionCategoryShouldBeDeletedListener,
     {
       provide: 'TransactionCategoryShouldBeDeletedEventListeners',
       useFactory: (

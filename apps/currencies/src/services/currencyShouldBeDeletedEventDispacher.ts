@@ -2,11 +2,10 @@ import { Inject } from '@nestjs/common';
 import { InjectQueue, Processor, Process } from '@nestjs/bull';
 import { Queue, Job } from 'bull';
 
-import CurrencyShouldBeDeletedEvent from '../events/currencyShouldBeDeleted.event';
-
 import IEventListener from '@app/events/eventListener.interface';
 import { EventStatus } from '@app/events/eventStatus.enum';
 import IEventDispatchService from '@app/events/eventDispatchService.interface';
+import CurrencyShouldBeDeletedEvent from '@app/events/currencyShouldBeDeleted.event';
 
 import { FileLoggerService } from '@transport/logger/fileLogger.service';
 

@@ -50,7 +50,13 @@ export default class PasswordlessAuthService
       const otp = Math.random()
         .toString(36)
         .substring(6);
-      await this.userCredentialRepo.update({ otp }, user.id);
+      await this.userCredentialRepo.update(
+        {
+          otp,
+          lastLoginDate: new Date(),
+        },
+        user.id,
+      );
       await this.mailService.sendMail({
         to: email,
         subject: 'Finance Manager OTP',

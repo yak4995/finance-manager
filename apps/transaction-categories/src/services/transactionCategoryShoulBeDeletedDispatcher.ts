@@ -2,11 +2,10 @@ import { Inject } from '@nestjs/common';
 import { InjectQueue, Processor, Process } from '@nestjs/bull';
 import { Queue, Job } from 'bull';
 
-import TransactionCategoryShouldBeDeletedEvent from '../events/transactionCategoryShouldBeDeleted.event';
-
 import IEventDispatchService from '@app/events/eventDispatchService.interface';
 import IEventListener from '@app/events/eventListener.interface';
 import { EventStatus } from '@app/events/eventStatus.enum';
+import TransactionCategoryShouldBeDeletedEvent from '@app/events/transactionCategoryShouldBeDeleted.event';
 
 import { FileLoggerService } from '@transport/logger/fileLogger.service';
 

@@ -8,14 +8,13 @@ import {
 } from '@nestjs/graphql';
 import { UseGuards, Inject, BadRequestException } from '@nestjs/common';
 
-import TransactionCategoryShouldBeDeletedEvent from '../events/transactionCategoryShouldBeDeleted.event';
-
 import IRepository from '@domain/repository.interface';
 import ITransactionCategory from '@domain/transactionCategories/entities/transactionCategory.interface';
 import TransactionCategoryAbstractFactory from '@domain/transactionCategories/factories/transactionCategoryFactory';
 
 import IEventDispatchService from '@app/events/eventDispatchService.interface';
 import { Roles } from '@app/users/enums/roles.enum';
+import TransactionCategoryShouldBeDeletedEvent from '@app/events/transactionCategoryShouldBeDeleted.event';
 
 import { OnlyRoles } from '@common/decorators/roles.decorator';
 import {

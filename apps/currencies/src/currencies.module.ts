@@ -31,7 +31,6 @@ import { AuthModule } from '@common/auth.module';
     PrismaModule,
     HttpModule,
     LoggerModule,
-    ConfigModule.forRoot(),
     MailerModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         transport: {
@@ -94,6 +93,8 @@ import { AuthModule } from '@common/auth.module';
   providers: [
     CurrenciesResolver,
     CurrencyConverterService,
+    CurrencyShouldBeDeletedEventDispatcher,
+    CurrencyShouldBeDeletedEventListener,
     {
       provide: 'CurrencyCreator',
       useClass: CurrencyCreator,
@@ -106,10 +107,6 @@ import { AuthModule } from '@common/auth.module';
     {
       provide: CurrencyAbstractFactory,
       useClass: CurrencyFactory,
-    },
-    {
-      provide: 'CurrencyShouldBeDeletedEventDispatcher',
-      useClass: CurrencyShouldBeDeletedEventDispatcher,
     },
     {
       provide: 'CurrencyShouldBeDeletedEventListeners',
