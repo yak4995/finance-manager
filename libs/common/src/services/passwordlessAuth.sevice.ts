@@ -75,6 +75,12 @@ export default class PasswordlessAuthService
       },
     );
     if (user) {
+      const isOtpValid: boolean =
+        moment().diff(user.lastLoginDate ?? new Date(), 'minutes') < 10 &&
+        payload.authorityData === user.otp;
+      if (!isOtpValid) {
+        throw new UnauthorizedException('Otp is invalid!');
+      }
       await this.userCredentialRepo.update(
         {
           lastLoginDate: new Date(),
@@ -82,13 +88,6 @@ export default class PasswordlessAuthService
         },
         user.id,
       );
-      const isOtpValid: boolean =
-        user.lastLoginDate &&
-        moment().diff(user.lastLoginDate, 'seconds') > 30 &&
-        payload.authorityData === user.otp;
-      if (!isOtpValid) {
-        throw new UnauthorizedException('Otp is invalid!');
-      }
       return user;
     } else {
       return null;

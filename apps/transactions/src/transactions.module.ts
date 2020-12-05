@@ -47,16 +47,15 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
     LoggerModule,
     ConfigModule.forRoot(),
     PrismaModule,
-    // TODO: use Kafka instead of Redis
     BullModule.registerQueueAsync({
       name: 'metrics',
       useFactory: async (
         configService: ConfigService,
       ): Promise<BullModuleOptions> => ({
         redis: {
-          host: configService.get('QUEUE_HOST'),
-          port: configService.get('QUEUE_PORT'),
-          password: configService.get('QUEUE_PASSWORD'),
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+          password: configService.get('REDIS_PASSWORD'),
         },
       }),
       imports: [ConfigModule],

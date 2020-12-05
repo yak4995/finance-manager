@@ -25,7 +25,7 @@ message Currency {
 message RateQuery {
   string from = 1;
   string to = 2;
-  int32 forDate = 3;
+  string forDate = 3;
 }
 
 message Rate {

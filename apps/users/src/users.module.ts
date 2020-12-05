@@ -37,7 +37,6 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
     PrismaModule,
     LoggerModule,
     // ConfigModule,
-    // TODO: use Kafka instead of Redis
     BullModule.registerQueueAsync(
       {
         name: 'mailing',
@@ -45,9 +44,9 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
           configService: ConfigService,
         ): Promise<BullModuleOptions> => ({
           redis: {
-            host: configService.get('QUEUE_HOST'),
-            port: configService.get('QUEUE_PORT'),
-            password: configService.get('QUEUE_PASSWORD'),
+            host: configService.get('REDIS_HOST'),
+            port: configService.get('REDIS_PORT'),
+            password: configService.get('REDIS_PASSWORD'),
           },
         }),
         inject: [ConfigService],
@@ -59,9 +58,9 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
           configService: ConfigService,
         ): Promise<BullModuleOptions> => ({
           redis: {
-            host: configService.get('QUEUE_HOST'),
-            port: configService.get('QUEUE_PORT'),
-            password: configService.get('QUEUE_PASSWORD'),
+            host: configService.get('REDIS_HOST'),
+            port: configService.get('REDIS_PORT'),
+            password: configService.get('REDIS_PASSWORD'),
           },
         }),
         inject: [ConfigService],
