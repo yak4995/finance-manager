@@ -93,6 +93,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/users/tsconfig.app.json"
       }
+    },
+    "workers": {
+      "type": "application",
+      "root": "apps/workers",
+      "entryFile": "main",
+      "sourceRoot": "apps/workers/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/workers/tsconfig.app.json"
+      }
     }
   }
 }

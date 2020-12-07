@@ -157,7 +157,7 @@ export default class TransactionAnalyticService {
       const rate = await this.currenciesFacade.getRateFor(
         transaction.currency.code,
         baseCurrency.code,
-        new Date().getTime(),
+        transaction.datetime.toUTCString(),
       );
       preparedTransactionsValues.push(rate * transaction.amount);
     }

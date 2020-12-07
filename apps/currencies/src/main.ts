@@ -42,6 +42,8 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const configService: ConfigService = app.get(ConfigService);
-  await app.listen(configService.get<number>('CURRENCIES_PORT'));
+  await app.listen(
+    Number(configService.get<string>('CURRENCIES_URL').split(':')[1]),
+  );
 }
 bootstrap();

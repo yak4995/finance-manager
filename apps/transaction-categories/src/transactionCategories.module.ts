@@ -3,6 +3,10 @@ import { BullModule, BullModuleOptions } from '@nestjs/bull';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { GraphQLModule } from '@nestjs/graphql';
+import { MailerModule } from '@nestjs-modules/mailer';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { join } from 'path';
 import * as redis from 'redis';
 
 import PrismaModule from '@persistance/prisma/prisma.module';
@@ -35,16 +39,42 @@ import { RedisCacheService } from '@common/services/redisCache.service';
   imports: [
     AuthModule,
     PrismaModule,
-    // TODO: use Kafka instead of Redis
+    MailerModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.get<string>('SMTP_HOST'),
+          port: configService.get<number>('SMTP_PORT'),
+          ssl: false,
+          tls: true,
+          auth: {
+            user: configService.get<string>('SMTP_USER'),
+            pass: configService.get<string>('SMTP_PASSWORD'),
+          },
+        } as SMTPTransport.Options,
+        defaults: {
+          from: configService.get<string>('SMTP_FROM'),
+        },
+        template: {
+          adapter: new PugAdapter(),
+          dir: join(
+            __dirname,
+            '../../../..', // from dist path
+            configService.get<string>('MAIL_TEMPLATES_PATH'),
+          ),
+        },
+      }),
+      inject: [ConfigService],
+      imports: [ConfigModule],
+    }),
     BullModule.registerQueueAsync({
       name: 'categoryDeletion',
       useFactory: async (
         configService: ConfigService,
       ): Promise<BullModuleOptions> => ({
         redis: {
-          host: configService.get('QUEUE_HOST'),
-          port: configService.get('QUEUE_PORT'),
-          password: configService.get('QUEUE_PASSWORD'),
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+          password: configService.get('REDIS_PASSWORD'),
         },
       }),
       imports: [ConfigModule],
@@ -114,9 +144,9 @@ import { RedisCacheService } from '@common/services/redisCache.service';
       useFactory: (configService: ConfigService) =>
         new RedisCacheService(
           redis.createClient({
-            host: configService.get('QUEUE_HOST'),
-            port: configService.get('QUEUE_PORT'),
-            password: configService.get('QUEUE_PASSWORD'),
+            host: configService.get('REDIS_HOST'),
+            port: configService.get('REDIS_PORT'),
+            password: configService.get('REDIS_PASSWORD'),
           }),
         ),
       inject: [ConfigService],
@@ -135,10 +165,8 @@ import { RedisCacheService } from '@common/services/redisCache.service';
         DefTransactionCategoryOutputPort,
       ],
     },
-    {
-      provide: 'TransactionCategoryShoulBeDeletedEventDispatcher',
-      useClass: TransactionCategoryShoulBeDeletedEventDispatcher,
-    },
+    TransactionCategoryShoulBeDeletedEventDispatcher,
+    TransactionCategoryShouldBeDeletedListener,
     {
       provide: 'TransactionCategoryShouldBeDeletedEventListeners',
       useFactory: (

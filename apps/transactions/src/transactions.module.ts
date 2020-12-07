@@ -6,7 +6,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { MailerModule, MailerService } from '@nestjs-modules/mailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
-import { ClientsModule } from '@nestjs/microservices';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 
 import PrismaModule from '@persistance/prisma/prisma.module';
@@ -45,23 +45,21 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
   imports: [
     AuthModule,
     LoggerModule,
-    ConfigModule.forRoot(),
     PrismaModule,
-    // TODO: use Kafka instead of Redis
-    BullModule.registerQueueAsync({
+    /*BullModule.registerQueueAsync({
       name: 'metrics',
       useFactory: async (
         configService: ConfigService,
       ): Promise<BullModuleOptions> => ({
         redis: {
-          host: configService.get('QUEUE_HOST'),
-          port: configService.get('QUEUE_PORT'),
-          password: configService.get('QUEUE_PASSWORD'),
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+          password: configService.get('REDIS_PASSWORD'),
         },
       }),
       imports: [ConfigModule],
       inject: [ConfigService],
-    }),
+    }),*/
     ScheduleModule.forRoot(),
     MailerModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
@@ -100,6 +98,19 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
     ClientsModule.register([
       grpcCurrenciesClientOptions,
       grpcCategoriesClientOptions,
+      {
+        name: 'WORKERS',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'transactions-module',
+            brokers: ['localhost:9092'],
+          },
+          consumer: {
+            groupId: 'workers',
+          },
+        },
+      },
     ]),
   ],
   controllers: [TransactionController, DistributingMetricItemsController],
@@ -108,6 +119,7 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
     TransactionCategoriesFacade,
     TransactionSearchService,
     ReportHasBeenGeneratedEventDispatcher,
+    ReportHasBeenGeneratedListener,
     DefTransactionOutputPort,
     DefReportDistributionOutputPort,
     {
@@ -177,13 +189,20 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
       provide: DistributingMetricItemAbstractFactory,
       useClass: DistributingMetricItemFactory,
     },
-    {
+    /*{
       provide: 'ReportHasBeenGeneratedEventListeners',
       useFactory: (
         mailService: MailerService,
         categoriesFacade: TransactionCategoriesFacade,
       ) => [new ReportHasBeenGeneratedListener(mailService, categoriesFacade)],
       inject: [MailerService, TransactionCategoriesFacade],
+    },*/
+    {
+      provide: 'ReportHasBeenGeneratedEventListeners',
+      useFactory: (eventListener: ReportHasBeenGeneratedListener) => [
+        eventListener,
+      ],
+      inject: [ReportHasBeenGeneratedListener],
     },
     {
       provide: 'ReportDistributionInputPort',

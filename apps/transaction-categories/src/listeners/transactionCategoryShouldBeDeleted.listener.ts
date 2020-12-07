@@ -1,11 +1,13 @@
+import { Injectable } from '@nestjs/common';
+
 import IEventListener from '@app/events/eventListener.interface';
+import TransactionCategoryShouldBeDeletedEvent from '@app/events/transactionCategoryShouldBeDeleted.event';
 
 import IRepository from '@domain/repository.interface';
 import ITransactionCategory from '@domain/transactionCategories/entities/transactionCategory.interface';
 import TransactionCategoryAbstractFactory from '@domain/transactionCategories/factories/transactionCategoryFactory';
 
-import TransactionCategoryShouldBeDeletedEvent from '../events/transactionCategoryShouldBeDeleted.event';
-
+@Injectable()
 export default class TransactionCategoryShouldBeDeletedListener
   implements IEventListener<TransactionCategoryShouldBeDeletedEvent> {
   private readonly transactionCategoryRepo: IRepository<ITransactionCategory>;

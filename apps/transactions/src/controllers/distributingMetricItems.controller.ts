@@ -130,8 +130,8 @@ export class DistributingMetricItemsController {
   }
 
   // 28-th day of every month at 23:59:00
-  @Cron('0 59 23 28 * *')
-  // @Cron('0 * * * * *') // for test only
+  // @Cron('0 59 23 28 * *')
+  @Cron('0 * * * * *') // for test only
   async send(): Promise<any[]> {
     const now = new Date();
     let metrics = await this.distributingMetricItemsRepo.findByAndCriteria({

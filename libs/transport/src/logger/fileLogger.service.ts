@@ -12,6 +12,23 @@ export class FileLoggerService extends Logger {
     }
   }
 
+  public static log(message: string, context?: string): void {
+    const now = new Date().toLocaleDateString();
+    fs.appendFile(
+      `${FileLoggerService.logsDestinationPath}/${now}.txt`,
+      JSON.stringify({
+        message,
+        context,
+      }) + '\n',
+      {},
+      err => {
+        if (err) {
+          console.log(err);
+        }
+      },
+    );
+  }
+
   public static error(message: string, trace?: string, context?: string): void {
     const now = new Date().toLocaleDateString();
     fs.appendFile(

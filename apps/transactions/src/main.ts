@@ -38,6 +38,8 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const configService: ConfigService = app.get(ConfigService);
-  await app.listen(configService.get<number>('TRANSACTIONS_PORT'));
+  await app.listen(
+    Number(configService.get<string>('TRANSACTIONS_URL').split(':')[1]),
+  );
 }
 bootstrap();

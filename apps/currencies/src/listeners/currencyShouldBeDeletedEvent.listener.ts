@@ -1,11 +1,13 @@
+import { Injectable } from '@nestjs/common';
+
 import IEventListener from '@app/events/eventListener.interface';
+import CurrencyShouldBeDeletedEvent from '@app/events/currencyShouldBeDeleted.event';
 
 import ICurrency from '@domain/currencies/entities/currency.interface';
 import CurrencyAbstractFactory from '@domain/currencies/factories/currencyFactory';
 import IRepository from '@domain/repository.interface';
 
-import CurrencyShouldBeDeletedEvent from '../events/currencyShouldBeDeleted.event';
-
+@Injectable()
 export default class CurrencyShouldBeDeletedEventListener
   implements IEventListener<CurrencyShouldBeDeletedEvent> {
   private readonly currencyRepo: IRepository<ICurrency>;

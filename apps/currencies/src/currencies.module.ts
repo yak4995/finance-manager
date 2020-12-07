@@ -2,6 +2,10 @@ import { Module, HttpModule } from '@nestjs/common';
 import { BullModule, BullModuleOptions } from '@nestjs/bull';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { MailerModule } from '@nestjs-modules/mailer';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { join } from 'path';
 
 import CurrencyCreator from '@persistance/creators/currency.creator';
 import { PrismaService } from '@persistance/prisma/prisma.service';
@@ -27,7 +31,33 @@ import { AuthModule } from '@common/auth.module';
     PrismaModule,
     HttpModule,
     LoggerModule,
-    ConfigModule.forRoot(),
+    MailerModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.get<string>('SMTP_HOST'),
+          port: configService.get<number>('SMTP_PORT'),
+          ssl: false,
+          tls: true,
+          auth: {
+            user: configService.get<string>('SMTP_USER'),
+            pass: configService.get<string>('SMTP_PASSWORD'),
+          },
+        } as SMTPTransport.Options,
+        defaults: {
+          from: configService.get<string>('SMTP_FROM'),
+        },
+        template: {
+          adapter: new PugAdapter(),
+          dir: join(
+            __dirname,
+            '../../../..', // from dist path
+            configService.get<string>('MAIL_TEMPLATES_PATH'),
+          ),
+        },
+      }),
+      inject: [ConfigService],
+      imports: [ConfigModule],
+    }),
     GraphQLModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -44,16 +74,15 @@ import { AuthModule } from '@common/auth.module';
         context: ({ req }) => ({ req }),
       }),
     }),
-    // TODO: use Kafka instead of Redis
     BullModule.registerQueueAsync({
       name: 'currencyDeletion',
       useFactory: async (
         configService: ConfigService,
       ): Promise<BullModuleOptions> => ({
         redis: {
-          host: configService.get('QUEUE_HOST'),
-          port: configService.get('QUEUE_PORT'),
-          password: configService.get('QUEUE_PASSWORD'),
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+          password: configService.get('REDIS_PASSWORD'),
         },
       }),
       imports: [ConfigModule],
@@ -64,6 +93,8 @@ import { AuthModule } from '@common/auth.module';
   providers: [
     CurrenciesResolver,
     CurrencyConverterService,
+    CurrencyShouldBeDeletedEventDispatcher,
+    CurrencyShouldBeDeletedEventListener,
     {
       provide: 'CurrencyCreator',
       useClass: CurrencyCreator,
@@ -76,10 +107,6 @@ import { AuthModule } from '@common/auth.module';
     {
       provide: CurrencyAbstractFactory,
       useClass: CurrencyFactory,
-    },
-    {
-      provide: 'CurrencyShouldBeDeletedEventDispatcher',
-      useClass: CurrencyShouldBeDeletedEventDispatcher,
     },
     {
       provide: 'CurrencyShouldBeDeletedEventListeners',
