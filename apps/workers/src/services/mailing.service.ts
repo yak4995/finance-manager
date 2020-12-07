@@ -1,35 +1,41 @@
-/*import * as fs from 'fs';
-import * as generate from 'node-chartist';
+import { MailerService } from '@nestjs-modules/mailer';
+import { Injectable } from '@nestjs/common';
 import { SentMessageInfo } from 'nodemailer';
-import { MailerService } from '@nestjs-modules/mailer';*/
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientKafka } from '@nestjs/microservices';
+import * as fs from 'fs';
+import * as generate from 'node-chartist';
 
-import IEventListener from '@app/events/eventListener.interface';
+import UserHasBeenCreatedEvent from '@app/users/events/userHasBeenCreated.event';
 import ReportHasBeenGeneratedEvent from '@app/transactions/events/reportHasBeenGenerated.event';
 
-/*import { AvailableAnalyticMetric } from '@domain/transactions/enums/availableAnalyticMetric.enum';
-import { TransactionsComparisonDto } from '@domain/transactions/dto/transactionsComparison.dto';*/
-import { FileLoggerService } from '@transport/logger/fileLogger.service';
-
-// import { TransactionCategoriesFacade } from '../facades/transactionCategories.facade';
+import { AvailableAnalyticMetric } from '@domain/transactions/enums/availableAnalyticMetric.enum';
+import { TransactionsComparisonDto } from '@domain/transactions/dto/transactionsComparison.dto';
+import TransactionCategoryAbstractFactory from '@domain/transactionCategories/factories/transactionCategoryFactory';
+import IRepository from '@domain/repository.interface';
+import ITransactionCategory from '@domain/transactionCategories/entities/transactionCategory.interface';
 
 @Injectable()
-export default class ReportHasBeenGeneratedListener
-  implements IEventListener<ReportHasBeenGeneratedEvent> {
-  constructor(
-    /*private readonly mailService: MailerService,
-    private readonly categoriesFacade: TransactionCategoriesFacade,*/
-    @Inject('WORKERS') private client: ClientKafka,
-  ) {}
+export class MailingService {
+  private readonly transactionCategoryRepo: IRepository<ITransactionCategory>;
 
-  async onModuleInit() {
-    this.client.subscribeToResponseOf('metrics');
-    await this.client.connect();
+  constructor(
+    private readonly mailService: MailerService,
+    transactionCategoryFactory: TransactionCategoryAbstractFactory,
+  ) {
+    this.transactionCategoryRepo = transactionCategoryFactory.createTransactionCategoryRepo();
   }
 
-  async process(event: ReportHasBeenGeneratedEvent): Promise<any> {
-    /*const { result, ...data } = event;
+  greetingsEmail(event: UserHasBeenCreatedEvent): Promise<SentMessageInfo> {
+    return this.mailService.sendMail({
+      to: (event as any).user.email,
+      subject: 'Finance Manager Registration',
+      template: 'userHasBeenRegistered',
+    });
+  }
+
+  async sendReport(
+    event: ReportHasBeenGeneratedEvent,
+  ): Promise<SentMessageInfo> {
+    const { result, ...data } = event;
     const metricName = Object.keys(AvailableAnalyticMetric).filter(
       key => typeof AvailableAnalyticMetric[key] === 'number',
     )[data.item.metric.toString()];
@@ -46,7 +52,7 @@ export default class ReportHasBeenGeneratedListener
           await Promise.all(
             Object.keys(result as TransactionsComparisonDto)
               .filter(key => result[key] !== 0)
-              .map(id => this.categoriesFacade.findById(id)),
+              .map(id => this.transactionCategoryRepo.findById(id)),
           )
         ).map(category => category.name);
         series = Object.values(result as TransactionsComparisonDto)
@@ -99,12 +105,6 @@ export default class ReportHasBeenGeneratedListener
         chart,
         metricName,
       },
-    });*/
-    this.client
-      .emit('metrics', JSON.stringify(event))
-      .toPromise()
-      .then(result => FileLoggerService.log(result))
-      .catch(e => FileLoggerService.error(e));
-    return null;
+    });
   }
 }

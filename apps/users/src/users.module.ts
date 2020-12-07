@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 import AuthController from './controllers/auth.controller';
 import UserHasBeenRegisteredEventDispatcher from './services/userHasBeenRegisteredEventDispatcher';
@@ -36,7 +37,7 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
     AuthModule,
     PrismaModule,
     LoggerModule,
-    BullModule.registerQueueAsync(
+    /*BullModule.registerQueueAsync(
       {
         name: 'mailing',
         useFactory: async (
@@ -65,7 +66,22 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
         inject: [ConfigService],
         imports: [ConfigModule],
       },
-    ),
+    ),*/
+    ClientsModule.register([
+      {
+        name: 'WORKERS',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'user-module',
+            brokers: ['localhost:9092'],
+          },
+          consumer: {
+            groupId: 'workers',
+          },
+        },
+      },
+    ]),
     MailerModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         transport: {
@@ -132,12 +148,19 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
       provide: UserCredentialAbstractFactory,
       useClass: UserCredentialFactory,
     },
-    {
+    /*{
       provide: 'UserHasBeenCreatedEventListeners',
       useFactory: (mailService: MailerService) => [
         new UserHasBeenCreatedEventListener(mailService),
       ],
       inject: [MailerService],
+    },*/
+    {
+      provide: 'UserHasBeenCreatedEventListeners',
+      useFactory: (eventListener: UserHasBeenCreatedEventListener) => [
+        eventListener,
+      ],
+      inject: [UserHasBeenCreatedEventListener],
     },
     /*{
       provide: 'UserShouldBeDeletedEventListeners',
@@ -146,12 +169,19 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
       ],
       inject: [AuthService],
     },*/
-    {
+    /*{
       provide: 'UserShouldBeDeletedEventListeners',
       useFactory: (authService: PasswordlessAuthService) => [
         new UserShouldBeDeletedEventListener(authService),
       ],
       inject: [PasswordlessAuthService],
+    },*/
+    {
+      provide: 'UserShouldBeDeletedEventListeners',
+      useFactory: (eventListener: UserShouldBeDeletedEventListener) => [
+        eventListener,
+      ],
+      inject: [UserShouldBeDeletedEventListener],
     },
     {
       provide: 'SessionsManagementInputPort&UserCredentialsManagementInputPort',

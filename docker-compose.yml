@@ -79,6 +79,28 @@ services:
     depends_on:
       - es01
 
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    networks:
+      - kafka
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    container_name: kafka
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 9092:9092
+    networks:
+      - kafka
+    depends_on:
+      - zookeeper
+
+
   redis:
     image: redis:latest
     container_name: redis
@@ -118,4 +140,6 @@ networks:
   elastic:
     driver: bridge
   db:
+    driver: bridge
+  kafka:
     driver: bridge
