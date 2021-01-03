@@ -7,8 +7,9 @@
   "scripts": {
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "document": "npx compodoc -p tsconfig.json -s",
-    "postinstall": "npx prisma init && ts-node generate-typings",
+    "init": "npx prisma init && ts-node generate-typings",
     "migrate": "npx prisma introspect && npx prisma generate",
+    "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

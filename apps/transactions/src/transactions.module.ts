@@ -104,7 +104,7 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
         options: {
           client: {
             clientId: 'transactions-module',
-            brokers: ['localhost:9092'],
+            brokers: ['kafka:9092'],
           },
           consumer: {
             groupId: 'workers',

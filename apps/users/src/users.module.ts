@@ -74,7 +74,7 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
         options: {
           client: {
             clientId: 'user-module',
-            brokers: ['localhost:9092'],
+            brokers: ['kafka:9092'],
           },
           consumer: {
             groupId: 'workers',

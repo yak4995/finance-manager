@@ -45,8 +45,6 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const configService: ConfigService = app.get(ConfigService);
-  await app.listen(
-    Number(configService.get<string>('CATEGORIES_URL').split(':')[1]),
-  );
+  await app.listen(configService.get<number>('CATEGORIES_PORT'));
 }
 bootstrap();

@@ -13,12 +13,13 @@ export class FileLoggerService extends Logger {
   }
 
   public static log(message: string, context?: string): void {
-    const now = new Date().toLocaleDateString();
+    const now = [...new Date().toUTCString().split(' ')];
     fs.appendFile(
-      `${FileLoggerService.logsDestinationPath}/${now}.txt`,
+      `${FileLoggerService.logsDestinationPath}/${now[1]} ${now[2]} ${now[3]}.txt`,
       JSON.stringify({
         message,
         context,
+        environment: `${process.env.DEBUG ? 'DEV' : 'PROD'}`,
       }) + '\n',
       {},
       err => {
@@ -30,13 +31,14 @@ export class FileLoggerService extends Logger {
   }
 
   public static error(message: string, trace?: string, context?: string): void {
-    const now = new Date().toLocaleDateString();
+    const now = [...new Date().toUTCString().split(' ')];
     fs.appendFile(
-      `${FileLoggerService.logsDestinationPath}/${now}.txt`,
+      `${FileLoggerService.logsDestinationPath}/${now[1]} ${now[2]} ${now[3]}.txt`,
       JSON.stringify({
         message,
         trace,
         context,
+        environment: `${process.env.DEBUG ? 'DEV' : 'PROD'}`,
       }) + '\n',
       {},
       err => {

@@ -79,6 +79,37 @@ services:
     depends_on:
       - es01
 
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.9.1
+    container_name: filebeat
+    restart: always
+    user: root
+    volumes:
+      - ./logs:/app/logs
+      - ./docker/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    networks:
+      - elastic
+    depends_on:
+      - logstash
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.9.1
+    container_name: logstash
+    restart: always
+    user: root
+    environment:
+      - monitoring.elasticsearch.hosts=http://es01:9200
+    volumes:
+      - ./docker/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./docker/pipelines.yml/:/usr/share/logstash/config/pipelines.yml
+      - ./docker/logstash.conf:/usr/share/logstash/config/pipeline/logstash.conf
+    ports:
+      - 5044:5044
+    networks:
+      - elastic
+    depends_on:
+      - es01
+
   zookeeper:
     image: wurstmeister/zookeeper:latest
     container_name: zookeeper
@@ -99,7 +130,11 @@ services:
       - kafka
     depends_on:
       - zookeeper
-
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--list", "--zookeeper", "zookeeper:2181"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
 
   redis:
     image: redis:latest
@@ -107,6 +142,13 @@ services:
     restart: always
     ports:
       - 6379:6379
+    networks:
+      - db
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
 
   postgres:
     image: 'postgres:latest'
@@ -117,7 +159,6 @@ services:
     ports:
       - 5432:5432
     volumes:
-      # - db-data:/var/lib/postgres
       - ./dbdata:/var/lib/postgresql/data
       - ./dbscripts:/docker-entrypoint-initdb.d
     networks:
@@ -128,9 +169,160 @@ services:
       timeout: 5s
       retries: 50
 
+  workers:
+    image: workers
+    container_name: workers
+    build: 
+      dockerfile: ./docker/Dockerfile
+      context: .
+      args:
+        exposed_http_port: 3000
+        exposed_grpc_port: 2999
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - apps
+      - db
+      - kafka
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["workers"]
+
+  users:
+    image: users
+    container_name: users
+    build: 
+      dockerfile: ./docker/Dockerfile
+      context: .
+      args:
+        exposed_http_port: $AUTH_PORT
+        exposed_grpc_port: 2999
+    env_file:
+      - .env
+    ports:
+      - $AUTH_PORT:$AUTH_PORT
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - apps
+      - db
+      - kafka
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    command: ["users"]
+
+  currencies:
+    image: currencies
+    container_name: currencies
+    build: 
+      dockerfile: ./docker/Dockerfile
+      context: .
+      args:
+        exposed_http_port: $CURRENCIES_PORT
+        exposed_grpc_port: $CURRENCIES_GRPC_PORT
+    env_file:
+      - .env
+    ports:
+      - $CURRENCIES_PORT:$CURRENCIES_PORT
+      - $CURRENCIES_GRPC_PORT:$CURRENCIES_GRPC_PORT
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - apps
+      - db
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: curl -sSk https://127.0.0.1:$CURRENCIES_PORT || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 6
+    command: ["currencies"]
+
+  transaction_categories:
+    image: transaction_categories
+    container_name: transaction_categories
+    build: 
+      dockerfile: ./docker/Dockerfile
+      context: .
+      args:
+        exposed_http_port: $CATEGORIES_PORT
+        exposed_grpc_port: $CATEGORIES_GRPC_PORT
+    env_file:
+      - .env
+    ports:
+      - $CATEGORIES_PORT:$CATEGORIES_PORT
+      - $CATEGORIES_GRPC_PORT:$CATEGORIES_GRPC_PORT
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - apps
+      - db
+      - elastic
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      es01:
+        condition: service_started
+    healthcheck:
+      test: curl -sSk https://127.0.0.1:$CATEGORIES_PORT || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 6
+    command: ["transaction-categories"]
+
+  transactions:
+    image: transactions
+    container_name: transactions
+    build: 
+      dockerfile: ./docker/Dockerfile
+      context: .
+      args:
+        exposed_http_port: $TRANSACTIONS_PORT
+        exposed_grpc_port: 2999
+    env_file:
+      - .env
+    ports:
+      - $TRANSACTIONS_PORT:$TRANSACTIONS_PORT
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - apps
+      - db
+      - kafka
+      - elastic
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      es01:
+        condition: service_started
+      currencies:
+        condition: service_healthy
+      transaction_categories:
+        condition: service_healthy
+    command: ["transactions"]
+
 volumes:
   data01:
     driver: local
+  # volumes of ELK additional instances:
   #data02:
   #  driver: local
   #data03:
@@ -142,4 +334,6 @@ networks:
   db:
     driver: bridge
   kafka:
+    driver: bridge
+  apps:
     driver: bridge

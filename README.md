@@ -1,14 +1,13 @@
 This project is my pet-project, that provided HTTP REST/GraphQL API for personal finance management and analysis. It implemented from Robert Martin "clear architecture" principles for more scalability and independent extensionsiability.
 
-For user interfaces uses HTTPS protocol, for data storage - Prisma2 ORM, for asyncronyous task executing and queueing - Redis, for unit and e2e tests - jest library. Base programming language is TypeScript.
-
-In future, I plan to transfer asyncronyous task executing and queueing to Kafka, authorization - to passwordless.
+For user interfaces uses HTTPS protocol, for inter app communication - GRPC protocol, for data storage - Prisma2 ORM with PostgreSQL, for asyncronyous task executing and queueing - Redis and Kafka, for unit and e2e tests - jest library. Base programming language is TypeScript.
 
 Project setup:
-1. Execute "npm i" from project dir. Then replace the content of the prisma/schema.prisma file to
+1. Execute "npm i && npm run init" from project dir. Then replace the content of the prisma/schema.prisma file to
 ```
   generator client {
     provider = "prisma-client-js"
+    binaryTargets = ["native"]
   }
 
   datasource db {
@@ -18,11 +17,17 @@ Project setup:
 ```
 and the content of prisma/.env file to
 ```
+  DATABASE_URL="postgresql://postgres:<make password that you put into POSTGRES_PASSWORD in the .env on the next step>@postgres:5432/<make db name that you put into POSTGRES_DB in the .env on the next step>?schema=public"
+```
+for docker or
+```
   DATABASE_URL="postgresql://postgres:<make password that you put into POSTGRES_PASSWORD in the .env on the next step>@localhost:5432/<make db name that you put into POSTGRES_DB in the .env on the next step>?schema=public"
 ```
-2. Copy .env.example to .env and replace there values with yours.
-3. Create empty "dbdata" dir in the project root, then execute "docker-compose up -d", then "npm run migrate".
-4. Create SSL-certificates (instructions see below) or put in its paths to .env file if you already have it.
+to local
+2. Copy any of .env.example-s to .env and replace there values with yours.
+3. Create SSL-certificates (instructions see below) or put in its paths to .env file if you already have it.
+4. Create empty "dbdata" dir in the project root, then execute "docker-compose build && docker-compose up -d"
+ If you want to run locally, comment apps section in docker-compose.yml before command above, then execute "npm run start yourAppName"
 5. Interactive documentation by endpoints locates here: https://{URL with deployed app}:{PORT of service}/api/docs
 6. Migrations in SQL format locates here: dbscripts/init_migration.sql
 
@@ -70,10 +75,6 @@ Generate ssl certificate for localhost in terminal:
 GraphQL explanations:
 
 In resolvers, that import GQL types, we import them from src/graphql.schema.generated.ts, that will be created by NestJS GraphQLModule from src/ui/schema.graphql (graphql types for UI) when you run "npm i".
-
-Logging via ELK:
-
-If you want provide logging via ELK stack, you already have ElasticSearch and Kibana in docker-compose. But Filebeat and Logstash you need install manually. There are some config files, which you could replace instead of defaults. They are in "filebeat config examples" and "logstash config examples" dirs. Logstash can be run via 'logstash' command from your terminal, filebeat via 'sudo ./filebeat -e' from filebeat dir by the same way.
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>

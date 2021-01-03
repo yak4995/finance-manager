@@ -4,7 +4,8 @@ const protoPath = 'libs/transport/src/proto/currencies.proto';
 export const grpcClientOptions: ClientOptions = {
   transport: Transport.GRPC,
   options: {
-    url: `${process.env.CURRENCIES_GRPC_URL ?? 'localhost:3002'}`,
+    url: `${process.env.CURRENCIES_URL ?? 'localhost'}:${process.env
+      .CURRENCIES_GRPC_PORT ?? 3002}`,
     package: 'currenciesService',
     protoPath,
   },

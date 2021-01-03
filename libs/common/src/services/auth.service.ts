@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
+// import * as bcrypt from 'bcrypt';
 
 import IAuthorityService from '@app/users/interfaces/authorityService.interface';
 import UserCredentialAbstractFactory from '@app/users/factories/userCredentialFactory';
@@ -48,14 +48,14 @@ export default class AuthService implements IAuthorityService {
         email: payload.email,
       },
     );
-    const isPasswordValid: boolean = await bcrypt.compare(
-      payload.authorityData,
-      'temp',
-      // user.passwordHash,
-    );
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Password is invalid!');
-    }
+    // const isPasswordValid: boolean = await bcrypt.compare(
+    //   payload.authorityData,
+    //   'temp',
+    //   // user.passwordHash,
+    // );
+    // if (!isPasswordValid) {
+    //   throw new UnauthorizedException('Password is invalid!');
+    // }
     return user;
   }
 

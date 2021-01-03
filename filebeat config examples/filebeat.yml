@@ -1,7 +1,0 @@
-filebeat.inputs:
-  - type: log
-    paths:
-      - ~/finance-manager/logs/*.txt
-
-output.logstash:
-  hosts: ["localhost:5044"]
