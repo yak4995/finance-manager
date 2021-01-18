@@ -2,7 +2,19 @@ import TransactionCategoryOutputPort from '@app/transactionCategories/ports/tran
 
 import ITransactionCategory from '@domain/transactionCategories/entities/transactionCategory.interface';
 
+import {
+  INTERNAL_SERVER_ERROR_MSG,
+  IS_OUTCOME_FLAG_ERROR_MSG,
+  OWN_CATEGORY_PARENT_ERROR_MSG,
+} from '@common/constants/errorMessages.constants';
+
 import { FileLoggerService } from '@transport/logger/fileLogger.service';
+
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import * as cls from 'cls-hooked';
 
 export default class DefTransactionCategoryOutputPort
   implements TransactionCategoryOutputPort {
@@ -12,11 +24,13 @@ export default class DefTransactionCategoryOutputPort
   ): Promise<ITransactionCategory[]> {
     if (e) {
       FileLoggerService.error(
-        e.message,
+        `requestId: ${(
+          cls.getNamespace('transactions') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::getTopCategories',
       );
-      throw e;
+      throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MSG);
     }
     return result.map((tc: ITransactionCategory) => {
       const { owner, parentCategory, ...res } = tc;
@@ -30,11 +44,13 @@ export default class DefTransactionCategoryOutputPort
   ): Promise<ITransactionCategory[]> {
     if (e) {
       FileLoggerService.error(
-        e.message,
+        `requestId: ${(
+          cls.getNamespace('transactions') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::getCategoryDirectChildren',
       );
-      throw e;
+      throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MSG);
     }
     return result.map((tc: ITransactionCategory) => {
       const { owner, parentCategory, ...res } = tc;
@@ -48,11 +64,13 @@ export default class DefTransactionCategoryOutputPort
   ): Promise<ITransactionCategory[]> {
     if (e) {
       FileLoggerService.error(
-        e.message,
+        `requestId: ${(
+          cls.getNamespace('transactions') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::getOwnCategories',
       );
-      throw e;
+      throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MSG);
     }
     return result.map((tc: ITransactionCategory) => {
       const { owner, parentCategory, ...res } = tc;
@@ -66,11 +84,13 @@ export default class DefTransactionCategoryOutputPort
   ): Promise<ITransactionCategory[]> {
     if (e) {
       FileLoggerService.error(
-        e.message,
+        `requestId: ${(
+          cls.getNamespace('transactions') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::search',
       );
-      throw e;
+      throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MSG);
     }
     return result.map((tc: ITransactionCategory) => {
       const { owner, parentCategory, ...res } = tc;
@@ -84,11 +104,21 @@ export default class DefTransactionCategoryOutputPort
   ): Promise<ITransactionCategory> {
     if (e) {
       FileLoggerService.error(
-        e.message,
+        `requestId: ${(
+          cls.getNamespace('transactions') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::addCategory',
       );
-      throw e;
+      const errorMessage = e.message;
+      if (
+        [OWN_CATEGORY_PARENT_ERROR_MSG, IS_OUTCOME_FLAG_ERROR_MSG].includes(
+          errorMessage,
+        )
+      ) {
+        throw new BadRequestException(errorMessage);
+      }
+      throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MSG);
     }
     return result;
   }
@@ -99,11 +129,16 @@ export default class DefTransactionCategoryOutputPort
   ): Promise<ITransactionCategory> {
     if (e) {
       FileLoggerService.error(
-        e.message,
+        `requestId: ${(
+          cls.getNamespace('transactions') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::updateCategory',
       );
-      throw e;
+      if (e.message === IS_OUTCOME_FLAG_ERROR_MSG) {
+        throw new BadRequestException(e.message);
+      }
+      throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MSG);
     }
     return result;
   }
@@ -114,11 +149,13 @@ export default class DefTransactionCategoryOutputPort
   ): Promise<boolean> {
     if (e) {
       FileLoggerService.error(
-        e.message,
+        `requestId: ${(
+          cls.getNamespace('transactions') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::deleteCategory',
       );
-      throw e;
+      throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MSG);
     }
     return true;
   }

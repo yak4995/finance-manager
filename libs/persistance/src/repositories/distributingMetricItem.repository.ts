@@ -14,6 +14,8 @@ import ICurrency from '@domain/currencies/entities/currency.interface';
 import IDistributingMetricItem from '@app/transactions/entities/distributingMetricItem.interface';
 import IUserCredential from '@app/users/entities/userCredential.interface';
 
+import { METHOD_IS_NOT_IMPLEMENTED_MSG } from '@common/constants/errorMessages.constants';
+
 @Injectable()
 export default class DistributingMetricItemRepository
   implements IRepository<IDistributingMetricItem> {
@@ -65,7 +67,7 @@ export default class DistributingMetricItemRepository
     orderBy: OrderCriteria<IDistributingMetricItem>,
     searchCriteria: Criteria<IDistributingMetricItem>,
   ): Promise<IDistributingMetricItem[]> {
-    throw new Error('Not implemented');
+    throw new Error(METHOD_IS_NOT_IMPLEMENTED_MSG);
   }
 
   async findById(id: string): Promise<IDistributingMetricItem> {
@@ -91,7 +93,7 @@ export default class DistributingMetricItemRepository
   findOneByAndCriteria(
     searchCriteria: Criteria<IDistributingMetricItem>,
   ): Promise<IDistributingMetricItem> {
-    throw new Error('Not implemented');
+    throw new Error(METHOD_IS_NOT_IMPLEMENTED_MSG);
   }
 
   async findByAndCriteria(
@@ -150,14 +152,14 @@ export default class DistributingMetricItemRepository
   findByOrCriteria(
     searchCriteria: Criteria<IDistributingMetricItem>,
   ): Promise<IDistributingMetricItem[]> {
-    throw new Error('Not implemented');
+    throw new Error(METHOD_IS_NOT_IMPLEMENTED_MSG);
   }
 
   update(
     updateData: Criteria<IDistributingMetricItem>,
     id: string,
   ): Promise<any> {
-    throw new Error('Not implemented');
+    throw new Error(METHOD_IS_NOT_IMPLEMENTED_MSG);
   }
 
   async delete(
@@ -199,6 +201,6 @@ export default class DistributingMetricItemRepository
     id: string,
     fieldName: keyof IDistributingMetricItem,
   ): Promise<any[]> {
-    throw new Error('Not implemented');
+    throw new Error(METHOD_IS_NOT_IMPLEMENTED_MSG);
   }
 }

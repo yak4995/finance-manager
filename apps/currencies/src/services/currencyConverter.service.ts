@@ -8,6 +8,8 @@ import * as moment from 'moment';
 
 import ICurrencyConverterService from '@domain/currencies/services/currencyConverterService.interface';
 
+import { NBU_IS_NOT_AVAILABLE_MSG } from '@common/constants/errorMessages.constants';
+
 @Injectable()
 export default class CurrencyConverterService
   implements ICurrencyConverterService {
@@ -28,7 +30,7 @@ export default class CurrencyConverterService
       const parsedResult = await parseStringPromise(result.data);
       return Number(parsedResult.exchange.currency[0].rate[0]);
     } else {
-      new InternalServerErrorException('NBU resurce is not allowed');
+      new InternalServerErrorException(NBU_IS_NOT_AVAILABLE_MSG);
     }
   }
 }

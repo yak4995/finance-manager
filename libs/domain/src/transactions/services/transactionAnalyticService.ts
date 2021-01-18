@@ -245,7 +245,9 @@ export default class TransactionAnalyticService {
       dateEnd,
       by,
     )) {
-      result[currentStartDate.toLocaleDateString()] = await processFunction(
+      result[
+        currentStartDate.toISOString().split('T')[0]
+      ] = await processFunction(
         transactionsForProcessing.filter(
           t => t.datetime >= currentStartDate && t.datetime <= currentEndDate,
         ),

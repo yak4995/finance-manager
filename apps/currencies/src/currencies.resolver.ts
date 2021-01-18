@@ -15,6 +15,7 @@ import {
   UpdateCurrencyInput,
 } from '@common/graphql.schema.generated';
 import GqlAuthGuard from '@common/guards/gql-auth.guard';
+import { CURRENCY_IS_NOT_FOUND_MSG } from '@common/constants/errorMessages.constants';
 
 @Resolver('Currency')
 @OnlyRoles(Roles.ADMINISTRATOR)
@@ -62,7 +63,7 @@ export default class CurrenciesResolver {
   async deleteCurrency(@Args('id') id: string): Promise<ICurrency> {
     const currency: ICurrency = await this.currencyRepo.findById(id);
     if (!currency) {
-      throw new BadRequestException('Currency doesn`t exist!');
+      throw new BadRequestException(CURRENCY_IS_NOT_FOUND_MSG);
     }
     await this.currencyShoulBeDeletedEventDispatcher.emit(
       new CurrencyShouldBeDeletedEvent(currency),

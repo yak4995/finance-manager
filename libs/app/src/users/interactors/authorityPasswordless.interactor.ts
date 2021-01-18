@@ -14,6 +14,8 @@ import IRepository from '@domain/repository.interface';
 import IUser from '@domain/users/entities/user.interface';
 import PasswordlessSessionManagementInputPort from '../ports/passwordlessSessionManagementInput.port';
 
+import { SUCH_USER_ALREADY_EXISTS_MSG } from '@common/constants/errorMessages.constants';
+
 export default class AuthorityPasswordlessInteractor
   implements
     PasswordlessSessionManagementInputPort,
@@ -60,7 +62,7 @@ export default class AuthorityPasswordlessInteractor
     return this.outputPort.processRegistration(
       null,
       false,
-      new Error('Such user already exists'),
+      new Error(SUCH_USER_ALREADY_EXISTS_MSG),
     );
   }
 

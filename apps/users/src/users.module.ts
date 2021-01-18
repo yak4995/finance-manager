@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { BullModule, BullModuleOptions } from '@nestjs/bull';
 import { MailerService, MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
@@ -31,6 +36,7 @@ import { LoggerModule } from '@transport/logger/logger.module';
 import { AuthModule } from '@common/auth.module';
 // import AuthService from '@common/services/auth.service';
 import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
+import RequestIdentificationMiddleware from '@common/middlewares/requestIdentification.middleware';
 
 @Module({
   imports: [
@@ -50,7 +56,11 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
           },
         }),
         inject: [ConfigService],
-        imports: [ConfigModule],
+        imports: [
+          ConfigModule.forRoot({
+            envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+          }),
+        ],
       },
       {
         name: 'sheduledUsersForDelete',
@@ -64,7 +74,11 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
           },
         }),
         inject: [ConfigService],
-        imports: [ConfigModule],
+        imports: [
+          ConfigModule.forRoot({
+            envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+          }),
+        ],
       },
     ),*/
     ClientsModule.register([
@@ -74,7 +88,7 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
         options: {
           client: {
             clientId: 'user-module',
-            brokers: ['kafka:9092'],
+            brokers: [`${process.env.IS_LOCAL ? '127.0.0.1' : 'kafka'}:9092`],
           },
           consumer: {
             groupId: 'workers',
@@ -107,10 +121,18 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
         },
       }),
       inject: [ConfigService],
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
     }),
     GraphQLModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         // typePaths: ['./src/infrastructure/ui/schema.graphql'],
@@ -120,7 +142,7 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
         resolverValidationOptions: {
           requireResolversForResolveType: false,
         },
-        debug: configService.get('DEBUG') === 'true',
+        debug: configService.get('DEBUG_MODE') === '1',
         introspection: true,
         context: ({ req }) => ({ req }),
       }),
@@ -210,6 +232,23 @@ import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
         DefAuthorityOutputPort,
       ],
     },
+    {
+      provide: 'appName',
+      useValue: 'users',
+    },
   ],
 })
-export default class UsersModule {}
+export default class UsersModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(RequestIdentificationMiddleware)
+      .exclude({
+        path: 'api/docs*',
+        method: RequestMethod.ALL,
+      })
+      .forRoutes({
+        path: '*',
+        method: RequestMethod.ALL,
+      });
+  }
+}

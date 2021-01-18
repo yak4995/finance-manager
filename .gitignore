@@ -8,5 +8,6 @@ logs/
 /prisma
 dbdata/*
 .env
+.env.local
 libs/common/src/graphql.schema.generated.ts
 .DS_Store

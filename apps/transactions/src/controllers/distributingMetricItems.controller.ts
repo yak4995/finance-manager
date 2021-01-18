@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -30,6 +31,12 @@ import IUserCredential from '@app/users/entities/userCredential.interface';
 import { OnlyRoles } from '@common/decorators/roles.decorator';
 import { User } from '@common/decorators/user.decorator';
 import JwtAuthGuard from '@common/guards/jwt-auth.guard';
+import {
+  INCORRECT_IDS_MSG,
+  INVALID_TOKEN_MSG,
+  INVALID_USER_MSG,
+  USER_IS_NOT_ACTIVE_MSG,
+} from '@common/constants/errorMessages.constants';
 
 @ApiBearerAuth()
 @ApiTags('Distributing metrics management')
@@ -54,9 +61,9 @@ export class DistributingMetricItemsController {
       type: 'string',
       examples: [
         'Incorrect token',
-        'User from token is invalid!',
-        'User is not active!',
-        'User token is invalid or expired',
+        INVALID_USER_MSG,
+        USER_IS_NOT_ACTIVE_MSG,
+        INVALID_TOKEN_MSG,
       ],
     },
   })
@@ -73,25 +80,32 @@ export class DistributingMetricItemsController {
     @User() user: IUserCredential,
     @Body() items: DistributingMetricItemDto[],
   ): Promise<any> {
-    const preparedItems: IDistributingMetricItem[] = await Promise.all(
-      items.map(
-        async (
-          item: DistributingMetricItemDto,
-        ): Promise<IDistributingMetricItem> => ({
-          id: undefined,
-          metric: item.metric,
-          period: item.period,
-          baseCurrency: item?.baseCurrency
-            ? await this.currenciesFacade.findById(item?.baseCurrency)
-            : null,
-          category: item?.category
-            ? await this.transactionCategoriesFacade.findById(item?.category)
-            : null,
-          user,
-        }),
-      ),
-    );
-    return this.distributingMetricsInputPort.subscribe(preparedItems);
+    let preparedItems: IDistributingMetricItem[] = null;
+    try {
+      preparedItems = await Promise.all(
+        items.map(
+          async (
+            item: DistributingMetricItemDto,
+          ): Promise<IDistributingMetricItem> => ({
+            id: undefined,
+            metric: item.metric,
+            period: item.period,
+            baseCurrency: item?.baseCurrency
+              ? await this.currenciesFacade.findById(item?.baseCurrency)
+              : null,
+            category: item?.category
+              ? await this.transactionCategoriesFacade.findById(item?.category)
+              : null,
+            user,
+          }),
+        ),
+      );
+    } catch (e) {
+      throw new BadRequestException(INCORRECT_IDS_MSG);
+    }
+    if (preparedItems) {
+      return this.distributingMetricsInputPort.subscribe(preparedItems);
+    }
   }
 
   @ApiUnauthorizedResponse({
@@ -99,9 +113,9 @@ export class DistributingMetricItemsController {
       type: 'string',
       examples: [
         'Incorrect token',
-        'User from token is invalid!',
-        'User is not active!',
-        'User token is invalid or expired',
+        INVALID_USER_MSG,
+        USER_IS_NOT_ACTIVE_MSG,
+        INVALID_TOKEN_MSG,
       ],
     },
   })
@@ -118,20 +132,27 @@ export class DistributingMetricItemsController {
     @User() user: IUserCredential,
     @Body() ids: string[],
   ): Promise<any> {
-    const preparedItems: IDistributingMetricItem[] = await Promise.all(
-      ids.map(
-        (id: string): Promise<IDistributingMetricItem> =>
-          this.distributingMetricItemsRepo.findById(id),
-      ),
-    );
-    return this.distributingMetricsInputPort.unsubscribe(
-      preparedItems.filter(item => item.user.id === user.id),
-    );
+    let preparedItems: IDistributingMetricItem[] = null;
+    try {
+      preparedItems = await Promise.all(
+        ids.map(
+          (id: string): Promise<IDistributingMetricItem> =>
+            this.distributingMetricItemsRepo.findById(id),
+        ),
+      );
+    } catch (e) {
+      throw new BadRequestException(INCORRECT_IDS_MSG);
+    }
+    if (preparedItems) {
+      return this.distributingMetricsInputPort.unsubscribe(
+        preparedItems.filter(item => item.user.id === user.id),
+      );
+    }
   }
 
   // 28-th day of every month at 23:59:00
-  // @Cron('0 59 23 28 * *')
-  @Cron('0 * * * * *') // for test only
+  @Cron('0 59 23 28 * *')
+  // @Cron('0 * * * * *') // for test only
   async send(): Promise<any[]> {
     const now = new Date();
     let metrics = await this.distributingMetricItemsRepo.findByAndCriteria({

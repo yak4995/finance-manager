@@ -194,7 +194,7 @@ export default class FakeRepo<T extends IPersistantEntity>
     return entity[fieldName];
   }
 
-  async getRelatedEntities(id: string, fieldName: keyof T): Promise<any[]> {
+  async getRelatedEntities(id: string, fieldName: keyof T): Promise<any> {
     const result = (await this.findById(id))[fieldName];
     if (!Array.isArray(result)) {
       throw new Error(`${fieldName} of entity doesn't have array type`);

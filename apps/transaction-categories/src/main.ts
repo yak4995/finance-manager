@@ -7,7 +7,8 @@ import { ConfigService } from '@nestjs/config';
 import TransactionCategoriesModule from './transactionCategories.module';
 import { grpcClientOptions } from './grpcClient.options';
 
-import HttpExceptionFilter from '@common/http-exception.filter';
+import HttpExceptionFilter from '@common/filters/http-exception.filter';
+import { LoggingInterceptor } from '@common/interceptors/logging.interceptor';
 
 import { FileLoggerService } from '@transport/logger/fileLogger.service';
 
@@ -28,7 +29,9 @@ async function bootstrap() {
       logger: false,
     },
   );
+  const configService: ConfigService = app.get(ConfigService);
   app.useLogger(app.get(FileLoggerService));
+  app.useGlobalInterceptors(new LoggingInterceptor('transaction-categories'));
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
 
@@ -44,7 +47,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api/docs', app, document);
 
-  const configService: ConfigService = app.get(ConfigService);
   await app.listen(configService.get<number>('CATEGORIES_PORT'));
 }
 bootstrap();

@@ -24,10 +24,9 @@ for docker or
   DATABASE_URL="postgresql://postgres:<make password that you put into POSTGRES_PASSWORD in the .env on the next step>@localhost:5432/<make db name that you put into POSTGRES_DB in the .env on the next step>?schema=public"
 ```
 to local
-2. Copy any of .env.example-s to .env and replace there values with yours.
+2. Copy .env.docker.example/env.local.example files to .env/.env.local and replace there values with yours.
 3. Create SSL-certificates (instructions see below) or put in its paths to .env file if you already have it.
-4. Create empty "dbdata" dir in the project root, then execute "docker-compose build && docker-compose up -d"
- If you want to run locally, comment apps section in docker-compose.yml before command above, then execute "npm run start yourAppName"
+4. Create empty "dbdata" dir in the project root, then execute "docker-compose build && docker-compose up -d", then "npm run start < needed appName >" for local deployment and "npm run build:prod && npm run start:prod" for docker deployment
 5. Interactive documentation by endpoints locates here: https://{URL with deployed app}:{PORT of service}/api/docs
 6. Migrations in SQL format locates here: dbscripts/init_migration.sql
 

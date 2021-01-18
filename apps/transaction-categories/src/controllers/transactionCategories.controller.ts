@@ -35,6 +35,12 @@ import IUser from '@domain/users/entities/user.interface';
 import { OnlyRoles } from '@common/decorators/roles.decorator';
 import { User } from '@common/decorators/user.decorator';
 import JwtAuthGuard from '@common/guards/jwt-auth.guard';
+import {
+  INVALID_TOKEN_MSG,
+  INVALID_USER_MSG,
+  TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
+  USER_IS_NOT_ACTIVE_MSG,
+} from '@common/constants/errorMessages.constants';
 
 @ApiBearerAuth()
 @ApiTags('Own transaction categories management')
@@ -43,9 +49,9 @@ import JwtAuthGuard from '@common/guards/jwt-auth.guard';
     type: 'string',
     examples: [
       'Incorrect token',
-      'User from token is invalid!',
-      'User is not active!',
-      'User token is invalid or expired',
+      INVALID_USER_MSG,
+      USER_IS_NOT_ACTIVE_MSG,
+      INVALID_TOKEN_MSG,
     ],
   },
 })
@@ -109,20 +115,21 @@ export default class TransactionCategoriesController {
     @User() user: IUser,
     @Param('parentCategoryId') parentCategoryId: string,
   ): Promise<ITransactionCategory[]> {
+    let parentCategory: ITransactionCategory = null;
     try {
-      const parentCategory: ITransactionCategory = await this.transactionCategoriesRepo.findOneByAndCriteria(
+      parentCategory = await this.transactionCategoriesRepo.findOneByAndCriteria(
         {
           id: parentCategoryId,
           owner: user,
         },
       );
-      return this.transactionCategoriesInputPort.getCategoryDirectChildren(
-        user,
-        parentCategory,
-      );
     } catch (e) {
-      throw new BadRequestException(e);
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
     }
+    return this.transactionCategoriesInputPort.getCategoryDirectChildren(
+      user,
+      parentCategory,
+    );
   }
 
   @ApiOperation({ description: 'Get profile info about current user' })
@@ -206,20 +213,21 @@ export default class TransactionCategoriesController {
     @Param('id') id: string,
     @Body() payload: UpdateTransactionCategoryDto,
   ): Promise<ITransactionCategory> {
+    let targetCategory: ITransactionCategory = null;
     try {
-      const targetCategory: ITransactionCategory = await this.transactionCategoriesRepo.findOneByAndCriteria(
+      targetCategory = await this.transactionCategoriesRepo.findOneByAndCriteria(
         {
           id,
           owner: user,
         },
       );
-      return this.transactionCategoriesInputPort.updateCategory(
-        targetCategory,
-        payload,
-      );
     } catch (e) {
-      throw new BadRequestException(e);
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
     }
+    return this.transactionCategoriesInputPort.updateCategory(
+      targetCategory,
+      payload,
+    );
   }
 
   @ApiOperation({ description: 'Get profile info about current user' })
@@ -232,16 +240,17 @@ export default class TransactionCategoriesController {
     @User() user: IUser,
     @Param('id') id: string,
   ): Promise<boolean> {
+    let targetCategory: ITransactionCategory = null;
     try {
-      const targetCategory: ITransactionCategory = await this.transactionCategoriesRepo.findOneByAndCriteria(
+      targetCategory = await this.transactionCategoriesRepo.findOneByAndCriteria(
         {
           id,
           owner: user,
         },
       );
-      return this.transactionCategoriesInputPort.deleteCategory(targetCategory);
     } catch (e) {
-      throw new BadRequestException(e);
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
     }
+    return this.transactionCategoriesInputPort.deleteCategory(targetCategory);
   }
 }

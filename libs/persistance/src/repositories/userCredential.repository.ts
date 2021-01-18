@@ -19,6 +19,8 @@ import IRepository, {
 import { Roles } from '@app/users/enums/roles.enum';
 import IUserCredential from '@app/users/entities/userCredential.interface';
 
+import { USER_IS_NOT_FOUND_MSG } from '@common/constants/errorMessages.constants';
+
 @Injectable()
 export default class UserCredentialRepository
   implements IRepository<ISecuredUserCredential> {
@@ -137,7 +139,7 @@ export default class UserCredentialRepository
         ),
       };
     } else {
-      throw new Error('This user has not been found');
+      throw new Error(USER_IS_NOT_FOUND_MSG);
     }
   }
 

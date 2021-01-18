@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { BullModule, BullModuleOptions } from '@nestjs/bull';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
@@ -34,6 +39,7 @@ import { LoggerModule } from '@transport/logger/logger.module';
 import { AuthModule } from '@common/auth.module';
 import { CacheService } from '@common/services/cache.service';
 import { RedisCacheService } from '@common/services/redisCache.service';
+import RequestIdentificationMiddleware from '@common/middlewares/requestIdentification.middleware';
 
 @Module({
   imports: [
@@ -64,7 +70,11 @@ import { RedisCacheService } from '@common/services/redisCache.service';
         },
       }),
       inject: [ConfigService],
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
     }),
     BullModule.registerQueueAsync({
       name: 'categoryDeletion',
@@ -77,18 +87,30 @@ import { RedisCacheService } from '@common/services/redisCache.service';
           password: configService.get('REDIS_PASSWORD'),
         },
       }),
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
       inject: [ConfigService],
     }),
     ElasticsearchModule.registerAsync({
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
       useFactory: async (configService: ConfigService) => ({
         node: configService.get('ELASTICSEARCH_NODE'),
       }),
       inject: [ConfigService],
     }),
     GraphQLModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         // typePaths: ['./src/infrastructure/ui/schema.graphql'],
@@ -98,13 +120,15 @@ import { RedisCacheService } from '@common/services/redisCache.service';
         resolverValidationOptions: {
           requireResolversForResolveType: false,
         },
-        debug: configService.get('DEBUG') === 'true',
+        debug: configService.get('DEBUG_MODE') === '1',
         introspection: true,
         context: ({ req }) => ({ req }),
       }),
     }),
     LoggerModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+    }),
   ],
   controllers: [TransactionCategoriesController, TransactionCategoriesFacade],
   providers: [
@@ -178,6 +202,23 @@ import { RedisCacheService } from '@common/services/redisCache.service';
       ],
       inject: [TransactionCategoryAbstractFactory],
     },
+    {
+      provide: 'appName',
+      useValue: 'transaction-categories',
+    },
   ],
 })
-export default class TransactionCategoriesModule {}
+export default class TransactionCategoriesModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(RequestIdentificationMiddleware)
+      .exclude({
+        path: 'api/docs*',
+        method: RequestMethod.ALL,
+      })
+      .forRoutes({
+        path: '*',
+        method: RequestMethod.ALL,
+      });
+  }
+}
