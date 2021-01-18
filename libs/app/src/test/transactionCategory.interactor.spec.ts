@@ -6,6 +6,8 @@ import IRepository, {
 } from '../../../domain/src/repository.interface';
 import ITransactionCategory from '../../../domain/src/transactionCategories/entities/transactionCategory.interface';
 
+import { IS_OUTCOME_FLAG_ERROR_MSG } from '../../../common/src/constants/errorMessages.constants';
+
 // mocks
 import FakeSearchService from './mocks/FakeSearchService';
 import FakeTransactionCategoryOutputPort from './mocks/fakeTransactionCategoryOutputPort';
@@ -127,7 +129,7 @@ describe('TransactionCategoryInteractor tests', () => {
         },
       );
     } catch (e) {
-      expect(e.message).toBe('isOutcome field is common for all category tree');
+      expect(e.message).toBe(IS_OUTCOME_FLAG_ERROR_MSG);
     }
   });
 
@@ -168,7 +170,7 @@ describe('TransactionCategoryInteractor tests', () => {
         parentCategoryId: secondCategory.parentCategory.id,
       });
     } catch (e) {
-      expect(e.message).toBe('isOutcome field is common for all category tree');
+      expect(e.message).toBe(IS_OUTCOME_FLAG_ERROR_MSG);
     }
   });
 

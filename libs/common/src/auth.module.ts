@@ -24,7 +24,9 @@ import PasswordlessAuthService from './services/passwordlessAuth.sevice';
   imports: [
     PrismaModule,
     LoggerModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+    }),
     PassportModule.register({}),
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
@@ -32,7 +34,11 @@ import PasswordlessAuthService from './services/passwordlessAuth.sevice';
         signOptions: { expiresIn: configService.get('JWT_TOKEN_EXPIRES_IN') },
       }),
       inject: [ConfigService],
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
     }),
   ],
   providers: [

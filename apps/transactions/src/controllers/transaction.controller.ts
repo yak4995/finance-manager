@@ -41,6 +41,14 @@ import ICurrency from '@domain/currencies/entities/currency.interface';
 import { OnlyRoles } from '@common/decorators/roles.decorator';
 import { User } from '@common/decorators/user.decorator';
 import JwtAuthGuard from '@common/guards/jwt-auth.guard';
+import {
+  INCORRECT_PAGE_PARAM_MSG,
+  INVALID_TOKEN_MSG,
+  INVALID_USER_MSG,
+  TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
+  TRANSACTION_IS_NOT_FOUND_MSG,
+  USER_IS_NOT_ACTIVE_MSG,
+} from '@common/constants/errorMessages.constants';
 
 @ApiBearerAuth()
 @ApiTags('Transaction management')
@@ -49,9 +57,9 @@ import JwtAuthGuard from '@common/guards/jwt-auth.guard';
     type: 'string',
     examples: [
       'Incorrect token',
-      'User from token is invalid!',
-      'User is not active!',
-      'User token is invalid or expired',
+      INVALID_USER_MSG,
+      USER_IS_NOT_ACTIVE_MSG,
+      INVALID_TOKEN_MSG,
     ],
   },
 })
@@ -81,7 +89,7 @@ export default class TransactionController {
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'page and perPage have to be more than 0',
+      example: INCORRECT_PAGE_PARAM_MSG,
     },
   })
   @Get('/')
@@ -90,7 +98,7 @@ export default class TransactionController {
     @Query() payload: PaginationDto,
   ): Promise<any> {
     if (Number(payload.page) < 1 || Number(payload.perPage) < 1) {
-      throw new BadRequestException('page and perPage have to be more than 0');
+      throw new BadRequestException(INCORRECT_PAGE_PARAM_MSG);
     }
     return this.transactionInputPort.getTransactions(
       user,
@@ -105,7 +113,7 @@ export default class TransactionController {
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Transaction category id is invalid',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
     },
   })
   @Get('/category')
@@ -124,7 +132,7 @@ export default class TransactionController {
         category,
       );
     } catch (e) {
-      throw new BadRequestException('Transaction category id is invalid');
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
     }
   }
 
@@ -144,7 +152,7 @@ export default class TransactionController {
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Transaction id is invalid',
+      example: TRANSACTION_IS_NOT_FOUND_MSG,
     },
   })
   @Patch(':id')
@@ -163,14 +171,14 @@ export default class TransactionController {
         payload,
       );
     } catch (e) {
-      throw new BadRequestException('Transaction id is invalid');
+      throw new BadRequestException(TRANSACTION_IS_NOT_FOUND_MSG);
     }
   }
 
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Transaction id is invalid',
+      example: TRANSACTION_IS_NOT_FOUND_MSG,
     },
   })
   @Delete(':id')
@@ -184,14 +192,14 @@ export default class TransactionController {
       );
       return this.transactionInputPort.deleteTransaction(user, transaction);
     } catch (e) {
-      throw new BadRequestException('Transaction id is invalid');
+      throw new BadRequestException(TRANSACTION_IS_NOT_FOUND_MSG);
     }
   }
 
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Transaction category id is invalid',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
     },
   })
   @Get('report/max')
@@ -217,14 +225,14 @@ export default class TransactionController {
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getMaxTransactionByCategory(category);
     } catch (e) {
-      throw new BadRequestException('Transaction category id is invalid');
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
     }
   }
 
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Transaction category id is invalid',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
     },
   })
   @Get('report/min')
@@ -250,14 +258,14 @@ export default class TransactionController {
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getMinTransactionByCategory(category);
     } catch (e) {
-      throw new BadRequestException('Transaction category id is invalid');
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
     }
   }
 
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Transaction category id is invalid',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
     },
   })
   @Get('report/count')
@@ -283,14 +291,14 @@ export default class TransactionController {
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionsCountBy(category);
     } catch (e) {
-      throw new BadRequestException('Transaction category id is invalid');
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
     }
   }
 
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Transaction category id is invalid',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
     },
   })
   @Get('/report/sum')
@@ -298,12 +306,13 @@ export default class TransactionController {
     @User() user: IUser,
     @Query() payload: TransactionsCategoryRangeDto,
   ): Promise<any> {
+    let [baseCurrency, category, transactions]: [
+      ICurrency,
+      ITransactionCategory,
+      ITransaction[],
+    ] = [null, null, null];
     try {
-      const [baseCurrency, category, transactions]: [
-        ICurrency,
-        ITransactionCategory,
-        ITransaction[],
-      ] = await Promise.all([
+      [baseCurrency, category, transactions] = await Promise.all([
         this.currenciesFacade.findByCode('UAH'),
         this.transactionCategoriesFacade.findById(payload.categoryId),
         this.transactionsRepo.findByAndCriteria({
@@ -315,13 +324,15 @@ export default class TransactionController {
           },
         }),
       ]);
+    } catch (e) {
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
+    }
+    if (category) {
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionsSumBy(
         category,
         baseCurrency,
       );
-    } catch (e) {
-      throw new BadRequestException('Transaction category id is invalid');
     }
   }
 
@@ -367,7 +378,7 @@ export default class TransactionController {
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Transaction category id is invalid',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
     },
   })
   @Get('/report/count-ratio')
@@ -395,14 +406,14 @@ export default class TransactionController {
         baseCategory,
       );
     } catch (e) {
-      throw new BadRequestException('Transaction category id is invalid');
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
     }
   }
 
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Transaction category id is invalid',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
     },
   })
   @Get('/report/sum-ratio')
@@ -410,12 +421,13 @@ export default class TransactionController {
     @User() user: IUser,
     @Query() payload: TransactionsCategoryRangeDto,
   ): Promise<any> {
+    let [baseCurrency, baseCategory, transactions]: [
+      ICurrency,
+      ITransactionCategory,
+      ITransaction[],
+    ] = [null, null, null];
     try {
-      const [baseCurrency, baseCategory, transactions]: [
-        ICurrency,
-        ITransactionCategory,
-        ITransaction[],
-      ] = await Promise.all([
+      [baseCurrency, baseCategory, transactions] = await Promise.all([
         this.currenciesFacade.findByCode('UAH'),
         this.transactionCategoriesFacade.findById(payload.categoryId),
         this.transactionsRepo.findByAndCriteria({
@@ -427,20 +439,22 @@ export default class TransactionController {
           },
         }),
       ]);
+    } catch (e) {
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
+    }
+    if (baseCategory) {
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionSumRatioByCategories(
         baseCategory,
         baseCurrency,
       );
-    } catch (e) {
-      throw new BadRequestException('Transaction category id is invalid');
     }
   }
 
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Transaction category id is invalid',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
     },
   })
   @Get('/report/count-change')
@@ -471,14 +485,14 @@ export default class TransactionController {
         payload.by,
       );
     } catch (e) {
-      throw new BadRequestException('Transaction category id is invalid');
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
     }
   }
 
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Transaction category id is invalid',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
     },
   })
   @Get('/report/sum-change')
@@ -486,12 +500,13 @@ export default class TransactionController {
     @User() user: IUser,
     @Query() payload: TransactionsRangeDto,
   ): Promise<any> {
+    let [baseCurrency, baseCategory, transactions]: [
+      ICurrency,
+      ITransactionCategory,
+      ITransaction[],
+    ] = [null, null, null];
     try {
-      const [baseCurrency, baseCategory, transactions]: [
-        ICurrency,
-        ITransactionCategory,
-        ITransaction[],
-      ] = await Promise.all([
+      [baseCurrency, baseCategory, transactions] = await Promise.all([
         this.currenciesFacade.findByCode('UAH'),
         this.transactionCategoriesFacade.findById(payload.categoryId),
         this.transactionsRepo.findByAndCriteria({
@@ -503,6 +518,10 @@ export default class TransactionController {
           },
         }),
       ]);
+    } catch (e) {
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
+    }
+    if (baseCategory) {
       this.transactionInputPort.setTransactions(transactions);
       return this.transactionInputPort.getTransactionSumChangeByPeriod(
         baseCategory,
@@ -511,16 +530,18 @@ export default class TransactionController {
         payload.by,
         baseCurrency,
       );
-    } catch (e) {
-      throw new BadRequestException('Transaction category id is invalid');
     }
   }
 
   @Get('/:id')
-  getTransactionDetail(
+  async getTransactionDetail(
     @User() user: IUser,
     @Param('id') id: string,
   ): Promise<any> {
-    return this.transactionInputPort.getTransactionDetail(user, id);
+    try {
+      return await this.transactionInputPort.getTransactionDetail(user, id);
+    } catch (e) {
+      throw new BadRequestException(TRANSACTION_IS_NOT_FOUND_MSG);
+    }
   }
 }

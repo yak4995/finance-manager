@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { BullModule, BullModuleOptions } from '@nestjs/bull';
@@ -40,6 +45,7 @@ import TransactionInteractor from '@app/transactions/interactors/transaction.int
 import { AuthModule } from '@common/auth.module';
 import { grpcCurrenciesClientOptions } from '@common/grpcCurrenciesClientOptions';
 import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions';
+import RequestIdentificationMiddleware from '@common/middlewares/requestIdentification.middleware';
 
 @Module({
   imports: [
@@ -57,7 +63,11 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
           password: configService.get('REDIS_PASSWORD'),
         },
       }),
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
       inject: [ConfigService],
     }),*/
     ScheduleModule.forRoot(),
@@ -85,11 +95,19 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
           ),
         },
       }),
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
       inject: [ConfigService],
     }),
     ElasticsearchModule.registerAsync({
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
       useFactory: async (configService: ConfigService) => ({
         node: configService.get('ELASTICSEARCH_NODE'),
       }),
@@ -104,7 +122,7 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
         options: {
           client: {
             clientId: 'transactions-module',
-            brokers: ['kafka:9092'],
+            brokers: [`${process.env.IS_LOCAL ? '127.0.0.1' : 'kafka'}:9092`],
           },
           consumer: {
             groupId: 'workers',
@@ -228,6 +246,23 @@ import { grpcCategoriesClientOptions } from '@common/grpcCategoriesClientOptions
         DefReportDistributionOutputPort,
       ],
     },
+    {
+      provide: 'appName',
+      useValue: 'transactions',
+    },
   ],
 })
-export default class TransactionsModule {}
+export default class TransactionsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(RequestIdentificationMiddleware)
+      .exclude({
+        path: 'api/docs*',
+        method: RequestMethod.ALL,
+      })
+      .forRoutes({
+        path: '*',
+        method: RequestMethod.ALL,
+      });
+  }
+}

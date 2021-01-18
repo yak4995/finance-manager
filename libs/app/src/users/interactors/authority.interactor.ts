@@ -13,6 +13,8 @@ import UserShouldBeDeletedEvent from '../events/userShouldBeDeleted.event';
 import IRepository from '@domain/repository.interface';
 import IUser from '@domain/users/entities/user.interface';
 
+import { SUCH_USER_ALREADY_EXISTS_MSG } from '@common/constants/errorMessages.constants';
+
 export default class AuthorityInteractor
   implements SessionsManagementInputPort, UserCredentialsManagementInputPort {
   constructor(
@@ -57,7 +59,7 @@ export default class AuthorityInteractor
     return this.outputPort.processRegistration(
       null,
       false,
-      new Error('Such user already exists'),
+      new Error(SUCH_USER_ALREADY_EXISTS_MSG),
     );
   }
 

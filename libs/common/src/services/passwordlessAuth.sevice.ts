@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -19,6 +23,11 @@ import ISecuredUserCredential from '@persistance/entities/securedUserCredential'
 import { FileLoggerService } from '@transport/logger/fileLogger.service';
 
 import JwtPayloadInterface from '@common/interfaces/jwt-payload.interface';
+import {
+  METHOD_IS_NOT_IMPLEMENTED_MSG,
+  OTP_IS_INVALID_MSG,
+  USER_IS_NOT_FOUND_MSG,
+} from '@common/constants/errorMessages.constants';
 
 @Injectable()
 export default class PasswordlessAuthService
@@ -70,6 +79,9 @@ export default class PasswordlessAuthService
         e.stack,
         'PasswordlessAuthService::sendOtp',
       );
+      if (e.message === USER_IS_NOT_FOUND_MSG) {
+        throw new BadRequestException(e.message);
+      }
       throw e;
     }
   }
@@ -85,7 +97,7 @@ export default class PasswordlessAuthService
         moment().diff(user.lastLoginDate ?? new Date(), 'minutes') < 10 &&
         payload.authorityData === user.otp;
       if (!isOtpValid) {
-        throw new UnauthorizedException('Otp is invalid!');
+        throw new UnauthorizedException(OTP_IS_INVALID_MSG);
       }
       await this.userCredentialRepo.update(
         {
@@ -101,7 +113,7 @@ export default class PasswordlessAuthService
   }
 
   public signOut(_user: IUserCredential): never {
-    throw new Error('Method not implemented.');
+    throw new Error(METHOD_IS_NOT_IMPLEMENTED_MSG);
   }
 
   public async deleteAccount(user: IUser): Promise<boolean> {

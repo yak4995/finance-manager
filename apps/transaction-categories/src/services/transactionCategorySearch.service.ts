@@ -5,6 +5,10 @@ import ISearchService from '@app/search/searchService.interface';
 
 import ITransactionCategory from '@domain/transactionCategories/entities/transactionCategory.interface';
 
+import { FileLoggerService } from '@transport/logger/fileLogger.service';
+
+import { METHOD_IS_NOT_IMPLEMENTED_MSG } from '@common/constants/errorMessages.constants';
+
 @Injectable()
 export class TransactionCategorySearchService
   implements ISearchService<ITransactionCategory> {
@@ -17,7 +21,11 @@ export class TransactionCategorySearchService
         id: entity.id,
         body: entity,
       })
-      .then(result => result.statusCode === 200);
+      .then(result => result.statusCode === 200)
+      .catch(err => {
+        FileLoggerService.log(err);
+        throw err;
+      });
   }
 
   remove(entity: ITransactionCategory): Promise<boolean> {
@@ -26,7 +34,11 @@ export class TransactionCategorySearchService
         index: 'transaction_categories',
         id: entity.id,
       })
-      .then(result => result.statusCode === 200);
+      .then(result => result.statusCode === 200)
+      .catch(err => {
+        FileLoggerService.log(err);
+        throw err;
+      });
   }
 
   search(
@@ -34,7 +46,7 @@ export class TransactionCategorySearchService
     ...fields: Array<keyof ITransactionCategory>
   ): Promise<ITransactionCategory[]> {
     if (fields.length > 1 || fields[0] !== 'name') {
-      throw new Error('Method not implemented.');
+      throw new Error(METHOD_IS_NOT_IMPLEMENTED_MSG);
     }
     return this.elasticService
       .search({

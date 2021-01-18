@@ -8,6 +8,11 @@ import ITransactionCategory from '@domain/transactionCategories/entities/transac
 import TransactionCategoryAbstractFactory from '@domain/transactionCategories/factories/transactionCategoryFactory';
 import IUser from '@domain/users/entities/user.interface';
 
+import {
+  IS_OUTCOME_FLAG_ERROR_MSG,
+  OWN_CATEGORY_PARENT_ERROR_MSG,
+} from '@common/constants/errorMessages.constants';
+
 export default class TransactionCategoryInteractor
   implements TransactionCategoryInputPort {
   private readonly transactionCategoryRepo: IRepository<ITransactionCategory>;
@@ -88,7 +93,10 @@ export default class TransactionCategoryInteractor
     try {
       const result: ITransactionCategory[] = (
         await this.searchService.search(content, 'name')
-      ).filter((c: ITransactionCategory): boolean => c.owner.id === user.id);
+      ).filter(
+        (c: ITransactionCategory | any): boolean =>
+          c.owner.id === user.id || c.owner === null,
+      );
       return this.transactionCategoryOutputPort.search(result, null);
     } catch (e) {
       return this.transactionCategoryOutputPort.search(null, e);
@@ -101,13 +109,13 @@ export default class TransactionCategoryInteractor
   ): Promise<any> {
     try {
       if (!payload?.parentCategoryId) {
-        throw new Error('own category has to have a parent');
+        throw new Error(OWN_CATEGORY_PARENT_ERROR_MSG);
       }
       const parentCategory: ITransactionCategory = await this.transactionCategoryRepo.findById(
         payload.parentCategoryId,
       );
       if (parentCategory.isOutcome !== payload.isOutcome) {
-        throw new Error('isOutcome field is common for all category tree');
+        throw new Error(IS_OUTCOME_FLAG_ERROR_MSG);
       }
       const createdCategory: ITransactionCategory = this.transactionCategoryFactory.createTransactionCategory(
         {
@@ -139,7 +147,7 @@ export default class TransactionCategoryInteractor
           payload.parentCategoryId,
         );
         if (parentCategory.isOutcome !== payload.isOutcome) {
-          throw new Error('isOutcome field is common for all category tree');
+          throw new Error(IS_OUTCOME_FLAG_ERROR_MSG);
         }
       }
       await this.searchService.remove(category);

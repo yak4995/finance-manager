@@ -32,7 +32,9 @@ import { MailingService } from './services/mailing.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+    }),
     AuthModule,
     PrismaModule,
     MailerModule.forRootAsync({
@@ -60,7 +62,11 @@ import { MailingService } from './services/mailing.service';
         },
       }),
       inject: [ConfigService],
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
     }),
   ],
   controllers: [MailingController, DeletionController],

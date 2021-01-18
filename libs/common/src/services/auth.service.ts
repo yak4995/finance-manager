@@ -17,6 +17,7 @@ import ISecuredUserCredential from '@persistance/entities/securedUserCredential'
 import { FileLoggerService } from '@transport/logger/fileLogger.service';
 
 import JwtPayloadInterface from '@common/interfaces/jwt-payload.interface';
+import { METHOD_IS_NOT_IMPLEMENTED_MSG } from '@common/constants/errorMessages.constants';
 
 @Injectable()
 export default class AuthService implements IAuthorityService {
@@ -60,7 +61,7 @@ export default class AuthService implements IAuthorityService {
   }
 
   public signOut(_user: IUserCredential): never {
-    throw new Error('Method not implemented.');
+    throw new Error(METHOD_IS_NOT_IMPLEMENTED_MSG);
   }
 
   public async deleteAccount(user: IUser): Promise<boolean> {

@@ -4,7 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-import HttpExceptionFilter from '@common/http-exception.filter';
+import HttpExceptionFilter from '@common/filters/http-exception.filter';
+import { LoggingInterceptor } from '@common/interceptors/logging.interceptor';
 
 import { FileLoggerService } from '@transport/logger/fileLogger.service';
 
@@ -24,7 +25,9 @@ async function bootstrap() {
     },
     logger: false,
   });
+  const configService: ConfigService = app.get(ConfigService);
   app.useLogger(app.get(FileLoggerService));
+  app.useGlobalInterceptors(new LoggingInterceptor('transactions'));
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
 
@@ -37,7 +40,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api/docs', app, document);
 
-  const configService: ConfigService = app.get(ConfigService);
   await app.listen(configService.get<number>('TRANSACTIONS_PORT'));
 }
 bootstrap();

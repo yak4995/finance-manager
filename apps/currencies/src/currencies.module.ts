@@ -1,4 +1,10 @@
-import { Module, HttpModule } from '@nestjs/common';
+import {
+  Module,
+  HttpModule,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { BullModule, BullModuleOptions } from '@nestjs/bull';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -24,6 +30,7 @@ import CurrencyAbstractFactory from '@domain/currencies/factories/currencyFactor
 import { LoggerModule } from '@transport/logger/logger.module';
 
 import { AuthModule } from '@common/auth.module';
+import RequestIdentificationMiddleware from '@common/middlewares/requestIdentification.middleware';
 
 @Module({
   imports: [
@@ -56,10 +63,18 @@ import { AuthModule } from '@common/auth.module';
         },
       }),
       inject: [ConfigService],
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
     }),
     GraphQLModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         // typePaths: ['./src/infrastructure/ui/schema.graphql'],
@@ -69,7 +84,7 @@ import { AuthModule } from '@common/auth.module';
         resolverValidationOptions: {
           requireResolversForResolveType: false,
         },
-        debug: configService.get('DEBUG') === 'true',
+        debug: configService.get('DEBUG_MODE') === '1',
         introspection: true,
         context: ({ req }) => ({ req }),
       }),
@@ -85,7 +100,11 @@ import { AuthModule } from '@common/auth.module';
           password: configService.get('REDIS_PASSWORD'),
         },
       }),
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.IS_LOCAL ? '.env.local' : '.env',
+        }),
+      ],
       inject: [ConfigService],
     }),
   ],
@@ -115,6 +134,23 @@ import { AuthModule } from '@common/auth.module';
       ],
       inject: [CurrencyAbstractFactory],
     },
+    {
+      provide: 'appName',
+      useValue: 'currencies',
+    },
   ],
 })
-export default class CurrenciesModule {}
+export default class CurrenciesModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(RequestIdentificationMiddleware)
+      .exclude({
+        path: 'api/docs*',
+        method: RequestMethod.ALL,
+      })
+      .forRoutes({
+        path: '*',
+        method: RequestMethod.ALL,
+      });
+  }
+}

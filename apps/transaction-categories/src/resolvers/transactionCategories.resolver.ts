@@ -23,6 +23,7 @@ import {
   UpdateTransactionCategoryInput,
 } from '@common/graphql.schema.generated';
 import GqlAuthGuard from '@common/guards/gql-auth.guard';
+import { TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG } from '@common/constants/errorMessages.constants';
 
 @Resolver('TransactionCategory')
 @OnlyRoles(Roles.ADMINISTRATOR)
@@ -92,7 +93,7 @@ export default class TransactionCategoriesResolver {
       id,
     );
     if (!category) {
-      throw new BadRequestException('Category doesn`t exist!');
+      throw new BadRequestException(TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG);
     }
     await this.transactionCategoryShoulBeDeletedEventDispatcher.emit(
       new TransactionCategoryShouldBeDeletedEvent(category),

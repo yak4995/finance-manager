@@ -7,8 +7,9 @@ export const grpcCategoriesClientOptions: ClientProviderOptions = {
   transport: Transport.GRPC,
   name: 'CATEGORIES_SERVICE',
   options: {
-    url: `${process.env.CATEGORIES_URL ?? 'localhost'}:${process.env
-      .CATEGORIES_GRPC_PORT ?? 3005}`,
+    url: `${
+      process.env.IS_LOCAL ? 'localhost' : process.env.CATEGORIES_URL
+    }:${process.env.CATEGORIES_GRPC_PORT ?? 3005}`,
     package: 'categoriesService',
     protoPath,
   },

@@ -31,6 +31,14 @@ import IUserCredential from '@app/users/entities/userCredential.interface';
 import IUser from '@domain/users/entities/user.interface';
 
 import JwtAuthGuard from '@common/guards/jwt-auth.guard';
+import {
+  INVALID_TOKEN_MSG,
+  INVALID_USER_MSG,
+  OTP_IS_INVALID_MSG,
+  SUCH_USER_ALREADY_EXISTS_MSG,
+  USER_IS_NOT_ACTIVE_MSG,
+  USER_IS_NOT_FOUND_MSG,
+} from '@common/constants/errorMessages.constants';
 
 import ISecuredUserCredential from '@persistance/entities/securedUserCredential';
 
@@ -43,9 +51,9 @@ import PasswordlessSessionManagementInputPort from '@app/users/ports/passwordles
     type: 'string',
     examples: [
       'Incorrect token',
-      'User from token is invalid!',
-      'User is not active!',
-      'User token is invalid or expired',
+      INVALID_USER_MSG,
+      USER_IS_NOT_ACTIVE_MSG,
+      INVALID_TOKEN_MSG,
     ],
   },
 })
@@ -88,7 +96,7 @@ export default class AuthController {
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      example: 'Such user already exists',
+      example: SUCH_USER_ALREADY_EXISTS_MSG,
     },
   })
   @ApiCreatedResponse({
@@ -122,8 +130,8 @@ export default class AuthController {
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
-      // examples: ['This user has not been found', 'Password is invalid!'],
-      examples: ['This user has not been found', 'Otp is invalid!'],
+      // examples: [USER_IS_NOT_FOUND_MSG, 'Password is invalid!'],
+      examples: [USER_IS_NOT_FOUND_MSG, OTP_IS_INVALID_MSG],
     },
   })
   @ApiCreatedResponse({

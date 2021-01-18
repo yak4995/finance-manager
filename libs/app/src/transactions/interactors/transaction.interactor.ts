@@ -139,10 +139,10 @@ export default class TransactionInteractor
           description: payload.description,
         },
       );
-      await this.searchService.insert(createdTransaction);
       const result: ITransaction = await this.transactionRepo.insert(
         createdTransaction,
       );
+      await this.searchService.insert(result);
       return this.transactionOutputPort.addTransaction(result, null);
     } catch (e) {
       return this.transactionOutputPort.addTransaction(null, e);

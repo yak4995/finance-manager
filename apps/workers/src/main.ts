@@ -13,7 +13,7 @@ async function bootstrap() {
       transport: Transport.KAFKA,
       options: {
         client: {
-          brokers: ['kafka:9092'],
+          brokers: [`${process.env.IS_LOCAL ? '127.0.0.1' : 'kafka'}:9092`],
         },
         consumer: {
           groupId: 'workers',

@@ -8,7 +8,8 @@ import UsersModule from './users.module';
 
 import { FileLoggerService } from '@transport/logger/fileLogger.service';
 
-import HttpExceptionFilter from '@common/http-exception.filter';
+import HttpExceptionFilter from '@common/filters/http-exception.filter';
+import { LoggingInterceptor } from '@common/interceptors/logging.interceptor';
 
 async function bootstrap() {
   const keyFile: Buffer = fs.readFileSync(
@@ -24,7 +25,9 @@ async function bootstrap() {
     },
     logger: false,
   });
+  const configService: ConfigService = app.get(ConfigService);
   app.useLogger(app.get(FileLoggerService));
+  app.useGlobalInterceptors(new LoggingInterceptor('users'));
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
 
@@ -37,7 +40,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api/docs', app, document);
 
-  const configService: ConfigService = app.get(ConfigService);
   await app.listen(configService.get<number>('AUTH_PORT'));
 }
 bootstrap();

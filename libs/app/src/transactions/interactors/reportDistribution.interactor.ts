@@ -12,6 +12,8 @@ import { TransactionsComparisonDto } from '@domain/transactions/dto/transactions
 import { AvailableAnalyticMetric } from '@domain/transactions/enums/availableAnalyticMetric.enum';
 import { Period } from '@domain/period/enums/period.enum';
 
+import { QUARTER_ERROR_MSG } from '@common/constants/errorMessages.constants';
+
 export default class ReportDistributionInteractor
   implements ReportDistributionInputPort {
   private readonly distributionMetricItemRepo: IRepository<
@@ -147,7 +149,7 @@ export default class ReportDistributionInteractor
         break;
       case Period.QUARTER:
         if (startDate.getMonth() === 1) {
-          throw new Error('Quarter has not been ended yet!');
+          throw new Error(QUARTER_ERROR_MSG);
         }
         if (startDate.getMonth() === 0) {
           startDate.setFullYear(startDate.getFullYear() - 1);

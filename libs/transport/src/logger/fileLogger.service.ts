@@ -19,7 +19,7 @@ export class FileLoggerService extends Logger {
       JSON.stringify({
         message,
         context,
-        environment: `${process.env.DEBUG ? 'DEV' : 'PROD'}`,
+        environment: `${process.env.DEBUG_MODE === '1' ? 'DEV' : 'PROD'}`,
       }) + '\n',
       {},
       err => {
@@ -38,7 +38,7 @@ export class FileLoggerService extends Logger {
         message,
         trace,
         context,
-        environment: `${process.env.DEBUG ? 'DEV' : 'PROD'}`,
+        environment: `${process.env.DEBUG_MODE === '1' ? 'DEV' : 'PROD'}`,
       }) + '\n',
       {},
       err => {

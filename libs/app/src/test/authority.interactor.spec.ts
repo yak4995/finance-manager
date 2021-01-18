@@ -14,6 +14,8 @@ import IRepository, {
 } from '../../../domain/src/repository.interface';
 import IUser from '../../../domain/src/users/entities/user.interface';
 
+import { SUCH_USER_ALREADY_EXISTS_MSG } from '../../../common/src/constants/errorMessages.constants';
+
 // mocks
 import FakeAuthorityService from './mocks/fakeAuthorityService';
 import FakeUserCredentialFactory from './mocks/fakeUserCredentialFactory';
@@ -70,7 +72,7 @@ describe('AuthorityInteractor tests', () => {
     try {
       await service.signUp({ email: 'existed@example.com' });
     } catch (e) {
-      expect(e.message).toBe('Such user already exists');
+      expect(e.message).toBe(SUCH_USER_ALREADY_EXISTS_MSG);
     }
   });
 

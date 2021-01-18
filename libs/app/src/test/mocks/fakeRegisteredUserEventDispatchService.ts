@@ -1,3 +1,5 @@
+import { METHOD_IS_NOT_IMPLEMENTED_MSG } from '@common/constants/errorMessages.constants';
+
 import IEventListener from '../../../../app/src/events/eventListener.interface';
 import { EventStatus } from '../../../../app/src/events/eventStatus.enum';
 
@@ -31,6 +33,6 @@ export default class FakeRegisteredUserEventDispatchService extends IEventDispat
   }
 
   protected async processEvent(...args: any[]): Promise<void> {
-    throw new Error('Method not implemented.');
+    throw new Error(METHOD_IS_NOT_IMPLEMENTED_MSG);
   }
 }

@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import * as cls from 'cls-hooked';
 
 import AuthorityOutputPort from '@app/users/ports/authorityOutput.port';
 import IUserCredential from '@app/users/entities/userCredential.interface';
@@ -11,6 +17,11 @@ import { FileLoggerService } from '@transport/logger/fileLogger.service';
 
 // import AuthService from '@common/services/auth.service';
 import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
+import {
+  METHOD_IS_NOT_IMPLEMENTED_MSG,
+  OTP_IS_INVALID_MSG,
+  SUCH_USER_ALREADY_EXISTS_MSG,
+} from '@common/constants/errorMessages.constants';
 
 @Injectable()
 export default class DefAuthorityOutputPort implements AuthorityOutputPort {
@@ -23,11 +34,17 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
   ): Promise<{ accessToken: string }> {
     if (e) {
       FileLoggerService.error(
-        e.message,
+        `requestId: ${(
+          cls.getNamespace('users') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefAuthorityOutputPort::processLogin',
       );
-      throw new BadRequestException(e.message);
+      if (e.message === OTP_IS_INVALID_MSG) {
+        throw new UnauthorizedException(e.message);
+      } else {
+        throw new BadRequestException(e.message);
+      }
     }
     return this.authService.createToken({
       id: user.id,
@@ -44,11 +61,17 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
   ): Promise<IUserCredential> {
     if (e) {
       FileLoggerService.error(
-        e.message,
+        `requestId: ${(
+          cls.getNamespace('users') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefAuthorityOutputPort::processRegistration',
       );
-      throw new BadRequestException(e.message);
+      if (e.message === SUCH_USER_ALREADY_EXISTS_MSG) {
+        throw new BadRequestException(e.message);
+      } else {
+        throw new InternalServerErrorException(e.message);
+      }
     }
     if (!mailingResult) {
       FileLoggerService.error(
@@ -62,11 +85,11 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
   }
 
   processLogout(_user: IUser, _logoutResult: boolean, _e: Error): never {
-    throw new Error('Method not implemented.');
+    throw new Error(METHOD_IS_NOT_IMPLEMENTED_MSG);
   }
 
   processAccountInfoChanging(_user: IUser, _e: Error): never {
-    throw new Error('Method not implemented.');
+    throw new Error(METHOD_IS_NOT_IMPLEMENTED_MSG);
   }
 
   async processAccountProfileImageChanging(
@@ -75,11 +98,13 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
   ): Promise<IUser> {
     if (e) {
       FileLoggerService.error(
-        e.message,
+        `requestId: ${(
+          cls.getNamespace('users') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefAuthorityOutputPort::processAccountProfileImageChanging',
       );
-      throw new BadRequestException(e.message);
+      throw new InternalServerErrorException(e.message);
     }
     const { /*passwordHash*/ otp, ...result } = user;
     return result;
@@ -92,11 +117,13 @@ export default class DefAuthorityOutputPort implements AuthorityOutputPort {
   ): Promise<boolean> {
     if (e) {
       FileLoggerService.error(
-        e.message,
+        `requestId: ${(
+          cls.getNamespace('users') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefAuthorityOutputPort::processAccountDeleting',
       );
-      throw new BadRequestException(e.message);
+      throw new InternalServerErrorException(e.message);
     }
     if (!deletingResult) {
       throw new BadRequestException(

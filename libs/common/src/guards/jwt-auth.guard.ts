@@ -12,6 +12,7 @@ import { Roles } from '@app/users/enums/roles.enum';
 
 // import AuthService from '@common/services/auth.service';
 import PasswordlessAuthService from '@common/services/passwordlessAuth.sevice';
+import { INVALID_USER_MSG } from '@common/constants/errorMessages.constants';
 
 @Injectable()
 export default class JwtAuthGuard extends AuthGuard('jwt') {
@@ -43,7 +44,7 @@ export default class JwtAuthGuard extends AuthGuard('jwt') {
       token,
     ) as IUserCredential;
     if (!user) {
-      throw new UnauthorizedException('User from token is invalid!');
+      throw new UnauthorizedException(INVALID_USER_MSG);
     }
     const hasRole = (): boolean =>
       user.roles.some((userRole: Roles): boolean => roles.includes(userRole));
