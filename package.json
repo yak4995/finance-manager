@@ -78,7 +78,7 @@
     "@types/redis": "^2.8.27",
     "@types/supertest": "^2.0.5",
     "@types/xml2js": "^0.4.5",
-    "handlebars": "^4.7.2",
+    "handlebars": "^4.7.7",
     "jest": "^25.2.0",
     "nodemon": "^1.18.3",
     "prettier": "^1.19",
