@@ -116,7 +116,7 @@ export default class AuthController {
     return this.authorityInputPort.signUp(payload);
   }
 
-  @ApiOperation({ description: 'Create new user in the system' })
+  @ApiOperation({ description: 'Send to user`s email their otp' })
   @ApiCreatedResponse({
     description: 'status',
     status: 200,

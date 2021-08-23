@@ -1,6 +1,6 @@
 {
   "name": "finance-manager",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "Backend API for personal finance manager app (my pet project)",
   "author": "Yuriy Kryvokhyzha",
   "license": "Apache License 2.0",

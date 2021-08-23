@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Inject,
   Post,
   UseGuards,
@@ -10,6 +11,8 @@ import {
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -54,6 +57,48 @@ export class DistributingMetricItemsController {
     private readonly transactionCategoriesFacade: TransactionCategoriesFacade,
   ) {
     this.distributingMetricItemsRepo = distributingMetricItemsFactory.createDistributingMetricItemRepo();
+  }
+
+  @ApiOperation({ description: 'Get your subscriptions' })
+  @ApiOkResponse({
+    description: 'IDistributingMetricItem array',
+    schema: {
+      type: 'array',
+      items: {
+        properties: {
+          user: { type: 'IUser' },
+          period: { type: 'string' },
+          metric: { type: 'integer' },
+          category: { type: 'ITransactionCategory' },
+          baseCurrency: { type: 'ICurrency' },
+        },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    schema: {
+      type: 'string',
+      examples: [
+        'Incorrect token',
+        INVALID_USER_MSG,
+        USER_IS_NOT_ACTIVE_MSG,
+        INVALID_TOKEN_MSG,
+      ],
+    },
+  })
+  @ApiForbiddenResponse({
+    schema: {
+      type: 'string',
+      example: 'This user doesn`t have any of these groups',
+    },
+  })
+  @UseGuards(JwtAuthGuard)
+  @OnlyRoles(Roles.USER)
+  @Get('/')
+  getUserSubscriptions(
+    @User() user: IUserCredential,
+  ): Promise<DistributingMetricItemDto[]> {
+    return this.distributingMetricsInputPort.getUserSubscriptions(user);
   }
 
   @ApiUnauthorizedResponse({

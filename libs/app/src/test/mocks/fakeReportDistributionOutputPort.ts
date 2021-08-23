@@ -6,6 +6,15 @@ import ReportDistributionOutputPort from '../../transactions/ports/reportDistrib
 /* istanbul ignore next */
 export default class FakeReportDistributionOutputPort
   implements ReportDistributionOutputPort {
+  async processGetUserSubscriptions(
+    result: IDistributingMetricItem[],
+    e: Error | null,
+  ): Promise<void> {
+    if (e) {
+      throw e;
+    }
+  }
+
   async processMetricSubscribing(
     result: IDistributingMetricItem[] | null,
     e: Error = null,

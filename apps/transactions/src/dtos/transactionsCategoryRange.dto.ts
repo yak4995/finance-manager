@@ -5,7 +5,7 @@ import { TransactionsDateRangeDto } from './transactionsDateRange.dto';
 
 export class TransactionsCategoryRangeDto extends TransactionsDateRangeDto {
   @ApiProperty({
-    title: 'start date',
+    title: 'transaction category id',
     required: true,
   })
   @IsNotEmpty()

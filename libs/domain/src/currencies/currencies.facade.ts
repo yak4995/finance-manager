@@ -1,8 +1,7 @@
-import { Metadata } from 'grpc';
 import ICurrency from './entities/currency.interface';
 
 export default interface ICurrenciesFacade {
-  findById(id: any, metadata?: Metadata): Promise<ICurrency>;
-  findByCode(code: any, metadata?: Metadata): Promise<ICurrency>;
+  findById(id: any, metadata?: any): Promise<ICurrency>;
+  findByCode(code: any, metadata?: any): Promise<ICurrency>;
   getRateFor(...args: any[]): Promise<any>;
 }

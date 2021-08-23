@@ -1,3 +1,4 @@
+// TODO: move to domain
 export const INTERNAL_SERVER_ERROR_MSG = 'Internal server error';
 
 export const CURRENCY_IS_NOT_FOUND_MSG = 'Currency is not found';

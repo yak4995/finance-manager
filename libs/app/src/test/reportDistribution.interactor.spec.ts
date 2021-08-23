@@ -188,6 +188,12 @@ describe('ReportDistributionInteractor tests', () => {
     );
   });
 
+  it('test getUserSubscriptions method', async () => {
+    expect(
+      await service.getUserSubscriptions({ id: 'fakeId' }),
+    ).not.toBeInstanceOf(Error);
+  });
+
   it('test subscribe method: some insert error', async () => {
     jest
       .spyOn(fakeDistributingMetricItemRepo, 'insert')

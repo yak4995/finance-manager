@@ -4,8 +4,6 @@ import ITransactionDto from '../dto/iTransaction.dto';
 import TransactionOutputPort from '../ports/transactionOutput.port';
 import ISearchService from '../../search/searchService.interface';
 
-import { BadRequestException } from '@nestjs/common';
-
 import IRepository, { OrderCriteria } from '@domain/repository.interface';
 import ITransaction from '@domain/transactions/entities/transaction.interface';
 import TransactionAbstractFactory from '@domain/transactions/factories/transactionFactory';
@@ -165,9 +163,7 @@ export default class TransactionInteractor
         this.currenciesFacade.findById(payload.currencyId),
       ]);
       if (transaction.owner.id !== user.id) {
-        throw new BadRequestException(
-          'This user is not owner of this transaction',
-        );
+        throw new Error('This user is not owner of this transaction');
       }
       await this.searchService.remove(transaction);
       await Promise.all([

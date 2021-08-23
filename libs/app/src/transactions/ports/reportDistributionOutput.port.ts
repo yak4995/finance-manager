@@ -3,6 +3,10 @@ import { TransactionsComparisonDto } from '@domain/transactions/dto/transactions
 import IDistributingMetricItem from '../entities/distributingMetricItem.interface';
 
 export default interface ReportDistributionOutputPort {
+  processGetUserSubscriptions(
+    result: IDistributingMetricItem[],
+    e: Error,
+  ): Promise<any>;
   processMetricSubscribing(
     result: IDistributingMetricItem[],
     e: Error,

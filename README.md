@@ -3,7 +3,7 @@ This project is my pet-project, that provided HTTP REST/GraphQL API for personal
 For user interfaces uses HTTPS protocol, for inter app communication - GRPC protocol, for data storage - Prisma2 ORM with PostgreSQL, for asyncronyous task executing and queueing - Redis and Kafka, for unit and e2e tests - jest library. Base programming language is TypeScript.
 
 Project setup:
-1. Execute "npm i && npm run init" from project dir. Then replace the content of the prisma/schema.prisma file to
+1. Execute "npm i && npm run init" ("npm run init" will create prisma subdir in you project with .env file for db creds and empty schema.prisma file for prisma client target platform/creds target/db schema definition in gql format) from project dir. Then replace the content of the prisma/schema.prisma file to
 ```
   generator client {
     provider = "prisma-client-js"
@@ -69,11 +69,15 @@ Generate ssl certificate for localhost in terminal:
   -out $NAME.crt -days 825 -sha256 -extfile $NAME.ext
 ```
 
-8. Add .pem file as trusted certificatein your GoogleChrome and paths to certifaicates to .env file.
+8. Add .pem file as trusted certificate in your GoogleChrome and paths to certifaicates to .env file.
 
 GraphQL explanations:
 
-In resolvers, that import GQL types, we import them from src/graphql.schema.generated.ts, that will be created by NestJS GraphQLModule from src/ui/schema.graphql (graphql types for UI) when you run "npm i".
+In resolvers, that import GQL types, we import them from libs/common/src/graphql.schema.generated.ts, that will be created by NestJS GraphQLModule from libs/common/src/schema.graphql (graphql types for UI) when you run "npm i".
+
+Prisma explanations:
+
+Check Readme above for understanding initial setup. For synchronization between prisma/schema.prisma and generating typescript client with compiled gql schemas use "npm run migrate"
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>

@@ -25,7 +25,9 @@ export default class DefTransactionCategoryOutputPort
     if (e) {
       FileLoggerService.error(
         `requestId: ${(
-          cls.getNamespace('transaction-categories') ?? { get: (_: string) => 'test' }
+          cls.getNamespace('transaction-categories') ?? {
+            get: (_: string) => 'test',
+          }
         ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::getTopCategories',
@@ -45,7 +47,9 @@ export default class DefTransactionCategoryOutputPort
     if (e) {
       FileLoggerService.error(
         `requestId: ${(
-          cls.getNamespace('transaction-categories') ?? { get: (_: string) => 'test' }
+          cls.getNamespace('transaction-categories') ?? {
+            get: (_: string) => 'test',
+          }
         ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::getCategoryDirectChildren',
@@ -65,7 +69,9 @@ export default class DefTransactionCategoryOutputPort
     if (e) {
       FileLoggerService.error(
         `requestId: ${(
-          cls.getNamespace('transaction-categories') ?? { get: (_: string) => 'test' }
+          cls.getNamespace('transaction-categories') ?? {
+            get: (_: string) => 'test',
+          }
         ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::getOwnCategories',
@@ -85,7 +91,9 @@ export default class DefTransactionCategoryOutputPort
     if (e) {
       FileLoggerService.error(
         `requestId: ${(
-          cls.getNamespace('transaction-categories') ?? { get: (_: string) => 'test' }
+          cls.getNamespace('transaction-categories') ?? {
+            get: (_: string) => 'test',
+          }
         ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::search',
@@ -105,7 +113,9 @@ export default class DefTransactionCategoryOutputPort
     if (e) {
       FileLoggerService.error(
         `requestId: ${(
-          cls.getNamespace('transaction-categories') ?? { get: (_: string) => 'test' }
+          cls.getNamespace('transaction-categories') ?? {
+            get: (_: string) => 'test',
+          }
         ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::addCategory',
@@ -130,7 +140,9 @@ export default class DefTransactionCategoryOutputPort
     if (e) {
       FileLoggerService.error(
         `requestId: ${(
-          cls.getNamespace('transaction-categories') ?? { get: (_: string) => 'test' }
+          cls.getNamespace('transaction-categories') ?? {
+            get: (_: string) => 'test',
+          }
         ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::updateCategory',
@@ -150,7 +162,9 @@ export default class DefTransactionCategoryOutputPort
     if (e) {
       FileLoggerService.error(
         `requestId: ${(
-          cls.getNamespace('transaction-categories') ?? { get: (_: string) => 'test' }
+          cls.getNamespace('transaction-categories') ?? {
+            get: (_: string) => 'test',
+          }
         ).get('requestId')}; ${e.message}`,
         e.stack,
         'DefTransactionCategoryOutputPort::deleteCategory',

@@ -11,6 +11,7 @@ import TransactionAnalyticService from '@domain/transactions/services/transactio
 import { TransactionsComparisonDto } from '@domain/transactions/dto/transactionsComparison.dto';
 import { AvailableAnalyticMetric } from '@domain/transactions/enums/availableAnalyticMetric.enum';
 import { Period } from '@domain/period/enums/period.enum';
+import IUser from '@domain/users/entities/user.interface';
 
 import { QUARTER_ERROR_MSG } from '@common/constants/errorMessages.constants';
 
@@ -30,6 +31,17 @@ export default class ReportDistributionInteractor
     private readonly outputPort: ReportDistributionOutputPort,
   ) {
     this.distributionMetricItemRepo = this.distributionMetricItemFactory.createDistributingMetricItemRepo();
+  }
+
+  public async getUserSubscriptions(user: IUser): Promise<any> {
+    try {
+      const items: IDistributingMetricItem[] = await this.distributionMetricItemRepo.findByAndCriteria(
+        { user },
+      );
+      return this.outputPort.processGetUserSubscriptions(items, null);
+    } catch (e) {
+      return this.outputPort.processGetUserSubscriptions(null, e);
+    }
   }
 
   public async subscribe(items: IDistributingMetricItem[]): Promise<any> {
@@ -75,7 +87,9 @@ export default class ReportDistributionInteractor
       );
       this.transactionAnalyticService.transactions = transactions;
       let message: number | TransactionsComparisonDto = null;
-      // TODO: to strategy?
+      // TODO: to strategy
+      // (make common class for single param, where category, currency and period will be optional
+      // and create custom param decorator, that will be check for each method existing of needed fields)
       switch (item.metric) {
         case AvailableAnalyticMetric.TRANSACTIONS_COUNT_BY_CATEGORY_AND_DATE_RANGE:
           message = await this.transactionAnalyticService.getTransactionsCountBy(
@@ -137,7 +151,9 @@ export default class ReportDistributionInteractor
   /* istanbul ignore next */
   private defineDateRange(period: Period): [Date, Date] {
     const startDate: Date = new Date();
-    // TODO: to strategy?
+    // TODO: to strategy
+    // (make common class for single param, where category, currency and period will be optional
+    // and create custom param decorator, that will be check for each method existing of needed fields)
     switch (period) {
       case Period.MONTH:
         if (startDate.getMonth() > 1) {

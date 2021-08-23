@@ -13,6 +13,24 @@ import * as cls from 'cls-hooked';
 @Injectable()
 export class DefReportDistributionOutputPort
   implements ReportDistributionOutputPort {
+  async processGetUserSubscriptions(
+    result: IDistributingMetricItem[],
+    e: Error,
+  ): Promise<any> {
+    if (e) {
+      FileLoggerService.error(
+        `requestId: ${(
+          cls.getNamespace('transactions') ?? { get: (_: string) => 'test' }
+        ).get('requestId')}; ${e.message}`,
+        e.stack,
+        'DefReportDistributionOutputPort::processGetUserSubscriptions',
+      );
+      throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MSG);
+    }
+
+    return result;
+  }
+
   async processMetricSubscribing(
     result: IDistributingMetricItem[],
     e: Error,

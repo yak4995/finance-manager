@@ -4,7 +4,7 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 import { FileLoggerService } from '@transport/logger/fileLogger.service';
 
-import { WorkersModule } from './workers.module';
+import WorkersModule from './workers.module';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(

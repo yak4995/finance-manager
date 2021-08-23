@@ -4,6 +4,8 @@ import {
   ApiUnauthorizedResponse,
   ApiForbiddenResponse,
   ApiBadRequestResponse,
+  ApiOperation,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import {
   UseGuards,
@@ -86,6 +88,23 @@ export default class TransactionController {
     this.transactionsRepo = this.transactionFactory.createTransactionRepo();
   }
 
+  @ApiOperation({ description: 'Paginate your transactions with ordering' })
+  @ApiOkResponse({
+    description: 'transactions array',
+    schema: {
+      type: 'array',
+      items: {
+        properties: {
+          datetime: { type: 'Date' },
+          description: { type: 'string' },
+          amount: { type: 'number' },
+          owner: { type: 'IUser' },
+          transactionCategory: { type: 'ITransactionCategory' },
+          currency: { type: 'ICurrency' },
+        },
+      },
+    },
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -110,6 +129,23 @@ export default class TransactionController {
     );
   }
 
+  @ApiOperation({ description: 'Get your transactions by category id' })
+  @ApiOkResponse({
+    description: 'transactions array',
+    schema: {
+      type: 'array',
+      items: {
+        properties: {
+          datetime: { type: 'Date' },
+          description: { type: 'string' },
+          amount: { type: 'number' },
+          owner: { type: 'IUser' },
+          transactionCategory: { type: 'ITransactionCategory' },
+          currency: { type: 'ICurrency' },
+        },
+      },
+    },
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -136,11 +172,42 @@ export default class TransactionController {
     }
   }
 
+  @ApiOperation({ description: 'Search your transactions by description' })
+  @ApiOkResponse({
+    description: 'transactions array',
+    schema: {
+      type: 'array',
+      items: {
+        properties: {
+          datetime: { type: 'Date' },
+          description: { type: 'string' },
+          amount: { type: 'number' },
+          owner: { type: 'IUser' },
+          transactionCategory: { type: 'ITransactionCategory' },
+          currency: { type: 'ICurrency' },
+        },
+      },
+    },
+  })
   @Get('search/:content')
   search(@User() user: IUser, @Param('content') content: string): Promise<any> {
     return this.transactionInputPort.search(user, content);
   }
 
+  @ApiOperation({ description: 'Add transaction' })
+  @ApiOkResponse({
+    description: 'created transaction',
+    schema: {
+      properties: {
+        datetime: { type: 'Date' },
+        description: { type: 'string' },
+        amount: { type: 'number' },
+        owner: { type: 'IUser' },
+        transactionCategory: { type: 'ITransactionCategory' },
+        currency: { type: 'ICurrency' },
+      },
+    },
+  })
   @Post()
   addTransaction(
     @User() user: IUser,
@@ -149,6 +216,20 @@ export default class TransactionController {
     return this.transactionInputPort.addTransaction(user, payload);
   }
 
+  @ApiOperation({ description: 'Update your transaction' })
+  @ApiOkResponse({
+    description: 'updated transaction',
+    schema: {
+      properties: {
+        datetime: { type: 'Date' },
+        description: { type: 'string' },
+        amount: { type: 'number' },
+        owner: { type: 'IUser' },
+        transactionCategory: { type: 'ITransactionCategory' },
+        currency: { type: 'ICurrency' },
+      },
+    },
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -175,6 +256,20 @@ export default class TransactionController {
     }
   }
 
+  @ApiOperation({ description: 'Delete your transaction' })
+  @ApiOkResponse({
+    description: 'deleted transaction',
+    schema: {
+      properties: {
+        datetime: { type: 'Date' },
+        description: { type: 'string' },
+        amount: { type: 'number' },
+        owner: { type: 'IUser' },
+        transactionCategory: { type: 'ITransactionCategory' },
+        currency: { type: 'ICurrency' },
+      },
+    },
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -196,6 +291,20 @@ export default class TransactionController {
     }
   }
 
+  @ApiOperation({ description: 'Get max transaction in passed category' })
+  @ApiOkResponse({
+    description: 'transaction with max value',
+    schema: {
+      properties: {
+        datetime: { type: 'Date' },
+        description: { type: 'string' },
+        amount: { type: 'number' },
+        owner: { type: 'IUser' },
+        transactionCategory: { type: 'ITransactionCategory' },
+        currency: { type: 'ICurrency' },
+      },
+    },
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -229,6 +338,22 @@ export default class TransactionController {
     }
   }
 
+  @ApiOperation({
+    description: 'Get min transaction in passed category and date range',
+  })
+  @ApiOkResponse({
+    description: 'transaction with min value',
+    schema: {
+      properties: {
+        datetime: { type: 'Date' },
+        description: { type: 'string' },
+        amount: { type: 'number' },
+        owner: { type: 'IUser' },
+        transactionCategory: { type: 'ITransactionCategory' },
+        currency: { type: 'ICurrency' },
+      },
+    },
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -262,6 +387,13 @@ export default class TransactionController {
     }
   }
 
+  @ApiOperation({
+    description: 'Get count of transactions in passed category and date range',
+  })
+  @ApiOkResponse({
+    description: 'count of transactions in passed category and date range',
+    type: 'integer',
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -295,6 +427,15 @@ export default class TransactionController {
     }
   }
 
+  @ApiOperation({
+    description:
+      'Get value`s sum of transactions in passed category and date range',
+  })
+  @ApiOkResponse({
+    description:
+      'value`s sum of transactions in passed category and date range',
+    type: 'integer',
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -336,6 +477,13 @@ export default class TransactionController {
     }
   }
 
+  @ApiOperation({
+    description: 'Get count of transactions in passed date range',
+  })
+  @ApiOkResponse({
+    description: 'count of transactions in passed date range',
+    type: 'integer',
+  })
   @Get('/report/count-by-range')
   async getTransactionsCountForDateRange(
     @User() user: IUser,
@@ -355,6 +503,13 @@ export default class TransactionController {
     return this.transactionInputPort.getTransactionsCount();
   }
 
+  @ApiOperation({
+    description: 'Get value`s sum of transactions in passed date range',
+  })
+  @ApiOkResponse({
+    description: 'value`s sum of transactions in passed date range',
+    type: 'integer',
+  })
   @Get('/report/sum-by-range')
   async getTransactionsSumForDateRange(
     @User() user: IUser,
@@ -375,6 +530,13 @@ export default class TransactionController {
     return this.transactionInputPort.getTransactionsSum(baseCurrency);
   }
 
+  @ApiOperation({
+    description: 'Get count-ratio report in passed category and date range',
+  })
+  @ApiOkResponse({
+    description: 'count-ratio report in passed category and date range',
+    type: 'TransactionsComparisonDto',
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -410,6 +572,13 @@ export default class TransactionController {
     }
   }
 
+  @ApiOperation({
+    description: 'Get sum-ratio report in passed category and date range',
+  })
+  @ApiOkResponse({
+    description: 'sum-ratio report in passed category and date range',
+    type: 'TransactionsComparisonDto',
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -451,6 +620,13 @@ export default class TransactionController {
     }
   }
 
+  @ApiOperation({
+    description: 'Get count-change report in passed category and date range',
+  })
+  @ApiOkResponse({
+    description: 'count-change report in passed category and date range',
+    type: 'TransactionsComparisonDto',
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -489,6 +665,13 @@ export default class TransactionController {
     }
   }
 
+  @ApiOperation({
+    description: 'Get sum-change report in passed category and date range',
+  })
+  @ApiOkResponse({
+    description: 'sum-change report in passed category and date range',
+    type: 'TransactionsComparisonDto',
+  })
   @ApiBadRequestResponse({
     schema: {
       type: 'string',
@@ -533,6 +716,26 @@ export default class TransactionController {
     }
   }
 
+  @ApiOperation({ description: 'Get transaction details by id' })
+  @ApiOkResponse({
+    description: 'transaction details',
+    schema: {
+      properties: {
+        datetime: { type: 'Date' },
+        description: { type: 'string' },
+        amount: { type: 'number' },
+        owner: { type: 'IUser' },
+        transactionCategory: { type: 'ITransactionCategory' },
+        currency: { type: 'ICurrency' },
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    schema: {
+      type: 'string',
+      example: TRANSACTION_IS_NOT_FOUND_MSG,
+    },
+  })
   @Get('/:id')
   async getTransactionDetail(
     @User() user: IUser,

@@ -119,4 +119,4 @@ import { MailingService } from './services/mailing.service';
     },
   ],
 })
-export class WorkersModule {}
+export default class WorkersModule {}

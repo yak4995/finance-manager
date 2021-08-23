@@ -19,6 +19,7 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 
 import UpdateTransactionCategoryDto from '../dtos/updateTransactionCategory.dto';
@@ -95,7 +96,7 @@ export default class TransactionCategoriesController {
     return this.transactionCategoriesInputPort.getTopCategories(user);
   }
 
-  @ApiOperation({ description: 'Get profile info about current user' })
+  @ApiOperation({ description: 'Get transaction category direct children' })
   @ApiOkResponse({
     description: 'categories array',
     schema: {
@@ -108,6 +109,12 @@ export default class TransactionCategoriesController {
           isOutcome: { type: 'boolean' },
         },
       },
+    },
+  })
+  @ApiBadRequestResponse({
+    schema: {
+      type: 'string',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
     },
   })
   @Get('category-direct-children/:parentCategoryId')
@@ -132,7 +139,7 @@ export default class TransactionCategoriesController {
     );
   }
 
-  @ApiOperation({ description: 'Get profile info about current user' })
+  @ApiOperation({ description: 'Get own transaction categories' })
   @ApiOkResponse({
     description: 'categories array',
     schema: {
@@ -152,7 +159,7 @@ export default class TransactionCategoriesController {
     return this.transactionCategoriesInputPort.getOwnCategories(user);
   }
 
-  @ApiOperation({ description: 'Get profile info about current user' })
+  @ApiOperation({ description: 'Search transaction categories by name' })
   @ApiOkResponse({
     description: 'categories array',
     schema: {
@@ -175,7 +182,7 @@ export default class TransactionCategoriesController {
     return this.transactionCategoriesInputPort.search(user, content);
   }
 
-  @ApiOperation({ description: 'Get profile info about current user' })
+  @ApiOperation({ description: 'Create own transaction category' })
   @ApiCreatedResponse({
     description: 'created category',
     schema: {
@@ -195,7 +202,7 @@ export default class TransactionCategoriesController {
     return this.transactionCategoriesInputPort.addCategory(user, payload);
   }
 
-  @ApiOperation({ description: 'Get profile info about current user' })
+  @ApiOperation({ description: 'Update own transaction category' })
   @ApiOkResponse({
     description: 'updated category',
     schema: {
@@ -205,6 +212,12 @@ export default class TransactionCategoriesController {
         isSystem: { type: 'boolean' },
         isOutcome: { type: 'boolean' },
       },
+    },
+  })
+  @ApiBadRequestResponse({
+    schema: {
+      type: 'string',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
     },
   })
   @Patch(':id')
@@ -230,10 +243,18 @@ export default class TransactionCategoriesController {
     );
   }
 
-  @ApiOperation({ description: 'Get profile info about current user' })
+  @ApiOperation({
+    description: 'Delete own transaction category (cascade deleting)',
+  })
   @ApiOkResponse({
     description: 'result of deletion',
     schema: { type: 'boolean' },
+  })
+  @ApiBadRequestResponse({
+    schema: {
+      type: 'string',
+      example: TRANSACTION_CATEGORY_IS_NOT_FOUND_MSG,
+    },
   })
   @Delete(':id')
   async deleteCategory(
