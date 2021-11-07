@@ -61,6 +61,9 @@ export class TransactionSearchService implements ISearchService<ITransaction> {
       .then(
         result =>
           result.body.hits.hits.map(value => value._source) as ITransaction[],
-      );
+      ).catch(e => {
+        console.log(e.message);
+        return [];
+      });;
   }
 }

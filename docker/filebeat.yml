@@ -1,7 +1,0 @@
-filebeat.inputs:
-  - type: log
-    paths:
-      - /app/logs/*.txt
-
-output.logstash:
-  hosts: ["logstash:5044"]

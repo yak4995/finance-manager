@@ -19,12 +19,10 @@ async function bootstrap() {
           groupId: 'workers',
         },
       },
-      logger: false,
     },
   );
-  app.useLogger(app.get(FileLoggerService));
   app.useGlobalPipes(new ValidationPipe());
 
-  app.listen(() => FileLoggerService.log('Workers are listening'));
+  app.listen();
 }
 bootstrap();

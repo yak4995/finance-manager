@@ -118,7 +118,7 @@ import RequestIdentificationMiddleware from '@common/middlewares/requestIdentifi
         path: '/graphql',
         installSubscriptionHandlers: true,
         resolverValidationOptions: {
-          requireResolversForResolveType: false,
+          requireResolversForResolveType: 'ignore',
         },
         debug: configService.get('DEBUG_MODE') === '1',
         introspection: true,
@@ -189,7 +189,10 @@ import RequestIdentificationMiddleware from '@common/middlewares/requestIdentifi
         DefTransactionCategoryOutputPort,
       ],
     },
-    TransactionCategoryShoulBeDeletedEventDispatcher,
+    {
+      provide: 'TransactionCategoryShoulBeDeletedEventDispatcher',
+      useClass: TransactionCategoryShoulBeDeletedEventDispatcher,
+    },
     TransactionCategoryShouldBeDeletedListener,
     {
       provide: 'TransactionCategoryShouldBeDeletedEventListeners',

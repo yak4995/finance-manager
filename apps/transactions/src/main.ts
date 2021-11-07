@@ -23,10 +23,8 @@ async function bootstrap() {
       key: keyFile,
       cert: certFile,
     },
-    logger: false,
   });
   const configService: ConfigService = app.get(ConfigService);
-  app.useLogger(app.get(FileLoggerService));
   app.useGlobalInterceptors(new LoggingInterceptor('transactions'));
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());

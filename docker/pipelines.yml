@@ -1,4 +1,0 @@
-- pipeline.id: logs
-  pipeline.workers: 1
-  pipeline.batch.size: 1
-  path.config: "/usr/share/logstash/config/pipeline/logstash.conf"

@@ -64,6 +64,9 @@ export class TransactionCategorySearchService
           result.body.hits.hits.map(
             value => value._source,
           ) as ITransactionCategory[],
-      );
+      ).catch(e => {
+        console.log(e.message);
+        return [];
+      });
   }
 }

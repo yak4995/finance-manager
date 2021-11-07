@@ -1,114 +1,59 @@
 version: '2.2'
 services:
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
     container_name: es01
     environment:
-      - node.name=es01
-      - cluster.name=es-docker-cluster
-      #- discovery.seed_hosts=es02,es03
-      #- cluster.initial_master_nodes=es01,es02,es03
-      - cluster.initial_master_nodes=es01
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - data01:/usr/share/elasticsearch/data
+      - discovery.type=single-node
+      - network.host=0.0.0.0
     ports:
       - 9200:9200
     networks:
       - elastic
 
-  # all of this require a lot of RAM, that I don`t have on my laptop
+  # kib01:
+  #   image: docker.elastic.co/kibana/kibana:7.15.1
+  #   container_name: kib01
+  #   ports:
+  #     - 5601:5601
+  #   environment:
+  #     ELASTICSEARCH_URL: http://es01:9200
+  #     ELASTICSEARCH_HOSTS: http://es01:9200
+  #   networks:
+  #     - elastic
+  #   depends_on:
+  #     - es01
 
-  #es02:
-  #  image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
-  #  container_name: es02
-  #  environment:
-  #    - node.name=es02
-  #    - cluster.name=es-docker-cluster
-  #    - discovery.seed_hosts=es01,es03
-  #    - cluster.initial_master_nodes=es01,es02,es03
-  #    - bootstrap.memory_lock=true
-  #    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  #  ulimits:
-  #    memlock:
-  #      soft: -1
-  #      hard: -1
-  #  volumes:
-  #    - data02:/usr/share/elasticsearch/data
-  #  ports:
-  #    - 9201:9201
-  #  networks:
-  #    - elastic
+  # filebeat:
+  #   image: docker.elastic.co/beats/filebeat:7.15.1
+  #   container_name: filebeat
+  #   restart: always
+  #   user: root
+  #   volumes:
+  #     - ./logs:/app/logs
+  #     - ./docker/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+  #   networks:
+  #     - elastic
+  #   depends_on:
+  #     - logstash
 
-  #es03:
-  #  image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
-  #  container_name: es03
-  #  environment:
-  #    - node.name=es03
-  #    - cluster.name=es-docker-cluster
-  #    - discovery.seed_hosts=es01,es02
-  #    - cluster.initial_master_nodes=es01,es02,es03
-  #    - bootstrap.memory_lock=true
-  #    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  #  ulimits:
-  #    memlock:
-  #      soft: -1
-  #      hard: -1
-  #  volumes:
-  #    - data03:/usr/share/elasticsearch/data
-  #  ports:
-  #    - 9202:9202
-  #  networks:
-  #    - elastic
-
-  kib01:
-    image: docker.elastic.co/kibana/kibana:7.9.1
-    container_name: kib01
-    ports:
-      - 5601:5601
-    environment:
-      ELASTICSEARCH_URL: http://es01:9200
-      ELASTICSEARCH_HOSTS: http://es01:9200
-    networks:
-      - elastic
-    depends_on:
-      - es01
-
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:7.9.1
-    container_name: filebeat
-    restart: always
-    user: root
-    volumes:
-      - ./logs:/app/logs
-      - ./docker/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-    networks:
-      - elastic
-    depends_on:
-      - logstash
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.9.1
-    container_name: logstash
-    restart: always
-    user: root
-    environment:
-      - monitoring.elasticsearch.hosts=http://es01:9200
-    volumes:
-      - ./docker/logstash.yml:/usr/share/logstash/config/logstash.yml
-      - ./docker/pipelines.yml/:/usr/share/logstash/config/pipelines.yml
-      - ./docker/logstash.conf:/usr/share/logstash/config/pipeline/logstash.conf
-    ports:
-      - 5044:5044
-    networks:
-      - elastic
-    depends_on:
-      - es01
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:7.15.1
+  #   container_name: logstash
+  #   restart: always
+  #   user: root
+  #   environment:
+  #     - monitoring.elasticsearch.hosts=http://es01:9200
+  #   volumes:
+  #     - ./docker/logstash.yml:/usr/share/logstash/config/logstash.yml
+  #     - ./docker/pipelines.yml/:/usr/share/logstash/config/pipelines.yml
+  #     - ./docker/logstash.conf:/usr/share/logstash/config/pipeline/logstash.conf
+  #   ports:
+  #     - 5044:5044
+  #   networks:
+  #     - elastic
+  #   depends_on:
+  #     - es01
 
   zookeeper:
     image: wurstmeister/zookeeper:latest
@@ -152,7 +97,7 @@ services:
 
   postgres:
     image: 'postgres:latest'
-    container_name: postgres_db
+    container_name: postgres
     restart: always
     env_file:
       - .env
@@ -168,15 +113,6 @@ services:
       interval: 1s
       timeout: 5s
       retries: 50
-
-volumes:
-  data01:
-    driver: local
-  # volumes of ELK additional instances:
-  #data02:
-  #  driver: local
-  #data03:
-  #  driver: local
 
 networks:
   elastic:
