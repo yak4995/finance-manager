@@ -48,7 +48,7 @@
     "graphql-tools": "^4.0.6",
     "grpc": "^1.24.11",
     "kafkajs": "^1.15.0",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "nestjs-command": "^3.1.0",
     "node-chartist": "^1.0.5",
     "passport": "^0.5.0",
