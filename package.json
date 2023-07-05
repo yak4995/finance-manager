@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.15.0",
-    "@grpc/grpc-js": "^1.4.3",
+    "@grpc/grpc-js": "^1.8.8",
     "@grpc/proto-loader": "^0.6.6",
     "@nestjs-modules/mailer": "^1.6.0",
     "@nestjs/bull": "^0.4.2",
